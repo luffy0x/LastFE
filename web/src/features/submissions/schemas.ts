@@ -57,13 +57,20 @@ const markdown = z.string().superRefine((value, context) => {
 export const isSafeHttpUrl = (url: string): boolean => {
   const normalizedUrl = url.trim();
 
-  if (normalizedUrl.length > MAX_URL_LENGTH) {
+  if (
+    normalizedUrl.length > MAX_URL_LENGTH ||
+    !/^https?:\/\//.test(normalizedUrl) ||
+    /[\\\u0000-\u001F\u007F-\u009F]/.test(normalizedUrl)
+  ) {
     return false;
   }
 
   try {
     const parsed = new URL(normalizedUrl);
-    return parsed.protocol === "http:" || parsed.protocol === "https:";
+    return (
+      parsed.hostname.length > 0 &&
+      (parsed.protocol === "http:" || parsed.protocol === "https:")
+    );
   } catch {
     return false;
   }

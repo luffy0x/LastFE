@@ -963,12 +963,14 @@ a {
 
 .dossier-page {
   min-height: 100dvh;
+  overflow-x: clip;
   padding: 64px 24px 96px;
   background: var(--canvas);
 }
 
 .dossier {
   width: min(100%, 820px);
+  min-width: 0;
   margin: 0 auto;
 }
 
@@ -983,11 +985,14 @@ a {
 }
 
 .dossier__header {
+  min-width: 0;
   padding: 56px 0 36px;
 }
 
 .dossier__header h1 {
   max-width: 18ch;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .dossier__metadata {
@@ -1031,6 +1036,16 @@ a {
   font-size: 23px;
   font-weight: 650;
   letter-spacing: -0.012em;
+}
+
+.dossier__body h1,
+.dossier__body h2,
+.dossier__body h3,
+.dossier__body h4,
+.dossier__body h5,
+.dossier__body h6 {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .dossier__body h3 {
@@ -1096,7 +1111,8 @@ a {
   color: var(--text-strong);
   font-family: ui-monospace, "Cascadia Mono", "SFMono-Regular", Consolas,
     monospace;
-  font-size: 0.875em;
+  font-size: 16px;
+  line-height: 1.6;
   overflow-wrap: anywhere;
 }
 
@@ -1109,7 +1125,7 @@ a {
   border-radius: var(--radius-sm);
   background: var(--surface-1);
   color: var(--text-strong);
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.6;
 }
 
@@ -1127,7 +1143,7 @@ a {
   overflow-x: auto;
   border-collapse: collapse;
   color: oklch(0.82 0.018 210);
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.6;
 }
 

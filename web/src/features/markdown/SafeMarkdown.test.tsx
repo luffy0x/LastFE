@@ -13,17 +13,25 @@ it("renders raw HTML as text instead of live elements", () => {
   expect(document.querySelector("img")).toBeNull();
 });
 
-it.each(["javascript:alert(1)", "data:text/html,unsafe"]) (
-  "does not expose %s as a dangerous link destination",
-  (unsafeUrl) => {
+it.each([
+  ["javascript URL", "javascript:alert(1)"],
+  ["data URL", "data:text/html,unsafe"],
+  ["relative URL", "/outside-file"],
+  ["protocol-relative URL", "//example.com/outside-file"],
+  ["overlong URL", `https://example.com/${"a".repeat(2_029)}`],
+  ["non-canonical URL", "https:example.com/path"],
+])("renders %s as non-clickable text", (_label, unsafeUrl) => {
     render(<SafeMarkdown source={`[危险链接](${unsafeUrl})`} />);
 
-    expect(screen.getByText("危险链接").closest("a")).not.toHaveAttribute(
-      "href",
-      unsafeUrl,
-    );
-  },
-);
+    expect(screen.queryByRole("link", { name: "危险链接" })).toBeNull();
+    expect(screen.getByText("危险链接")).toBeVisible();
+  });
+
+it("does not emit Markdown images that could load external files", () => {
+  render(<SafeMarkdown source="![tracker](https://example.com/tracker.png)" />);
+
+  expect(document.querySelector("img")).toBeNull();
+});
 
 it("hardens HTTP and HTTPS links opened from markdown", () => {
   render(

@@ -6,21 +6,55 @@ type SafeMarkdownProps = {
   source: string;
 };
 
+const ALLOWED_MARKDOWN_ELEMENTS = [
+  "a",
+  "blockquote",
+  "br",
+  "code",
+  "del",
+  "em",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "hr",
+  "li",
+  "ol",
+  "p",
+  "pre",
+  "strong",
+  "table",
+  "tbody",
+  "td",
+  "th",
+  "thead",
+  "tr",
+  "ul",
+] as const;
+
 export function SafeMarkdown({ source }: SafeMarkdownProps) {
   return (
     <ReactMarkdown
       remarkPlugins={[remarkGfm]}
-      urlTransform={(url) => (isSafeHttpUrl(url) ? url : "")}
+      allowedElements={ALLOWED_MARKDOWN_ELEMENTS}
+      skipHtml
+      urlTransform={(url) => url}
       components={{
-        a: ({ children, ...props }) => (
-          <a
-            {...props}
-            target="_blank"
-            rel="nofollow noopener noreferrer"
-          >
-            {children}
-          </a>
-        ),
+        a: ({ children, href }) => {
+          if (!href || !isSafeHttpUrl(href)) return <>{children}</>;
+
+          return (
+            <a
+              href={href.trim()}
+              target="_blank"
+              rel="nofollow noopener noreferrer"
+            >
+              {children}
+            </a>
+          );
+        },
       }}
     >
       {source}

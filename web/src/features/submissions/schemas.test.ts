@@ -158,6 +158,20 @@ describe("parseSubmission", () => {
   );
 
   it.each([
+    ["relative path", "/outside-file"],
+    ["protocol-relative URL", "//example.com/outside-file"],
+    ["non-canonical scheme form", "https:example.com/path"],
+    ["backslash path", "https://example.com\\outside-file"],
+    ["backslash host separator", "https:\\\\example.com/outside-file"],
+    ["control character", "https://example.com/\u0000file"],
+  ])("rejects malformed but parseable URL shape: %s", (_label, url) => {
+    expect(isSafeHttpUrl(url)).toBe(false);
+    expect(() =>
+      parseSubmission("resources", { ...validInputs.resources, url }),
+    ).toThrow(/http/i);
+  });
+
+  it.each([
     ["required resource URL", "resources", "url", validInputs.resources],
     ["optional project repository URL", "projects", "repositoryUrl", validInputs.projects],
     ["optional project demo URL", "projects", "demoUrl", validInputs.projects],
