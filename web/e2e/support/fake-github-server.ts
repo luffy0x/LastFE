@@ -92,6 +92,10 @@ const server = createServer(async (request, response) => {
       json(response, latest ? 200 : 404, latest ?? { message: "No issues" });
       return;
     }
+    if (request.method === "GET" && url.pathname === "/__test/issues/count") {
+      json(response, 200, { count: issues.length });
+      return;
+    }
     if (request.method === "PATCH" && /^\/__test\/issues\/\d+$/.test(url.pathname)) {
       const number = Number(url.pathname.split("/").at(-1));
       const issue = issues.find((candidate) => candidate.number === number);

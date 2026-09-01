@@ -29,7 +29,6 @@ function SearchIcon() {
 export function GlobalSearch() {
   const {
     close,
-    deferredQuery,
     dialogRef,
     groups,
     isOpen,
@@ -97,7 +96,7 @@ export function GlobalSearch() {
         </form>
 
         <div className="global-search-dialog__status" aria-live="polite">
-          {state === "loading" || query !== deferredQuery ? "正在扫描公开索引…" : null}
+          {state === "loading" ? "正在扫描公开索引…" : null}
           {state === "error" ? (
             <p role="alert">搜索暂时不可用，请稍后重试。</p>
           ) : null}
@@ -107,7 +106,7 @@ export function GlobalSearch() {
         </div>
 
         <div className="global-search-dialog__results">
-          {state === "ready" && query === deferredQuery ? groups.map((group) => {
+          {state === "ready" ? groups.map((group) => {
             const region = REGIONS.find(({ slug }) => slug === group.regionSlug);
             return (
               <section key={group.regionSlug} aria-labelledby={`search-group-${group.regionSlug}`}>

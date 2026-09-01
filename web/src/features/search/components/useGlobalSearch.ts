@@ -12,6 +12,10 @@ import type { SearchGroup } from "@/server/content/search";
 import { request } from "@/utils/request";
 
 type SearchResponse = { groups: readonly SearchGroup[] };
+type SettledSearch = SearchResponse & {
+  query: string;
+  state: "ready" | "error";
+};
 
 export function useGlobalSearch() {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -19,10 +23,7 @@ export function useGlobalSearch() {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
   const deferredQuery = useDeferredValue(query);
-  const [groups, setGroups] = useState<readonly SearchGroup[]>([]);
-  const [state, setState] = useState<
-    "idle" | "loading" | "ready" | "error"
-  >("idle");
+  const [settledSearch, setSettledSearch] = useState<SettledSearch | null>(null);
 
   const open = useCallback(() => {
     const dialog = dialogRef.current;
@@ -30,7 +31,6 @@ export function useGlobalSearch() {
     if (!dialog.open) {
       if (typeof dialog.showModal === "function") dialog.showModal();
       else dialog.setAttribute("open", "");
-      setState("loading");
       setIsOpen(true);
     }
     dialog.querySelector<HTMLInputElement>("input")?.focus();
@@ -51,8 +51,6 @@ export function useGlobalSearch() {
 
   const updateQuery = (value: string) => {
     setQuery(value);
-    setGroups([]);
-    setState("loading");
   };
 
   useEffect(() => {
@@ -67,29 +65,40 @@ export function useGlobalSearch() {
   }, [open]);
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || settledSearch?.query === deferredQuery) return;
     const controller = new AbortController();
     void request<SearchResponse>(
       `/api/search?q=${encodeURIComponent(deferredQuery)}`,
       { signal: controller.signal },
     )
       .then((response) => {
-        setGroups(response.groups);
-        setState("ready");
+        setSettledSearch({
+          groups: response.groups,
+          query: deferredQuery,
+          state: "ready",
+        });
       })
       .catch((error: unknown) => {
         if (error instanceof DOMException && error.name === "AbortError") return;
-        setGroups([]);
-        setState("error");
+        setSettledSearch({ groups: [], query: deferredQuery, state: "error" });
       });
     return () => controller.abort();
-  }, [deferredQuery, isOpen]);
+  }, [deferredQuery, isOpen, settledSearch?.query]);
+
+  const isDeferring = query !== deferredQuery;
+  const state = !isOpen
+    ? "idle"
+    : isDeferring && settledSearch
+      ? settledSearch.state
+      : settledSearch?.query === deferredQuery
+        ? settledSearch.state
+        : "loading";
 
   return {
     close,
     deferredQuery,
     dialogRef,
-    groups,
+    groups: settledSearch?.groups ?? [],
     isOpen,
     open,
     query,

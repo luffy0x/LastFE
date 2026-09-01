@@ -1,11 +1,21 @@
 import { defineConfig, devices } from "@playwright/test";
-import { join } from "node:path";
+import { mkdtempSync } from "node:fs";
+import { basename, dirname, join, resolve } from "node:path";
 import { tmpdir } from "node:os";
 
-const e2eDatabasePath = join(
-  tmpdir(),
-  `knowledge-frontier-playwright-${process.pid}.sqlite`,
-);
+const RUN_DIRECTORY_PREFIX = "knowledge-frontier-playwright-";
+const inheritedRunDirectory = process.env.KNOWLEDGE_FRONTIER_E2E_RUN_DIRECTORY;
+const ownsInheritedRunDirectory =
+  inheritedRunDirectory !== undefined &&
+  dirname(resolve(inheritedRunDirectory)) === resolve(tmpdir()) &&
+  basename(inheritedRunDirectory).startsWith(RUN_DIRECTORY_PREFIX);
+const e2eRunDirectory = ownsInheritedRunDirectory
+  ? resolve(inheritedRunDirectory)
+  : mkdtempSync(join(tmpdir(), RUN_DIRECTORY_PREFIX));
+const e2eDatabasePath = join(e2eRunDirectory, "content.sqlite");
+
+process.env.KNOWLEDGE_FRONTIER_E2E_RUN_DIRECTORY = e2eRunDirectory;
+process.env.SQLITE_PATH = e2eDatabasePath;
 
 export default defineConfig({
   testDir: "./e2e",
@@ -14,7 +24,11 @@ export default defineConfig({
   expect: {
     timeout: 15_000,
   },
-  reporter: "html",
+  reporter: [
+    ["line"],
+    ["html"],
+    ["./e2e/support/run-directory-cleanup-reporter.ts", { e2eRunDirectory }],
+  ],
   use: {
     baseURL: "http://127.0.0.1:3000",
     extraHTTPHeaders: { "x-real-ip": "127.0.0.1" },

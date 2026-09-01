@@ -20,6 +20,10 @@ type FakeIssue = {
   updated_at: string;
 };
 
+type IssueEvent =
+  | { action: "closed" | "reopened" }
+  | { action: "labeled" | "unlabeled"; label: { name: string } };
+
 type SubmissionCase = {
   slug: "interview" | "resources" | "fundamentals" | "projects" | "algorithms";
   title: string;
@@ -41,6 +45,13 @@ async function latestIssue(request: APIRequestContext): Promise<FakeIssue> {
   return (await response.json()) as FakeIssue;
 }
 
+async function issueCount(request: APIRequestContext): Promise<number> {
+  const response = await request.get(`${FAKE_GITHUB_ORIGIN}/__test/issues/count`);
+  expect(response.ok()).toBe(true);
+  const body = (await response.json()) as { count: number };
+  return body.count;
+}
+
 async function mutateIssue(
   request: APIRequestContext,
   issue: FakeIssue,
@@ -58,8 +69,9 @@ async function deliverIssue(
   request: APIRequestContext,
   issue: FakeIssue,
   deliveryId: string,
+  event: IssueEvent,
 ) {
-  const rawBody = JSON.stringify({ action: "edited", issue });
+  const rawBody = JSON.stringify({ ...event, issue });
   const signature = `sha256=${createHmac("sha256", TEST_WEBHOOK_KEY)
     .update(rawBody)
     .digest("hex")}`;
@@ -86,7 +98,10 @@ async function approveLatestIssue(
     state: "open",
     updated_at: new Date(Date.parse(latest.updated_at) + 1_000).toISOString(),
   });
-  const response = await deliverIssue(request, approved, deliveryId);
+  const response = await deliverIssue(request, approved, deliveryId, {
+    action: "labeled",
+    label: { name: "approved" },
+  });
   expect(response.ok()).toBe(true);
   await expect(response.json()).resolves.toEqual({
     ok: true,
@@ -198,6 +213,16 @@ test.describe.serial("anonymous moderation flow", () => {
     }
   });
 
+  test("territory routes reject unknown and repeated query parameters", async ({
+    request,
+  }) => {
+    const unknown = await request.get("/regions/interview?q=Redis&debug=1");
+    expect(unknown.status()).toBe(400);
+
+    const repeated = await request.get("/regions/interview?q=Redis&q=SQL");
+    expect(repeated.status()).toBe(400);
+  });
+
   test("global search, territory filters, safe Markdown, and external links use public records", async ({
     page,
     request,
@@ -248,6 +273,44 @@ test.describe.serial("anonymous moderation flow", () => {
     await expect(external).toHaveAttribute("rel", "nofollow noopener noreferrer");
   });
 
+  test("normalized duplicate content is rejected for 24 hours without changing public data", async ({
+    page,
+    request,
+  }) => {
+    const issuesBefore = await issueCount(request);
+    await page.goto("/");
+    const publicCount = await page
+      .getByLabel("已公开档案数量")
+      .textContent();
+
+    await page.goto("/submit/resources");
+    await page.getByLabel("标题").fill("  二十四小时去重资源  ");
+    await page.getByLabel("URL").fill("  https://example.com/dedupe  ");
+    await page.getByLabel("摘要").fill("  浏览器重复提交验证  ");
+    await page.getByLabel("标签").fill("去重, 浏览器");
+    await completeAltcha(page);
+    await page.getByRole("button", { name: "提交审核" }).click();
+    await expect(page).toHaveURL(/\/submitted$/);
+    await expect.poll(() => issueCount(request)).toBe(issuesBefore + 1);
+
+    await page.goto("/submit/resources");
+    await page.getByLabel("标题").fill("二十四小时去重资源");
+    await page.getByLabel("URL").fill("https://example.com/dedupe");
+    await page.getByLabel("摘要").fill("浏览器重复提交验证");
+    await page.getByLabel("标签").fill("去重, 浏览器");
+    await completeAltcha(page);
+    await page.getByRole("button", { name: "提交审核" }).click();
+
+    await expect(
+      page.getByRole("alert").filter({ hasText: "相同内容近期已提交" }),
+    ).toContainText("请等待审核或修改后重试");
+    await expect.poll(() => issueCount(request)).toBe(issuesBefore + 1);
+    await page.goto("/");
+    await expect(page.getByLabel("已公开档案数量")).toHaveText(publicCount ?? "");
+    await page.goto("/regions/resources?q=二十四小时去重资源");
+    await expect(page.getByText("二十四小时去重资源")).toHaveCount(0);
+  });
+
   test("closing an unapproved issue rejects it without publishing", async ({
     page,
     request,
@@ -266,7 +329,9 @@ test.describe.serial("anonymous moderation flow", () => {
       state: "closed",
       updated_at: new Date(Date.parse(queued.updated_at) + 1_000).toISOString(),
     });
-    const response = await deliverIssue(request, rejected, "e2e-reject");
+    const response = await deliverIssue(request, rejected, "e2e-reject", {
+      action: "closed",
+    });
     await expect(response.json()).resolves.toEqual({ ok: true, result: "rejected" });
 
     await page.goto("/regions/resources?q=拒绝测试资源");
@@ -285,19 +350,42 @@ test.describe.serial("anonymous moderation flow", () => {
       state: "closed",
       updated_at: "2026-09-02T01:00:00.000Z",
     });
-    const withdrawal = await deliverIssue(request, withdrawn, "e2e-withdraw");
+    const withdrawal = await deliverIssue(request, withdrawn, "e2e-withdraw", {
+      action: "labeled",
+      label: { name: "unpublish" },
+    });
     await expect(withdrawal.json()).resolves.toEqual({ ok: true, result: "withdrawn" });
     const hidden = await page.goto(`/content/gh-${original.number}`);
     expect(hidden?.status()).toBe(404);
 
-    const republished = await mutateIssue(request, withdrawn, {
+    const unlabeled = await mutateIssue(request, withdrawn, {
       labels: ["submission", "region:interview", "approved", "published"],
-      state: "open",
+      state: "closed",
       updated_at: "2026-09-02T02:00:00.000Z",
     });
-    const first = await deliverIssue(request, republished, "e2e-republish");
+    const first = await deliverIssue(request, unlabeled, "e2e-republish-unlabeled", {
+      action: "unlabeled",
+      label: { name: "unpublish" },
+    });
     await expect(first.json()).resolves.toEqual({ ok: true, result: "published" });
-    const duplicate = await deliverIssue(request, republished, "e2e-republish");
+    const reopened = await mutateIssue(request, unlabeled, {
+      labels: ["submission", "region:interview", "approved", "published"],
+      state: "open",
+      updated_at: "2026-09-02T03:00:00.000Z",
+    });
+    const reopenedDelivery = await deliverIssue(
+      request,
+      reopened,
+      "e2e-republish-reopened",
+      { action: "reopened" },
+    );
+    await expect(reopenedDelivery.json()).resolves.toEqual({
+      ok: true,
+      result: "published",
+    });
+    const duplicate = await deliverIssue(request, reopened, "e2e-republish-reopened", {
+      action: "reopened",
+    });
     await expect(duplicate.json()).resolves.toEqual({ ok: true, result: "duplicate" });
 
     await page.goto(`/content/gh-${original.number}`);
