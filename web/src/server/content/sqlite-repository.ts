@@ -21,6 +21,7 @@ export type ModerationOrdering = {
   updatedAt: string;
   snapshotIdentity: string;
   authoritative: boolean;
+  reviewSequence: { createdAt: string; eventId: string } | null;
 };
 
 export type ContentSyncCommand =
@@ -121,6 +122,27 @@ function toSummary(database: SqliteDatabase, row: ContentRow): ContentSummary {
 
 function queryPage(query: ContentQuery): number {
   return Number.isSafeInteger(query.page) && query.page > 0 ? query.page : 1;
+}
+
+function compareEventIds(left: string, right: string): number {
+  if (/^\d+$/.test(left) && /^\d+$/.test(right)) {
+    const leftId = BigInt(left);
+    const rightId = BigInt(right);
+    return leftId < rightId ? -1 : leftId > rightId ? 1 : 0;
+  }
+  return left < right ? -1 : left > right ? 1 : 0;
+}
+
+function compareReviewSequences(
+  left: NonNullable<ModerationOrdering["reviewSequence"]>,
+  right: NonNullable<ModerationOrdering["reviewSequence"]>,
+): number {
+  const leftTimestamp = Date.parse(left.createdAt);
+  const rightTimestamp = Date.parse(right.createdAt);
+  if (leftTimestamp !== rightTimestamp) {
+    return leftTimestamp < rightTimestamp ? -1 : 1;
+  }
+  return compareEventIds(left.eventId, right.eventId);
 }
 
 export function createSqliteContentStores(database: SqliteDatabase): {
@@ -227,21 +249,31 @@ export function createSqliteContentStores(database: SqliteDatabase): {
             ? "rejected"
             : "ignored";
     const incomingTimestamp = Date.parse(command.ordering.updatedAt);
+    const reviewSequence = command.ordering.reviewSequence;
     if (
       !Number.isFinite(incomingTimestamp) ||
-      !command.ordering.snapshotIdentity.trim()
+      !command.ordering.snapshotIdentity.trim() ||
+      (reviewSequence !== null &&
+        (!Number.isFinite(Date.parse(reviewSequence.createdAt)) ||
+          !reviewSequence.eventId.trim()))
     ) {
       throw new Error("Invalid moderation ordering key");
     }
 
     const current = database
       .prepare(
-        `SELECT updated_at, snapshot_identity
+        `SELECT updated_at, snapshot_identity,
+                review_event_created_at, review_event_id
          FROM moderation_issue_states
          WHERE github_issue_number = ?`,
       )
       .get(issueNumber) as
-      | { updated_at: string; snapshot_identity: string }
+      | {
+          updated_at: string;
+          snapshot_identity: string;
+          review_event_created_at: string | null;
+          review_event_id: string | null;
+        }
       | undefined;
     const delivery = database
       .prepare("INSERT OR IGNORE INTO webhook_deliveries (delivery_id, processed_at) VALUES (?, ?)")
@@ -256,28 +288,43 @@ export function createSqliteContentStores(database: SqliteDatabase): {
     if (current) {
       const currentTimestamp = Date.parse(current.updated_at);
       const isOlder = incomingTimestamp < currentTimestamp;
-      const isUnresolvedTie =
-        incomingTimestamp === currentTimestamp &&
-        (!command.ordering.authoritative ||
-          command.ordering.snapshotIdentity === current.snapshot_identity);
+      const currentReviewSequence =
+        current.review_event_created_at !== null &&
+        current.review_event_id !== null
+          ? {
+              createdAt: current.review_event_created_at,
+              eventId: current.review_event_id,
+            }
+          : null;
+      const isUnresolvedTie = incomingTimestamp === currentTimestamp && (
+        !command.ordering.authoritative ||
+        reviewSequence === null ||
+        (currentReviewSequence !== null &&
+          compareReviewSequences(reviewSequence, currentReviewSequence) <= 0)
+      );
       if (isOlder || isUnresolvedTie) return "stale" as const;
     }
 
     database
       .prepare(
         `INSERT INTO moderation_issue_states (
-           github_issue_number, decision, updated_at, snapshot_identity
-         ) VALUES (?, ?, ?, ?)
+           github_issue_number, decision, updated_at, snapshot_identity,
+           review_event_created_at, review_event_id
+         ) VALUES (?, ?, ?, ?, ?, ?)
          ON CONFLICT(github_issue_number) DO UPDATE SET
            decision = excluded.decision,
            updated_at = excluded.updated_at,
-           snapshot_identity = excluded.snapshot_identity`,
+           snapshot_identity = excluded.snapshot_identity,
+           review_event_created_at = excluded.review_event_created_at,
+           review_event_id = excluded.review_event_id`,
       )
       .run(
         issueNumber,
         decision,
         command.ordering.updatedAt,
         command.ordering.snapshotIdentity,
+        reviewSequence?.createdAt ?? null,
+        reviewSequence?.eventId ?? null,
       );
 
     if (command.action !== "publish") {

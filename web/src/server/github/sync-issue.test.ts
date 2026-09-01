@@ -92,6 +92,7 @@ describe("syncIssue", () => {
         updatedAt: "2026-09-01T08:05:00.000Z",
         snapshotIdentity: expect.stringMatching(/^[a-f0-9]{64}$/),
         authoritative: false,
+        reviewSequence: null,
       },
       record: {
         id: "gh-101",
@@ -327,6 +328,7 @@ describe("syncIssue", () => {
         updatedAt: "2026-09-01T08:05:00.000Z",
         snapshotIdentity: expect.stringMatching(/^[a-f0-9]{64}$/),
         authoritative: false,
+        reviewSequence: null,
       },
     });
     expect(dependencies.ensureReviewState).toHaveBeenCalledWith(101, decision);
@@ -595,6 +597,113 @@ describe("syncIssue", () => {
       ),
     ).resolves.toBe("withdrawn");
     await expect(repository.get("gh-101")).resolves.toBeNull();
+    database.close();
+  });
+
+  it("propagates the same-second authoritative sequence from reconciliation", async () => {
+    const dependencies = fakeDependencies();
+    const updatedAt = "2026-09-01T10:00:00.000Z";
+
+    await syncIssue(
+      issue({
+        updatedAt,
+        review: {
+          source: "reconciliation",
+          latestRelevantEvent: {
+            id: "9001",
+            action: "labeled",
+            label: "approved",
+            createdAt: updatedAt,
+          },
+        },
+      }),
+      "sequence-approval-9001",
+      dependencies,
+    );
+    await syncIssue(
+      issue({
+        labels: ["submission", "region:interview", "approved"],
+        state: "closed",
+        updatedAt,
+        review: {
+          source: "reconciliation",
+          latestRelevantEvent: {
+            id: "9002",
+            action: "unlabeled",
+            label: "unpublish",
+            createdAt: updatedAt,
+          },
+        },
+      }),
+      "sequence-withdrawal-9002",
+      dependencies,
+    );
+
+    expect(dependencies.moderation.apply).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        ordering: expect.objectContaining({
+          reviewSequence: { createdAt: updatedAt, eventId: "9001" },
+        }),
+      }),
+    );
+    expect(dependencies.moderation.apply).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        ordering: expect.objectContaining({
+          reviewSequence: { createdAt: updatedAt, eventId: "9002" },
+        }),
+      }),
+    );
+  });
+
+  it("keeps the newer same-second authoritative sequence after reverse delivery", async () => {
+    const database = openDatabase(":memory:");
+    migrate(database);
+    const { repository, moderation } = createSqliteContentStores(database);
+    const dependencies: SyncIssueDependencies = {
+      moderation,
+      ensureReviewState: vi.fn().mockResolvedValue(undefined),
+      invalidate: vi.fn().mockResolvedValue(undefined),
+    };
+    const updatedAt = "2026-09-01T10:00:00.000Z";
+    const newerWithdrawal = issue({
+      labels: ["submission", "region:interview", "approved"],
+      state: "closed",
+      updatedAt,
+      review: {
+        source: "reconciliation",
+        latestRelevantEvent: {
+          id: "9002",
+          action: "unlabeled",
+          label: "unpublish",
+          createdAt: updatedAt,
+        },
+      },
+    });
+    const olderApproval = issue({
+      updatedAt,
+      review: {
+        source: "reconciliation",
+        latestRelevantEvent: {
+          id: "9001",
+          action: "labeled",
+          label: "approved",
+          createdAt: updatedAt,
+        },
+      },
+    });
+
+    await expect(
+      syncIssue(newerWithdrawal, "reverse-withdrawal-9002", dependencies),
+    ).resolves.toBe("withdrawn");
+    await expect(
+      syncIssue(olderApproval, "reverse-approval-9001", dependencies),
+    ).resolves.toBe("stale");
+    await expect(repository.list({ page: 1, pageSize: 20 })).resolves.toMatchObject({
+      total: 0,
+      items: [],
+    });
     database.close();
   });
 

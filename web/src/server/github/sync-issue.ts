@@ -194,6 +194,14 @@ function publishCommand(
       updatedAt: event.updatedAt,
       snapshotIdentity: moderationSnapshotIdentity(event, decision),
       authoritative: event.review.source === "reconciliation",
+      reviewSequence:
+        event.review.source === "reconciliation" &&
+        event.review.latestRelevantEvent !== null
+          ? {
+              createdAt: event.review.latestRelevantEvent.createdAt,
+              eventId: event.review.latestRelevantEvent.id,
+            }
+          : null,
     },
     record: {
       id: `gh-${event.number}`,
@@ -233,6 +241,14 @@ function commandFor(
       updatedAt: event.updatedAt,
       snapshotIdentity: moderationSnapshotIdentity(event, decision),
       authoritative: event.review.source === "reconciliation",
+      reviewSequence:
+        event.review.source === "reconciliation" &&
+        event.review.latestRelevantEvent !== null
+          ? {
+              createdAt: event.review.latestRelevantEvent.createdAt,
+              eventId: event.review.latestRelevantEvent.id,
+            }
+          : null,
     },
   };
 }

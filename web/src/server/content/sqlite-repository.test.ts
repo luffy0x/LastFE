@@ -3,6 +3,7 @@ import { openDatabase } from "../db/client";
 import { migrate } from "../db/migrate";
 import {
   createSqliteContentStores,
+  type ModerationOrdering,
 } from "./sqlite-repository";
 import type { ContentRecord } from "../../features/content/types";
 
@@ -44,17 +45,18 @@ function moderationOrdering(
   snapshotIdentity: string,
   authoritative = false,
 ) {
-  return { updatedAt, snapshotIdentity, authoritative };
+  return { updatedAt, snapshotIdentity, authoritative, reviewSequence: null };
 }
 
 async function publish(
   moderation: ReturnType<typeof setup>["moderation"],
   content: PublishedRecord,
   deliveryId = `delivery-${content.id}`,
-  ordering = {
+  ordering: ModerationOrdering = {
     updatedAt: content.updatedAt,
     snapshotIdentity: `snapshot-${deliveryId}`,
     authoritative: false,
+    reviewSequence: null,
   },
 ) {
   const command = {
@@ -281,6 +283,7 @@ describe("SQLite content repository", () => {
           updatedAt: "2026-09-01T10:00:00.000Z",
           snapshotIdentity: `${action}-snapshot-t3`,
           authoritative: false,
+          reviewSequence: null,
         },
       };
 
@@ -311,6 +314,7 @@ describe("SQLite content repository", () => {
         updatedAt,
         snapshotIdentity: "webhook-published",
         authoritative: false,
+        reviewSequence: null,
       },
     );
     const ambiguousWebhook = {
@@ -322,6 +326,7 @@ describe("SQLite content repository", () => {
         updatedAt,
         snapshotIdentity: "webhook-withdrawn",
         authoritative: false,
+        reviewSequence: null,
       },
     };
     await expect(moderation.apply(ambiguousWebhook)).resolves.toBe("stale");
@@ -336,10 +341,89 @@ describe("SQLite content repository", () => {
         ...ambiguousWebhook.ordering,
         snapshotIdentity: "reconciliation-withdrawn",
         authoritative: true,
+        reviewSequence: { createdAt: updatedAt, eventId: "9001" },
       },
     };
     await expect(moderation.apply(authoritativeSnapshot)).resolves.toBe("applied");
     await expect(repository.get("gh-101")).resolves.toBeNull();
+  });
+
+  it("keeps a newer same-second authoritative sequence when it arrives first", async () => {
+    const { repository, moderation } = setup();
+    const sameSecond = "2026-09-01T10:00:00.000Z";
+    const olderApproval = {
+      updatedAt: sameSecond,
+      snapshotIdentity: "approval-9001",
+      authoritative: true,
+      reviewSequence: { createdAt: sameSecond, eventId: "9001" },
+    };
+    const newerWithdrawal = {
+      updatedAt: sameSecond,
+      snapshotIdentity: "withdrawal-9002",
+      authoritative: true,
+      reviewSequence: { createdAt: sameSecond, eventId: "9002" },
+    };
+
+    await expect(
+      moderation.apply({
+        deliveryId: "sequence-withdrawal-9002",
+        action: "withdraw",
+        issueNumber: 101,
+        ordering: newerWithdrawal,
+      }),
+    ).resolves.toBe("applied");
+    await expect(
+      publish(
+        moderation,
+        record({ updatedAt: sameSecond }),
+        "sequence-approval-9001",
+        olderApproval,
+      ),
+    ).resolves.toBe("stale");
+
+    await expect(repository.list({ page: 1, pageSize: 20 })).resolves.toMatchObject({
+      total: 0,
+      items: [],
+    });
+  });
+
+  it("applies a newer same-second authoritative sequence when it arrives last", async () => {
+    const { repository, moderation } = setup();
+    const sameSecond = "2026-09-01T10:00:00.000Z";
+    const olderApproval = {
+      updatedAt: sameSecond,
+      snapshotIdentity: "approval-9001",
+      authoritative: true,
+      reviewSequence: { createdAt: sameSecond, eventId: "9001" },
+    };
+    const newerWithdrawal = {
+      updatedAt: sameSecond,
+      snapshotIdentity: "withdrawal-9002",
+      authoritative: true,
+      reviewSequence: { createdAt: sameSecond, eventId: "9002" },
+    };
+
+    await expect(
+      publish(
+        moderation,
+        record({ updatedAt: sameSecond }),
+        "sequence-approval-9001-first",
+        olderApproval,
+      ),
+    ).resolves.toBe("applied");
+    await expect(
+      moderation.apply({
+        deliveryId: "sequence-withdrawal-9002-last",
+        action: "withdraw",
+        issueNumber: 101,
+        ordering: newerWithdrawal,
+      }),
+    ).resolves.toBe("applied");
+
+    await expect(repository.list({ page: 1, pageSize: 20 })).resolves.toMatchObject({
+      total: 0,
+      items: [],
+    });
   });
 
   it("allows a newer publish after an unseen withdrawal and ignores later stale transitions", async () => {
