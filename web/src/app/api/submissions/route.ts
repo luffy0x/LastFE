@@ -3,6 +3,7 @@ import type {
   Submission,
   SubmissionResponse,
 } from "@/features/submissions/types";
+import { getServerConfig } from "@/server/config";
 import { openDatabase } from "@/server/db/client";
 import { migrate } from "@/server/db/migrate";
 import {
@@ -201,28 +202,21 @@ type SubmissionHandler = ReturnType<typeof createSubmissionHandler>;
 let productionHandlerPromise: Promise<SubmissionHandler> | undefined;
 
 async function createProductionHandler(): Promise<SubmissionHandler> {
-  const sqlitePath = process.env.SQLITE_PATH;
-  const altchaHmacKey = process.env.ALTCHA_HMAC_KEY;
-  const rateLimitHmacKey = process.env.RATE_LIMIT_HMAC_KEY;
-  if (!sqlitePath || !altchaHmacKey || !rateLimitHmacKey) {
-    throw new Error("Submission runtime configuration is incomplete");
-  }
-
-  const configuredMaxNumber = process.env.ALTCHA_MAX_NUMBER;
-  const maxNumber = configuredMaxNumber
-    ? Number(configuredMaxNumber)
-    : undefined;
-  const database = openDatabase(sqlitePath);
+  const config = getServerConfig();
+  const database = openDatabase(config.sqlitePath);
   migrate(database);
-  const { createSubmissionQueue } = await import(
-    "@/server/submissions/queue"
+  const { GitHubSubmissionQueue } = await import(
+    "@/server/github/submission-queue"
   );
 
   return createSubmissionHandler({
-    challenge: createAltchaChallengeService(altchaHmacKey, maxNumber),
+    challenge: createAltchaChallengeService(
+      config.altchaHmacKey,
+      config.altchaMaxNumber,
+    ),
     abuse: createSqliteAbuseStore(database),
-    queue: createSubmissionQueue(),
-    hashSource: createSourceHasher(rateLimitHmacKey),
+    queue: new GitHubSubmissionQueue(),
+    hashSource: createSourceHasher(config.rateLimitHmacKey),
     now: () => new Date(),
   });
 }

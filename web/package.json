@@ -13,6 +13,7 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@octokit/rest": "^22.0.1",
     "altcha": "^3.2.2",
     "altcha-lib": "^2.4.0",
     "better-sqlite3": "^13.0.3",
@@ -21,6 +22,7 @@
     "react-dom": "19.2.8",
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
+    "server-only": "^0.0.1",
     "zod": "^4.5.4"
   },
   "devDependencies": {

@@ -2,6 +2,7 @@ import {
   createAltchaChallengeService,
   type ChallengeService,
 } from "@/server/security/challenge";
+import { getServerConfig } from "@/server/config";
 
 export const dynamic = "force-dynamic";
 
@@ -33,13 +34,11 @@ export function createChallengeHandler(
 }
 
 export async function GET(): Promise<Response> {
-  const rawMaxNumber = process.env.ALTCHA_MAX_NUMBER;
-  const maxNumber = rawMaxNumber ? Number(rawMaxNumber) : undefined;
-
   try {
+    const config = getServerConfig();
     const service = createAltchaChallengeService(
-      process.env.ALTCHA_HMAC_KEY ?? "",
-      maxNumber,
+      config.altchaHmacKey,
+      config.altchaMaxNumber,
     );
     return createChallengeHandler(service)();
   } catch {
