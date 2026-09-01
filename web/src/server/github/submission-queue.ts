@@ -16,14 +16,16 @@ import type { ReconcileIssueSnapshot } from "./reconcile";
 
 const REVIEW_EVENT_PAGE_SIZE = 100;
 
-class GitHubHistoryError extends Error {
+class GitHubReviewError extends Error {
   readonly code = "GITHUB" as const;
 
   constructor() {
-    super("GitHub review history failed (GITHUB)");
-    this.name = "GitHubHistoryError";
+    super("GitHub review reconciliation failed (GITHUB)");
+    this.name = "GitHubReviewError";
   }
 }
+
+const REVIEW_SNAPSHOT_ATTEMPTS = 2;
 
 function normalizeReviewEvent(value: unknown): ReviewRelevantEvent | null {
   if (!value || Array.isArray(value) || typeof value !== "object") return null;
@@ -73,6 +75,88 @@ function latestReviewEvent(
     );
 }
 
+function labelsFromIssue(value: unknown): string[] {
+  if (!Array.isArray(value)) throw new Error("GitHub issue labels are invalid");
+  return value.flatMap((label) => {
+    if (typeof label === "string") return [label];
+    if (!label || Array.isArray(label) || typeof label !== "object") return [];
+    const name = (label as Record<string, unknown>).name;
+    return typeof name === "string" ? [name] : [];
+  });
+}
+
+function refreshedSnapshot(
+  issueNumber: number,
+  value: unknown,
+): ReconcileIssueSnapshot {
+  if (!value || Array.isArray(value) || typeof value !== "object") {
+    throw new Error("GitHub issue is invalid");
+  }
+  const issue = value as Record<string, unknown>;
+  if (
+    (issue.state !== "open" && issue.state !== "closed") ||
+    typeof issue.title !== "string" ||
+    (typeof issue.body !== "string" && issue.body !== null) ||
+    typeof issue.created_at !== "string" ||
+    !Number.isFinite(Date.parse(issue.created_at)) ||
+    typeof issue.updated_at !== "string" ||
+    !Number.isFinite(Date.parse(issue.updated_at))
+  ) {
+    throw new Error("GitHub issue is invalid");
+  }
+  return {
+    number: issueNumber,
+    title: issue.title,
+    body: issue.body ?? "",
+    labels: labelsFromIssue(issue.labels),
+    state: issue.state,
+    createdAt: issue.created_at,
+    updatedAt: issue.updated_at,
+  };
+}
+
+function hasSameSnapshotFields(
+  left: ReconcileIssueSnapshot,
+  right: ReconcileIssueSnapshot,
+): boolean {
+  return (
+    left.number === right.number &&
+    left.title === right.title &&
+    left.body === right.body &&
+    left.state === right.state &&
+    left.createdAt === right.createdAt &&
+    left.updatedAt === right.updatedAt &&
+    [...left.labels].sort().join("\u0000") === [...right.labels].sort().join("\u0000")
+  );
+}
+
+function needsReviewHistory(issue: ReconcileIssueSnapshot): boolean {
+  return (
+    issue.state === "closed" ||
+    issue.labels.includes("approved") ||
+    issue.labels.includes("unpublish")
+  );
+}
+
+function reviewEventForSnapshot(
+  issue: ReconcileIssueSnapshot,
+  events: readonly ReviewRelevantEvent[],
+): ReviewRelevantEvent | null {
+  if (issue.labels.includes("unpublish")) {
+    return latestReviewEvent(
+      events,
+      (event) => event.action === "labeled" && event.label === "unpublish",
+    );
+  }
+  if (issue.labels.includes("approved")) {
+    return latestReviewEvent(
+      events,
+      (event) => event.action === "labeled" && event.label === "approved",
+    );
+  }
+  return latestReviewEvent(events, (event) => event.action === "unlabeled");
+}
+
 export class GitHubSubmissionQueue implements SubmissionQueue {
   constructor(private readonly client: GitHubClient = createGitHubClient()) {}
 
@@ -119,12 +203,19 @@ export class GitHubSubmissionQueue implements SubmissionQueue {
   async enrichReview(
     issue: ReconcileIssueSnapshot,
   ): Promise<GitHubIssueSnapshot> {
-    let latestRelevantEvent: ReviewRelevantEvent | null = null;
-    if (
-      issue.labels.includes("approved") ||
-      issue.labels.includes("unpublish")
-    ) {
-      try {
+    let snapshot = issue;
+    try {
+      for (
+        let attempt = 0;
+        attempt < REVIEW_SNAPSHOT_ATTEMPTS;
+        attempt += 1
+      ) {
+        if (!needsReviewHistory(snapshot)) {
+          return {
+            ...snapshot,
+            review: { source: "reconciliation", latestRelevantEvent: null },
+          };
+        }
         const reviewEvents: ReviewRelevantEvent[] = [];
         for (let eventPage = 1; ; eventPage += 1) {
           const events = await this.client.octokit.rest.issues.listEvents({
@@ -140,20 +231,28 @@ export class GitHubSubmissionQueue implements SubmissionQueue {
           }
           if (events.data.length < REVIEW_EVENT_PAGE_SIZE) break;
         }
-        latestRelevantEvent = latestReviewEvent(
-          reviewEvents,
-          issue.labels.includes("unpublish")
-            ? (event) => event.action === "labeled" && event.label === "unpublish"
-            : undefined,
-        );
-      } catch {
-        throw new GitHubHistoryError();
+        const response = await this.client.octokit.rest.issues.get({
+          owner: this.client.owner,
+          repo: this.client.repo,
+          issue_number: snapshot.number,
+        });
+        const refreshed = refreshedSnapshot(snapshot.number, response.data);
+        if (!hasSameSnapshotFields(snapshot, refreshed)) {
+          snapshot = refreshed;
+          continue;
+        }
+        return {
+          ...snapshot,
+          review: {
+            source: "reconciliation",
+            latestRelevantEvent: reviewEventForSnapshot(snapshot, reviewEvents),
+          },
+        };
       }
+    } catch {
+      throw new GitHubReviewError();
     }
-    return {
-      ...issue,
-      review: { source: "reconciliation", latestRelevantEvent },
-    };
+    throw new GitHubReviewError();
   }
 
   async ensureReviewState(

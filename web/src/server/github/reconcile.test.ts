@@ -44,13 +44,24 @@ const basicIssue = (number: number, updatedAt = `2026-09-01T08:0${number}:00.000
 
 const enrichExistingIssue = async (
   issue: Omit<GitHubIssueSnapshot, "review">,
-): Promise<GitHubIssueSnapshot> => issue as GitHubIssueSnapshot;
+): Promise<GitHubIssueSnapshot> => ({
+  ...issue,
+  review: {
+    source: "reconciliation",
+    latestRelevantEvent: {
+      id: `event-${issue.number}`,
+      action: "labeled",
+      label: "approved",
+      createdAt: issue.updatedAt,
+    },
+  },
+});
 
 const TEST_RECONCILE_DEPS: ReconcileDependencies = {
   since: "2026-09-01T07:00:00.000Z",
   listIssues: vi
     .fn()
-    .mockResolvedValueOnce([changedIssue(1), changedIssue(2), changedIssue(3)])
+    .mockResolvedValueOnce([basicIssue(1), basicIssue(2), basicIssue(3)])
     .mockResolvedValueOnce([]),
   enrichIssue: enrichExistingIssue,
   syncIssue: vi
@@ -82,9 +93,9 @@ describe("reconcileIssues", () => {
 
   it("uses pages of exactly 100 and stops before an issue older than the cursor", async () => {
     const listIssues = vi.fn().mockResolvedValue([
-      changedIssue(4, "2026-09-01T08:04:00.000Z"),
-      changedIssue(3, "2026-09-01T06:59:59.999Z"),
-      changedIssue(2, "2026-09-01T06:58:00.000Z"),
+      basicIssue(4, "2026-09-01T08:04:00.000Z"),
+      basicIssue(3, "2026-09-01T06:59:59.999Z"),
+      basicIssue(2, "2026-09-01T06:58:00.000Z"),
     ]);
     const syncIssue = vi.fn(async () => "published" as const);
 
@@ -106,7 +117,7 @@ describe("reconcileIssues", () => {
   });
 
   it("continues with later issues when one snapshot has an invalid update timestamp", async () => {
-    const validIssue = changedIssue(5, "2026-09-01T08:05:00.000Z");
+    const validIssue = basicIssue(5, "2026-09-01T08:05:00.000Z");
     const syncIssue = vi.fn().mockResolvedValue("published");
 
     await expect(
@@ -115,7 +126,7 @@ describe("reconcileIssues", () => {
         listIssues: vi
           .fn()
           .mockResolvedValueOnce([
-            changedIssue(4, "not-a-timestamp"),
+            basicIssue(4, "not-a-timestamp"),
             validIssue,
           ])
           .mockResolvedValueOnce([]),
@@ -129,7 +140,7 @@ describe("reconcileIssues", () => {
       failures: [{ issueNumber: 4, category: "INVALID_TIMESTAMP" }],
     });
     expect(syncIssue).toHaveBeenCalledExactlyOnceWith(
-      validIssue,
+      changedIssue(5, "2026-09-01T08:05:00.000Z"),
       expect.stringMatching(
         /^reconcile:5:2026-09-01T08:05:00\.000Z:[a-f0-9]{64}$/,
       ),
@@ -166,13 +177,28 @@ describe("reconcileIssues", () => {
     };
     const syncIssue = vi.fn().mockResolvedValue("published");
 
+    const listIssueSnapshots = [
+      {
+        ...basicIssue(8, updatedAt),
+        title: removedUnpublish.title,
+        body: removedUnpublish.body,
+      },
+      {
+        ...basicIssue(8, updatedAt),
+        title: reapproved.title,
+        body: reapproved.body,
+      },
+    ];
     await reconcileIssues({
       since: "2026-09-01T07:00:00.000Z",
       listIssues: vi
         .fn()
-        .mockResolvedValueOnce([removedUnpublish, reapproved])
+        .mockResolvedValueOnce(listIssueSnapshots)
         .mockResolvedValueOnce([]),
-      enrichIssue: enrichExistingIssue,
+      enrichIssue: vi
+        .fn()
+        .mockResolvedValueOnce(removedUnpublish)
+        .mockResolvedValueOnce(reapproved),
       syncIssue,
     });
 
@@ -190,7 +216,7 @@ describe("reconcileIssues", () => {
   it("emits only the issue number and safe category at the operator boundary", async () => {
     const onFailure = vi.fn();
     const privateIssue = {
-      ...changedIssue(12, "2026-09-01T08:12:00.000Z"),
+      ...basicIssue(12, "2026-09-01T08:12:00.000Z"),
       title: "private title",
       body: "private body with token and https://private.example/12",
     };
@@ -272,9 +298,9 @@ describe("reconcileFromCursor", () => {
     const cursorStore = createReconciliationCursorStore(database);
     const listIssues = vi
       .fn()
-      .mockResolvedValueOnce([
-        changedIssue(1, "1970-01-01T00:00:00.000Z"),
-      ])
+        .mockResolvedValueOnce([
+          basicIssue(1, "1970-01-01T00:00:00.000Z"),
+        ])
       .mockResolvedValueOnce([]);
 
     const report = await reconcileFromCursor({
@@ -310,7 +336,7 @@ describe("reconcileFromCursor", () => {
       startedAt: "2026-09-01T08:10:00.000Z",
       listIssues: vi
         .fn()
-        .mockResolvedValueOnce([changedIssue(9, "2026-09-01T08:09:00.000Z")])
+        .mockResolvedValueOnce([basicIssue(9, "2026-09-01T08:09:00.000Z")])
         .mockResolvedValueOnce([]),
       enrichIssue: enrichExistingIssue,
       syncIssue: vi.fn().mockRejectedValue(new Error("private issue body")),
