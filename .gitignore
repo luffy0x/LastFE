@@ -1,0 +1,10 @@
+.superpowers/
+web/.next/
+web/node_modules/
+web/playwright-report/
+web/test-results/
+*.db
+*.db-shm
+*.db-wal
+.env*
+!.env.example
