@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import type { GitHubIssueSnapshot, SyncResult } from "@/server/github/sync-issue";
 
-import { createWebhookHandler } from "./route";
+import { createWebhookHandler, createWebhookRoute } from "./route";
 
 const SECRET = "webhook-secret";
 const VALID_PAYLOAD = {
@@ -54,6 +54,27 @@ function setup(result: SyncResult = "published") {
 }
 
 describe("GitHub webhook route", () => {
+  it("retries production initialization after a transient failure", async () => {
+    const loadHandler = vi
+      .fn<() => Promise<(request: Request) => Promise<Response>>>()
+      .mockRejectedValueOnce(new Error("temporary database failure"))
+      .mockResolvedValueOnce(async () => Response.json({ ok: true }));
+    const endpoint = createWebhookRoute(loadHandler);
+    const incoming = new Request("http://localhost/api/github/webhook", {
+      method: "POST",
+    });
+
+    const failed = await endpoint(incoming.clone());
+    const retried = await endpoint(incoming.clone());
+    const cached = await endpoint(incoming.clone());
+
+    expect(failed.status).toBe(503);
+    expect(retried.status).toBe(200);
+    expect(cached.status).toBe(200);
+    await expect(retried.json()).resolves.toEqual({ ok: true });
+    expect(loadHandler).toHaveBeenCalledTimes(2);
+  });
+
   it("verifies raw bytes and synchronizes an issues delivery", async () => {
     const raw = new TextEncoder().encode(JSON.stringify(VALID_PAYLOAD));
     const { handler, synchronize } = setup();

@@ -24,6 +24,11 @@ export type ModerationDecision =
   | "rejected"
   | "ignored";
 
+export type ModerationState = {
+  isClosed: boolean;
+  labels: ReadonlySet<string>;
+};
+
 export type SyncResult = ModerationDecision | "duplicate";
 
 export type SyncIssueDependencies = {
@@ -48,12 +53,20 @@ export class SyncIssueError extends Error {
   }
 }
 
-function decide(event: GitHubIssueSnapshot): ModerationDecision {
-  const labels = new Set(event.labels);
-  if (labels.has("unpublish")) return "withdrawn";
-  if (labels.has("approved")) return "published";
-  if (event.state === "closed") return "rejected";
+export function decideModerationState(
+  state: ModerationState,
+): ModerationDecision {
+  if (state.labels.has("unpublish")) return "withdrawn";
+  if (state.labels.has("approved")) return "published";
+  if (state.isClosed) return "rejected";
   return "ignored";
+}
+
+function decide(event: GitHubIssueSnapshot): ModerationDecision {
+  return decideModerationState({
+    isClosed: event.state === "closed",
+    labels: new Set(event.labels),
+  });
 }
 
 type PublishedRecord = Extract<

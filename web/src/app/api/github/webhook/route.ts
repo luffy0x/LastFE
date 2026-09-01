@@ -4,10 +4,7 @@ import { getServerConfig } from "@/server/config";
 import { createSqliteContentStores } from "@/server/content/sqlite-repository";
 import { openDatabase } from "@/server/db/client";
 import { migrate } from "@/server/db/migrate";
-import {
-  createGitHubClient,
-  ensureGitHubReviewState,
-} from "@/server/github/client";
+import { GitHubSubmissionQueue } from "@/server/github/submission-queue";
 import {
   syncIssue,
   type GitHubIssueSnapshot,
@@ -190,14 +187,13 @@ export function createWebhookHandler(
 }
 
 type WebhookHandler = ReturnType<typeof createWebhookHandler>;
-let productionHandlerPromise: Promise<WebhookHandler> | undefined;
 
 async function createProductionHandler(): Promise<WebhookHandler> {
   const config = getServerConfig();
   const database = openDatabase(config.sqlitePath);
   migrate(database);
   const { moderation } = createSqliteContentStores(database);
-  const githubClient = createGitHubClient();
+  const github = new GitHubSubmissionQueue();
 
   return createWebhookHandler({
     webhookSecret: config.githubWebhookSecret,
@@ -205,7 +201,7 @@ async function createProductionHandler(): Promise<WebhookHandler> {
       syncIssue(issue, deliveryId, {
         moderation,
         ensureReviewState: (issueNumber, decision) =>
-          ensureGitHubReviewState(issueNumber, decision, githubClient),
+          github.ensureReviewState(issueNumber, decision),
         invalidate: async (paths) => {
           for (const path of paths) revalidatePath(path);
         },
@@ -213,16 +209,31 @@ async function createProductionHandler(): Promise<WebhookHandler> {
   });
 }
 
-export async function POST(request: Request): Promise<Response> {
-  try {
-    productionHandlerPromise ??= createProductionHandler();
-    const handler = await productionHandlerPromise;
-    return handler(request);
-  } catch {
-    return json(
-      { ok: false, code: "SYNC", message: "Webhook synchronization failed." },
-      503,
-      { "retry-after": "60" },
-    );
-  }
+export function createWebhookRoute(
+  loadHandler: () => Promise<WebhookHandler>,
+): (request: Request) => Promise<Response> {
+  let handler: WebhookHandler | undefined;
+  let loading: Promise<WebhookHandler> | undefined;
+
+  return async (request) => {
+    try {
+      if (!handler) {
+        loading ??= loadHandler();
+        try {
+          handler = await loading;
+        } finally {
+          loading = undefined;
+        }
+      }
+      return handler(request);
+    } catch {
+      return json(
+        { ok: false, code: "SYNC", message: "Webhook synchronization failed." },
+        503,
+        { "retry-after": "60" },
+      );
+    }
+  };
 }
+
+export const POST = createWebhookRoute(createProductionHandler);
