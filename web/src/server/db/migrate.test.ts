@@ -5,6 +5,7 @@ import * as migrationModule from "./migrate";
 import { migrationSql } from "./migrations/0001-content";
 import { moderationOrderingMigrationSql } from "./migrations/0002-moderation-ordering";
 import { moderationSequenceMigrationSql } from "./migrations/0003-moderation-sequence";
+import { moderationAuthorityMigrationSql } from "./migrations/0004-moderation-authority";
 
 type InitializeDatabase = <T>(
   path: string,
@@ -55,6 +56,14 @@ function seedVersionThreeWithoutAuthority(database: SqliteDatabase): void {
   database
     .prepare("INSERT INTO schema_migrations (version, applied_at) VALUES (3, ?)")
     .run("2026-09-01T00:02:00.000Z");
+}
+
+function seedVersionFour(database: SqliteDatabase): void {
+  seedVersionThreeWithoutAuthority(database);
+  database.exec(moderationAuthorityMigrationSql);
+  database
+    .prepare("INSERT INTO schema_migrations (version, applied_at) VALUES (4, ?)")
+    .run("2026-09-01T00:03:00.000Z");
 }
 
 describe("database initialization ownership", () => {
@@ -109,6 +118,7 @@ describe("migrate", () => {
       { version: 2 },
       { version: 3 },
       { version: 4 },
+      { version: 5 },
     ]);
     expect(
       database
@@ -153,6 +163,7 @@ describe("migrate", () => {
       { version: 2 },
       { version: 3 },
       { version: 4 },
+      { version: 5 },
     ]);
     expect(
       database
@@ -174,22 +185,106 @@ describe("migrate", () => {
     database.close();
   });
 
-  it("upgrades an already-applied version-three database with authority", () => {
+  it("upgrades a historical version-three database and backfills only complete review sequences", () => {
     const database = openDatabase(":memory:");
     seedVersionThreeWithoutAuthority(database);
+    const insertHistoricalState = database.prepare(
+      `INSERT INTO moderation_issue_states (
+        github_issue_number, decision, updated_at, snapshot_identity,
+        review_event_created_at, review_event_id
+      ) VALUES (?, 'withdrawn', ?, ?, ?, ?)`,
+    );
+    insertHistoricalState.run(
+      303,
+      "2026-09-01T10:00:00.000Z",
+      "historical-v3-complete",
+      "2026-09-01T10:00:00.000Z",
+      "9002",
+    );
+    insertHistoricalState.run(
+      304,
+      "2026-09-01T10:01:00.000Z",
+      "historical-v3-created-at-only",
+      "2026-09-01T10:01:00.000Z",
+      null,
+    );
+    insertHistoricalState.run(
+      305,
+      "2026-09-01T10:02:00.000Z",
+      "historical-v3-event-id-only",
+      null,
+      "9003",
+    );
+    insertHistoricalState.run(
+      306,
+      "2026-09-01T10:03:00.000Z",
+      "historical-v3-no-sequence",
+      null,
+      null,
+    );
+
+    migrationModule.migrate(database);
+    migrationModule.migrate(database);
+
+    expect(
+      database
+        .prepare(
+          `SELECT github_issue_number, authoritative
+           FROM moderation_issue_states
+           ORDER BY github_issue_number`,
+        )
+        .all(),
+    ).toEqual([
+      { github_issue_number: 303, authoritative: 1 },
+      { github_issue_number: 304, authoritative: 0 },
+      { github_issue_number: 305, authoritative: 0 },
+      { github_issue_number: 306, authoritative: 0 },
+    ]);
+    expect(
+      database
+        .prepare(
+          `SELECT decision, snapshot_identity, review_event_created_at,
+                  review_event_id
+           FROM moderation_issue_states
+           WHERE github_issue_number = 303`,
+        )
+        .get(),
+    ).toEqual({
+      decision: "withdrawn",
+      snapshot_identity: "historical-v3-complete",
+      review_event_created_at: "2026-09-01T10:00:00.000Z",
+      review_event_id: "9002",
+    });
+    expect(
+      database
+        .prepare("SELECT version FROM schema_migrations ORDER BY version")
+        .all(),
+    ).toEqual([
+      { version: 1 },
+      { version: 2 },
+      { version: 3 },
+      { version: 4 },
+      { version: 5 },
+    ]);
+    database.close();
+  });
+
+  it("upgrades a historical version-four database and backfills complete review sequences", () => {
+    const database = openDatabase(":memory:");
+    seedVersionFour(database);
     database
       .prepare(
         `INSERT INTO moderation_issue_states (
           github_issue_number, decision, updated_at, snapshot_identity,
-          review_event_created_at, review_event_id
-        ) VALUES (?, 'withdrawn', ?, ?, ?, ?)`,
+          review_event_created_at, review_event_id, authoritative
+        ) VALUES (?, 'withdrawn', ?, ?, ?, ?, 0)`,
       )
       .run(
-        303,
-        "2026-09-01T10:00:00.000Z",
-        "historical-v3-withdrawal",
-        "2026-09-01T10:00:00.000Z",
-        "9002",
+        403,
+        "2026-09-01T11:00:00.000Z",
+        "historical-v4-complete",
+        "2026-09-01T11:00:00.000Z",
+        "9010",
       );
 
     migrationModule.migrate(database);
@@ -201,15 +296,15 @@ describe("migrate", () => {
           `SELECT decision, snapshot_identity, review_event_created_at,
                   review_event_id, authoritative
            FROM moderation_issue_states
-           WHERE github_issue_number = 303`,
+           WHERE github_issue_number = 403`,
         )
         .get(),
     ).toEqual({
       decision: "withdrawn",
-      snapshot_identity: "historical-v3-withdrawal",
-      review_event_created_at: "2026-09-01T10:00:00.000Z",
-      review_event_id: "9002",
-      authoritative: 0,
+      snapshot_identity: "historical-v4-complete",
+      review_event_created_at: "2026-09-01T11:00:00.000Z",
+      review_event_id: "9010",
+      authoritative: 1,
     });
     expect(
       database
@@ -220,7 +315,78 @@ describe("migrate", () => {
       { version: 2 },
       { version: 3 },
       { version: 4 },
+      { version: 5 },
     ]);
+    database.close();
+  });
+
+  it("rolls back version-five backfill and succeeds on retry and rerun", () => {
+    const database = openDatabase(":memory:");
+    seedVersionFour(database);
+    database
+      .prepare(
+        `INSERT INTO moderation_issue_states (
+          github_issue_number, decision, updated_at, snapshot_identity,
+          review_event_created_at, review_event_id, authoritative
+        ) VALUES (?, 'withdrawn', ?, ?, ?, ?, 0)`,
+      )
+      .run(
+        503,
+        "2026-09-01T12:00:00.000Z",
+        "rollback-v5-complete",
+        "2026-09-01T12:00:00.000Z",
+        "9020",
+      );
+    database.exec(`CREATE TRIGGER fail_version_five
+      BEFORE INSERT ON schema_migrations
+      WHEN NEW.version = 5
+      BEGIN
+        SELECT RAISE(ABORT, 'forced version five failure');
+      END;`);
+
+    expect(() => migrationModule.migrate(database)).toThrow(
+      "forced version five failure",
+    );
+    expect(
+      database
+        .prepare("SELECT version FROM schema_migrations ORDER BY version")
+        .all(),
+    ).toEqual([
+      { version: 1 },
+      { version: 2 },
+      { version: 3 },
+      { version: 4 },
+    ]);
+    expect(
+      database
+        .prepare(
+          "SELECT authoritative FROM moderation_issue_states WHERE github_issue_number = 503",
+        )
+        .get(),
+    ).toEqual({ authoritative: 0 });
+
+    database.exec("DROP TRIGGER fail_version_five");
+    migrationModule.migrate(database);
+    migrationModule.migrate(database);
+
+    expect(
+      database
+        .prepare("SELECT version FROM schema_migrations ORDER BY version")
+        .all(),
+    ).toEqual([
+      { version: 1 },
+      { version: 2 },
+      { version: 3 },
+      { version: 4 },
+      { version: 5 },
+    ]);
+    expect(
+      database
+        .prepare(
+          "SELECT authoritative FROM moderation_issue_states WHERE github_issue_number = 503",
+        )
+        .get(),
+    ).toEqual({ authoritative: 1 });
     database.close();
   });
 
@@ -261,6 +427,7 @@ describe("migrate", () => {
       { version: 2 },
       { version: 3 },
       { version: 4 },
+      { version: 5 },
     ]);
     const authorityColumns = database
       .prepare("SELECT name FROM pragma_table_info('moderation_issue_states')")
@@ -309,6 +476,7 @@ describe("migrate", () => {
       { version: 2 },
       { version: 3 },
       { version: 4 },
+      { version: 5 },
     ]);
     const sequenceColumns = database
       .prepare("SELECT name FROM pragma_table_info('moderation_issue_states')")
@@ -360,6 +528,7 @@ describe("migrate", () => {
       { version: 2 },
       { version: 3 },
       { version: 4 },
+      { version: 5 },
     ]);
     database.close();
   });

@@ -1,6 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { parseSubmission } from "@/features/submissions/schemas";
+import { createSqliteContentStores } from "@/server/content/sqlite-repository";
+import { openDatabase } from "@/server/db/client";
+import { migrate } from "@/server/db/migrate";
 
 const createIssue = vi.fn();
 const getIssue = vi.fn();
@@ -31,6 +34,8 @@ vi.mock("./client", () => ({
 }));
 
 import { GitHubSubmissionQueue } from "./submission-queue";
+import { encodeIssue } from "./issue-codec";
+import { syncIssue, type SyncIssueDependencies } from "./sync-issue";
 
 describe("GitHubSubmissionQueue", () => {
   beforeEach(() => {
@@ -177,6 +182,119 @@ describe("GitHubSubmissionQueue", () => {
       page: 2,
       per_page: 100,
     });
+  });
+
+  it("orders mixed-case non-decimal review event IDs by code point", async () => {
+    const createdAt = "2026-09-01T08:05:00.000Z";
+    listIssueEvents.mockResolvedValue({
+      data: [
+        {
+          id: "a",
+          event: "labeled",
+          label: { name: "approved" },
+          created_at: createdAt,
+        },
+        {
+          id: "B",
+          event: "labeled",
+          label: { name: "unpublish" },
+          created_at: createdAt,
+        },
+      ],
+    });
+    const queue = new GitHubSubmissionQueue();
+
+    const snapshot = await queue.enrichReview({
+      number: 42,
+      title: "[interview] candidate",
+      body: "encoded-submission",
+      labels: ["submission", "approved"],
+      state: "open",
+      createdAt: "2026-09-01T08:00:00.000Z",
+      updatedAt: createdAt,
+    });
+
+    expect(snapshot.review).toEqual({
+      source: "reconciliation",
+      latestRelevantEvent: {
+        id: "a",
+        action: "labeled",
+        label: "approved",
+        createdAt,
+      },
+    });
+  });
+
+  it("keeps a newer same-second withdrawal hidden when queue snapshots arrive in reverse order", async () => {
+    const encoded = encodeIssue(
+      parseSubmission("interview", {
+        regionSlug: "interview",
+        companyDepartment: "字节跳动/基础架构",
+        position: "后端开发",
+        tags: ["一面"],
+        markdown: "面试记录",
+      }),
+    );
+    const updatedAt = "2026-09-01T10:00:00.000Z";
+    const baseIssue = {
+      number: 42,
+      title: encoded.title,
+      body: encoded.body,
+      state: "open" as const,
+      createdAt: "2026-09-01T08:00:00.000Z",
+      updatedAt,
+    };
+    const queue = new GitHubSubmissionQueue();
+    const database = openDatabase(":memory:");
+    migrate(database);
+    const { repository, moderation } = createSqliteContentStores(database);
+    const dependencies: SyncIssueDependencies = {
+      moderation,
+      ensureReviewState: vi.fn().mockResolvedValue(undefined),
+      invalidate: vi.fn().mockResolvedValue(undefined),
+    };
+
+    listIssueEvents.mockResolvedValue({
+      data: [
+        {
+          id: 9002,
+          event: "labeled",
+          label: { name: "unpublish" },
+          created_at: updatedAt,
+        },
+      ],
+    });
+    const newerWithdrawal = await queue.enrichReview({
+      ...baseIssue,
+      labels: [...encoded.labels, "approved", "unpublish"],
+    });
+
+    listIssueEvents.mockReset();
+    listIssueEvents.mockResolvedValue({
+      data: [
+        {
+          id: 9001,
+          event: "labeled",
+          label: { name: "approved" },
+          created_at: updatedAt,
+        },
+      ],
+    });
+    const olderApproval = await queue.enrichReview({
+      ...baseIssue,
+      labels: [...encoded.labels, "approved"],
+    });
+
+    await expect(
+      syncIssue(newerWithdrawal, "queue-withdrawal-9002", dependencies),
+    ).resolves.toBe("withdrawn");
+    await expect(
+      syncIssue(olderApproval, "queue-approval-9001", dependencies),
+    ).resolves.toBe("stale");
+    await expect(
+      repository.list({ page: 1, pageSize: 20 }),
+    ).resolves.toMatchObject({ total: 0, items: [] });
+    database.close();
   });
 
   it("converts history failures into a safe GitHub error", async () => {

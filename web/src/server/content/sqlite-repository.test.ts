@@ -500,6 +500,43 @@ describe("SQLite content repository", () => {
     });
   });
 
+  it("orders mixed-case non-decimal review event IDs by code point", async () => {
+    const { repository, moderation } = setup();
+    const sameSecond = "2026-09-01T10:00:00.000Z";
+
+    await expect(
+      moderation.apply({
+        deliveryId: "non-decimal-withdrawal-a",
+        action: "withdraw",
+        issueNumber: 101,
+        ordering: {
+          updatedAt: sameSecond,
+          snapshotIdentity: "non-decimal-withdrawal-a",
+          authoritative: true,
+          reviewSequence: { createdAt: sameSecond, eventId: "a" },
+        },
+      }),
+    ).resolves.toBe("applied");
+    await expect(
+      publish(
+        moderation,
+        record({ updatedAt: sameSecond }),
+        "non-decimal-approval-B",
+        {
+          updatedAt: sameSecond,
+          snapshotIdentity: "non-decimal-approval-B",
+          authoritative: true,
+          reviewSequence: { createdAt: sameSecond, eventId: "B" },
+        },
+      ),
+    ).resolves.toBe("stale");
+
+    await expect(repository.list({ page: 1, pageSize: 20 })).resolves.toMatchObject({
+      total: 0,
+      items: [],
+    });
+  });
+
   it("allows a newer publish after an unseen withdrawal and ignores later stale transitions", async () => {
     const { repository, moderation } = setup();
     await moderation.apply({

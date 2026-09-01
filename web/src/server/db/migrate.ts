@@ -3,6 +3,7 @@ import { migrationSql } from "./migrations/0001-content";
 import { moderationOrderingMigrationSql } from "./migrations/0002-moderation-ordering";
 import { moderationSequenceMigrationSql } from "./migrations/0003-moderation-sequence";
 import { moderationAuthorityMigrationSql } from "./migrations/0004-moderation-authority";
+import { moderationAuthorityBackfillMigrationSql } from "./migrations/0005-moderation-authority-backfill";
 
 const migrations = [
   {
@@ -15,6 +16,7 @@ const migrations = [
   { version: 2, sql: moderationOrderingMigrationSql },
   { version: 3, sql: moderationSequenceMigrationSql },
   { version: 4, sql: moderationAuthorityMigrationSql },
+  { version: 5, sql: moderationAuthorityBackfillMigrationSql },
 ] as const;
 
 export function migrate(database: SqliteDatabase): void {

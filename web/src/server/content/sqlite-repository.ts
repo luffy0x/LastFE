@@ -8,6 +8,7 @@ import type {
 import type { ContentRepository } from "../../features/content/repository";
 import { REGIONS } from "../../features/map/regions";
 import type { SqliteDatabase } from "../db/client";
+import { compareReviewEventIds } from "../moderation-ordering";
 import {
   buildSearchPredicate,
   escapeLikeLiteral,
@@ -124,15 +125,6 @@ function queryPage(query: ContentQuery): number {
   return Number.isSafeInteger(query.page) && query.page > 0 ? query.page : 1;
 }
 
-function compareEventIds(left: string, right: string): number {
-  if (/^\d+$/.test(left) && /^\d+$/.test(right)) {
-    const leftId = BigInt(left);
-    const rightId = BigInt(right);
-    return leftId < rightId ? -1 : leftId > rightId ? 1 : 0;
-  }
-  return left < right ? -1 : left > right ? 1 : 0;
-}
-
 function compareReviewSequences(
   left: NonNullable<ModerationOrdering["reviewSequence"]>,
   right: NonNullable<ModerationOrdering["reviewSequence"]>,
@@ -142,7 +134,7 @@ function compareReviewSequences(
   if (leftTimestamp !== rightTimestamp) {
     return leftTimestamp < rightTimestamp ? -1 : 1;
   }
-  return compareEventIds(left.eventId, right.eventId);
+  return compareReviewEventIds(left.eventId, right.eventId);
 }
 
 export function createSqliteContentStores(database: SqliteDatabase): {

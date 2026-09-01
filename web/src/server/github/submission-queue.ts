@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { Submission } from "@/features/submissions/types";
+import { compareReviewEventIds } from "@/server/moderation-ordering";
 import type { SubmissionQueue } from "@/server/submissions/queue";
 
 import { createGitHubClient, type GitHubClient } from "./client";
@@ -57,10 +58,7 @@ function isLaterReviewEvent(
     Date.parse(candidate.createdAt) - Date.parse(current.createdAt);
   if (timestampDifference !== 0) return timestampDifference > 0;
 
-  if (/^\d+$/.test(candidate.id) && /^\d+$/.test(current.id)) {
-    return BigInt(candidate.id) > BigInt(current.id);
-  }
-  return candidate.id.localeCompare(current.id) > 0;
+  return compareReviewEventIds(candidate.id, current.id) > 0;
 }
 
 export class GitHubSubmissionQueue implements SubmissionQueue {
@@ -110,7 +108,10 @@ export class GitHubSubmissionQueue implements SubmissionQueue {
     issue: ReconcileIssueSnapshot,
   ): Promise<GitHubIssueSnapshot> {
     let latestRelevantEvent: ReviewRelevantEvent | null = null;
-    if (issue.labels.includes("approved") && !issue.labels.includes("unpublish")) {
+    if (
+      issue.labels.includes("approved") ||
+      issue.labels.includes("unpublish")
+    ) {
       try {
         for (let eventPage = 1; ; eventPage += 1) {
           const events = await this.client.octokit.rest.issues.listEvents({
