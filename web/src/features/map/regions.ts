@@ -89,7 +89,7 @@ export const REGIONS = [
     schemaKey: "resource",
     submissionFields: [
       { name: "title", label: "标题", kind: "text", required: true, maxLength: 120 },
-      { name: "url", label: "URL", kind: "url", required: true },
+      { name: "url", label: "URL", kind: "url", required: true, maxLength: 2048 },
       { name: "summary", label: "摘要", kind: "text", required: false, maxLength: 2000 },
       { name: "tags", label: "标签", kind: "tags", required: true, maxLength: 24 },
       { name: "nickname", label: "昵称", kind: "text", required: false, maxLength: 40 },
@@ -166,8 +166,8 @@ export const REGIONS = [
     submissionFields: [
       { name: "title", label: "标题", kind: "text", required: true, maxLength: 120 },
       { name: "techStack", label: "技术栈", kind: "tags", required: true, maxLength: 24 },
-      { name: "repositoryUrl", label: "仓库 URL", kind: "url", required: false },
-      { name: "demoUrl", label: "演示 URL", kind: "url", required: false },
+      { name: "repositoryUrl", label: "仓库 URL", kind: "url", required: false, maxLength: 2048 },
+      { name: "demoUrl", label: "演示 URL", kind: "url", required: false, maxLength: 2048 },
       { name: "tags", label: "标签", kind: "tags", required: true, maxLength: 24 },
       { name: "nickname", label: "昵称", kind: "text", required: false, maxLength: 40 },
       { name: "markdown", label: "项目说明", kind: "markdown", required: true, maxLength: 50 * 1024 },
@@ -208,7 +208,7 @@ export const REGIONS = [
         required: true,
         options: DIFFICULTY_OPTIONS,
       },
-      { name: "problemUrl", label: "题目 URL", kind: "url", required: false },
+      { name: "problemUrl", label: "题目 URL", kind: "url", required: false, maxLength: 2048 },
       { name: "tags", label: "标签", kind: "tags", required: true, maxLength: 24 },
       { name: "nickname", label: "昵称", kind: "text", required: false, maxLength: 40 },
       { name: "markdown", label: "题解", kind: "markdown", required: true, maxLength: 50 * 1024 },

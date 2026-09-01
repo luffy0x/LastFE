@@ -3,13 +3,14 @@ import { z } from "zod";
 import type { Submission } from "./types";
 
 const utf8ByteLength = (value: string) => new TextEncoder().encode(value).length;
+const MAX_URL_LENGTH = 2_048;
 
 const text = (minimumLength: number, maximumLength: number) =>
   z.string().trim().min(minimumLength).max(maximumLength);
 
 const singleLineText = (minimumLength: number, maximumLength: number) =>
   text(minimumLength, maximumLength).refine(
-    (value) => !/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F\r\n]/.test(value),
+    (value) => !/[\u0000-\u001F\u007F-\u009F\u2028\u2029]/.test(value),
     "Text must be a single line without control characters.",
   );
 
@@ -54,8 +55,14 @@ const markdown = z.string().superRefine((value, context) => {
 });
 
 export const isSafeHttpUrl = (url: string): boolean => {
+  const normalizedUrl = url.trim();
+
+  if (normalizedUrl.length > MAX_URL_LENGTH) {
+    return false;
+  }
+
   try {
-    const parsed = new URL(url);
+    const parsed = new URL(normalizedUrl);
     return parsed.protocol === "http:" || parsed.protocol === "https:";
   } catch {
     return false;
@@ -65,6 +72,7 @@ export const isSafeHttpUrl = (url: string): boolean => {
 const safeHttpUrl = z
   .string()
   .trim()
+  .max(MAX_URL_LENGTH)
   .refine(isSafeHttpUrl, "URL must use http or https.");
 
 export const SUBMISSION_SCHEMAS = {
