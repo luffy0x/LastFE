@@ -99,7 +99,7 @@ describe("migrate", () => {
     expect(
       database
         .prepare(
-          `SELECT decision, updated_at, snapshot_identity,
+          `SELECT decision, updated_at, snapshot_identity, authoritative,
                   review_event_created_at, review_event_id
            FROM moderation_issue_states
            WHERE github_issue_number = 101`,
@@ -109,6 +109,7 @@ describe("migrate", () => {
       decision: "withdrawn",
       updated_at: "2026-09-01T08:00:00.000Z",
       snapshot_identity: "legacy:withdrawn:2026-09-01T08:00:00.000Z",
+      authoritative: 0,
       review_event_created_at: null,
       review_event_id: null,
     });
@@ -137,7 +138,7 @@ describe("migrate", () => {
     expect(
       database
         .prepare(
-          `SELECT decision, updated_at, snapshot_identity,
+          `SELECT decision, updated_at, snapshot_identity, authoritative,
                   review_event_created_at, review_event_id
            FROM moderation_issue_states
            WHERE github_issue_number = 202`,
@@ -147,6 +148,7 @@ describe("migrate", () => {
       decision: "withdrawn",
       updated_at: "2026-09-01T09:00:00.000Z",
       snapshot_identity: "withdrawal-before-sequence",
+      authoritative: 0,
       review_event_created_at: null,
       review_event_id: null,
     });
@@ -168,11 +170,13 @@ describe("migrate", () => {
         .prepare("SELECT version FROM schema_migrations ORDER BY version")
         .all(),
     ).toEqual([{ version: 1 }, { version: 2 }]);
-    expect(
-      database
-        .prepare("SELECT name FROM pragma_table_info('moderation_issue_states')")
-        .all(),
-    ).not.toContainEqual({ name: "review_event_created_at" });
+    const rolledBackColumns = database
+      .prepare("SELECT name FROM pragma_table_info('moderation_issue_states')")
+      .all();
+    expect(rolledBackColumns).not.toContainEqual({
+      name: "review_event_created_at",
+    });
+    expect(rolledBackColumns).not.toContainEqual({ name: "authoritative" });
 
     database.exec(
       "ALTER TABLE moderation_issue_states DROP COLUMN review_event_id",
@@ -190,11 +194,12 @@ describe("migrate", () => {
       .all() as Array<{ name: string }>;
     const matchingSequenceColumns = sequenceColumns
       .filter(({ name }) =>
-        ["review_event_created_at", "review_event_id"].includes(name),
+        ["review_event_created_at", "review_event_id", "authoritative"].includes(name),
       );
     expect(matchingSequenceColumns).toEqual([
       { name: "review_event_created_at" },
       { name: "review_event_id" },
+      { name: "authoritative" },
     ]);
     database.close();
   });

@@ -263,7 +263,7 @@ export function createSqliteContentStores(database: SqliteDatabase): {
     const current = database
       .prepare(
         `SELECT updated_at, snapshot_identity,
-                review_event_created_at, review_event_id
+                review_event_created_at, review_event_id, authoritative
          FROM moderation_issue_states
          WHERE github_issue_number = ?`,
       )
@@ -273,6 +273,7 @@ export function createSqliteContentStores(database: SqliteDatabase): {
           snapshot_identity: string;
           review_event_created_at: string | null;
           review_event_id: string | null;
+          authoritative: 0 | 1;
         }
       | undefined;
     const delivery = database
@@ -298,9 +299,10 @@ export function createSqliteContentStores(database: SqliteDatabase): {
           : null;
       const isUnresolvedTie = incomingTimestamp === currentTimestamp && (
         !command.ordering.authoritative ||
-        reviewSequence === null ||
-        (currentReviewSequence !== null &&
-          compareReviewSequences(reviewSequence, currentReviewSequence) <= 0)
+        (current.authoritative === 1 &&
+          (reviewSequence === null ||
+            (currentReviewSequence !== null &&
+              compareReviewSequences(reviewSequence, currentReviewSequence) <= 0)))
       );
       if (isOlder || isUnresolvedTie) return "stale" as const;
     }
@@ -309,14 +311,15 @@ export function createSqliteContentStores(database: SqliteDatabase): {
       .prepare(
         `INSERT INTO moderation_issue_states (
            github_issue_number, decision, updated_at, snapshot_identity,
-           review_event_created_at, review_event_id
-         ) VALUES (?, ?, ?, ?, ?, ?)
+           review_event_created_at, review_event_id, authoritative
+         ) VALUES (?, ?, ?, ?, ?, ?, ?)
          ON CONFLICT(github_issue_number) DO UPDATE SET
            decision = excluded.decision,
            updated_at = excluded.updated_at,
            snapshot_identity = excluded.snapshot_identity,
            review_event_created_at = excluded.review_event_created_at,
-           review_event_id = excluded.review_event_id`,
+           review_event_id = excluded.review_event_id,
+           authoritative = excluded.authoritative`,
       )
       .run(
         issueNumber,
@@ -325,6 +328,7 @@ export function createSqliteContentStores(database: SqliteDatabase): {
         command.ordering.snapshotIdentity,
         reviewSequence?.createdAt ?? null,
         reviewSequence?.eventId ?? null,
+        command.ordering.authoritative ? 1 : 0,
       );
 
     if (command.action !== "publish") {

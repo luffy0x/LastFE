@@ -348,6 +348,80 @@ describe("SQLite content repository", () => {
     await expect(repository.get("gh-101")).resolves.toBeNull();
   });
 
+  it("lets an authoritative null sequence replace a same-second non-authoritative state", async () => {
+    const { db, repository, moderation } = setup();
+    const updatedAt = "2026-09-01T10:00:00.000Z";
+
+    await publish(
+      moderation,
+      record({ updatedAt }),
+      "null-sequence-webhook-publish",
+      {
+        updatedAt,
+        snapshotIdentity: "null-sequence-webhook",
+        authoritative: false,
+        reviewSequence: null,
+      },
+    );
+    await expect(
+      moderation.apply({
+        deliveryId: "null-sequence-reconciliation-withdraw",
+        action: "withdraw",
+        issueNumber: 101,
+        ordering: {
+          updatedAt,
+          snapshotIdentity: "null-sequence-reconciliation",
+          authoritative: true,
+          reviewSequence: null,
+        },
+      }),
+    ).resolves.toBe("applied");
+
+    await expect(repository.get("gh-101")).resolves.toBeNull();
+    expect(
+      db.prepare(
+        "SELECT authoritative FROM moderation_issue_states WHERE github_issue_number = 101",
+      ).get(),
+    ).toEqual({ authoritative: 1 });
+  });
+
+  it("keeps an authoritative null sequence against another same-second unordered snapshot", async () => {
+    const { repository, moderation } = setup();
+    const updatedAt = "2026-09-01T10:00:00.000Z";
+
+    await expect(
+      moderation.apply({
+        deliveryId: "stored-authoritative-withdraw",
+        action: "withdraw",
+        issueNumber: 101,
+        ordering: {
+          updatedAt,
+          snapshotIdentity: "stored-authoritative-withdraw",
+          authoritative: true,
+          reviewSequence: null,
+        },
+      }),
+    ).resolves.toBe("applied");
+    await expect(
+      publish(
+        moderation,
+        record({ updatedAt }),
+        "unordered-authoritative-publish",
+        {
+          updatedAt,
+          snapshotIdentity: "unordered-authoritative-publish",
+          authoritative: true,
+          reviewSequence: null,
+        },
+      ),
+    ).resolves.toBe("stale");
+
+    await expect(repository.list({ page: 1, pageSize: 20 })).resolves.toMatchObject({
+      total: 0,
+      items: [],
+    });
+  });
+
   it("keeps a newer same-second authoritative sequence when it arrives first", async () => {
     const { repository, moderation } = setup();
     const sameSecond = "2026-09-01T10:00:00.000Z";
