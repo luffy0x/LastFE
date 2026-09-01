@@ -215,6 +215,73 @@ describe("SQLite content repository", () => {
     ).toEqual({ delivery_id: "publish-t2" });
   });
 
+  it("keeps an unseen newer withdrawal as a tombstone against a delayed publish", async () => {
+    const { db, repository, moderation } = setup();
+    const delayed = record({
+      id: "unseen-withdrawal",
+      githubIssueNumber: 701,
+      updatedAt: "2026-09-01T09:00:00.000Z",
+    });
+    await moderation.apply({
+      deliveryId: "unseen-withdraw-t3",
+      action: "withdraw",
+      issueNumber: 701,
+      updatedAt: "2026-09-01T10:00:00.000Z",
+    });
+
+    await expect(publish(moderation, delayed, "unseen-publish-t2")).resolves.toBe("applied");
+    await expect(repository.get("unseen-withdrawal")).resolves.toBeNull();
+    await expect(repository.list({ page: 1, pageSize: 20 })).resolves.toMatchObject({
+      total: 0,
+      items: [],
+    });
+    expect(
+      db.prepare("SELECT delivery_id FROM webhook_deliveries WHERE delivery_id = ?").get("unseen-publish-t2"),
+    ).toEqual({ delivery_id: "unseen-publish-t2" });
+    await expect(publish(moderation, delayed, "unseen-publish-t2")).resolves.toBe("duplicate");
+  });
+
+  it("allows a newer publish after an unseen withdrawal and ignores later stale transitions", async () => {
+    const { repository, moderation } = setup();
+    await moderation.apply({
+      deliveryId: "unseen-withdraw-t3",
+      action: "withdraw",
+      issueNumber: 702,
+      updatedAt: "2026-09-01T10:00:00.000Z",
+    });
+    await publish(
+      moderation,
+      record({
+        id: "newer-after-tombstone",
+        githubIssueNumber: 702,
+        title: "newer publish",
+        updatedAt: "2026-09-01T11:00:00.000Z",
+      }),
+      "unseen-publish-t4",
+    );
+    await moderation.apply({
+      deliveryId: "unseen-withdraw-t2",
+      action: "withdraw",
+      issueNumber: 702,
+      updatedAt: "2026-09-01T09:00:00.000Z",
+    });
+    await publish(
+      moderation,
+      record({
+        id: "newer-after-tombstone",
+        githubIssueNumber: 702,
+        title: "stale publish",
+        updatedAt: "2026-09-01T09:00:00.000Z",
+      }),
+      "unseen-publish-t2",
+    );
+
+    await expect(repository.get("newer-after-tombstone")).resolves.toMatchObject({
+      status: "published",
+      title: "newer publish",
+    });
+  });
+
   it("does not let a stale withdrawal override a newer publish", async () => {
     const { db, repository, moderation } = setup();
     await publish(

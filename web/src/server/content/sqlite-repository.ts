@@ -183,20 +183,45 @@ export function createSqliteContentStores(database: SqliteDatabase): {
       .run(command.deliveryId, new Date().toISOString());
     if (delivery.changes === 0) return "duplicate" as const;
 
-    if (command.action !== "publish") {
-      if (command.action === "withdraw") {
-        database
-          .prepare(
-            `UPDATE contents
-             SET status = 'withdrawn', updated_at = ?
-             WHERE github_issue_number = ? AND updated_at < ?`,
-          )
-          .run(command.updatedAt, command.issueNumber, command.updatedAt);
-      }
+    if (command.action === "reject" || command.action === "ignore") {
       return "applied" as const;
     }
 
+    if (command.action === "withdraw") {
+      const state = database
+        .prepare(
+          `INSERT INTO moderation_issue_states (github_issue_number, status, updated_at)
+           VALUES (?, 'withdrawn', ?)
+           ON CONFLICT(github_issue_number) DO UPDATE SET
+             status = excluded.status,
+             updated_at = excluded.updated_at
+           WHERE excluded.updated_at > moderation_issue_states.updated_at`,
+        )
+        .run(command.issueNumber, command.updatedAt);
+      if (state.changes === 0) return "applied" as const;
+      database
+        .prepare(
+          `UPDATE contents
+           SET status = 'withdrawn', updated_at = ?
+           WHERE github_issue_number = ? AND updated_at < ?`,
+        )
+        .run(command.updatedAt, command.issueNumber, command.updatedAt);
+      return "applied" as const;
+    }
+
+    if (command.action !== "publish") return "applied" as const;
     const content = command.record;
+    const state = database
+      .prepare(
+        `INSERT INTO moderation_issue_states (github_issue_number, status, updated_at)
+         VALUES (?, 'published', ?)
+         ON CONFLICT(github_issue_number) DO UPDATE SET
+           status = excluded.status,
+           updated_at = excluded.updated_at
+         WHERE excluded.updated_at > moderation_issue_states.updated_at`,
+      )
+      .run(content.githubIssueNumber, content.updatedAt);
+    if (state.changes === 0) return "applied" as const;
     const transition = database
       .prepare(
         `INSERT INTO contents (

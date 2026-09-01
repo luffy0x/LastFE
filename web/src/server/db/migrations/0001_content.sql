@@ -27,6 +27,11 @@ CREATE TABLE webhook_deliveries (
   delivery_id TEXT PRIMARY KEY,
   processed_at TEXT NOT NULL
 );
+CREATE TABLE moderation_issue_states (
+  github_issue_number INTEGER PRIMARY KEY,
+  status TEXT NOT NULL CHECK (status IN ('published', 'withdrawn')),
+  updated_at TEXT NOT NULL
+);
 CREATE TABLE submission_fingerprints (
   fingerprint TEXT PRIMARY KEY,
   source_hash TEXT NOT NULL,
