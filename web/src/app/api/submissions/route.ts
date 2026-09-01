@@ -186,7 +186,10 @@ export function createSubmissionHandler(
     }
 
     try {
-      await dependencies.abuse.recordSuccess(reservation.reservationId, now);
+      await dependencies.abuse.recordSuccess(
+        reservation.reservationId,
+        dependencies.now(),
+      );
     } catch {
       return upstreamResponse("提交状态暂时无法确认，请稍后重试。");
     }

@@ -287,6 +287,34 @@ describe("createSubmissionHandler", () => {
     ).toBeLessThan(vi.mocked(abuse.recordSuccess).mock.invocationCallOrder[0]);
   });
 
+  it("uses a fresh timestamp to promote after enqueue completes", async () => {
+    const reservationTime = new Date("2026-09-01T08:00:00.000Z");
+    const successTime = new Date("2026-09-01T08:06:00.000Z");
+    const now = vi
+      .fn<() => Date>()
+      .mockReturnValueOnce(reservationTime)
+      .mockReturnValueOnce(successTime);
+    const handler = createSubmissionHandler({
+      challenge: { create: vi.fn(), verify: vi.fn().mockResolvedValue(true) },
+      abuse,
+      queue,
+      hashSource: () => "hashed-test-source",
+      now,
+    });
+
+    const response = await handler(makeRequest(VALID_INTERVIEW_INPUT));
+
+    expect(response.status).toBe(201);
+    expect(abuse.reserve).toHaveBeenCalledWith(
+      expect.objectContaining({ now: reservationTime }),
+    );
+    expect(abuse.recordSuccess).toHaveBeenCalledWith(
+      "reservation-1",
+      successTime,
+    );
+    expect(now).toHaveBeenCalledTimes(2);
+  });
+
   it.each([
     ["DUPLICATE", 409, false],
     ["RATE_LIMIT", 429, true],
