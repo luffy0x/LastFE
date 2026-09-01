@@ -2,6 +2,7 @@ import { openDatabase, type SqliteDatabase } from "./client";
 import { migrationSql } from "./migrations/0001-content";
 import { moderationOrderingMigrationSql } from "./migrations/0002-moderation-ordering";
 import { moderationSequenceMigrationSql } from "./migrations/0003-moderation-sequence";
+import { moderationAuthorityMigrationSql } from "./migrations/0004-moderation-authority";
 
 const migrations = [
   {
@@ -13,6 +14,7 @@ const migrations = [
   },
   { version: 2, sql: moderationOrderingMigrationSql },
   { version: 3, sql: moderationSequenceMigrationSql },
+  { version: 4, sql: moderationAuthorityMigrationSql },
 ] as const;
 
 export function migrate(database: SqliteDatabase): void {

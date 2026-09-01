@@ -4,6 +4,7 @@ import { openDatabase, type SqliteDatabase } from "./client";
 import * as migrationModule from "./migrate";
 import { migrationSql } from "./migrations/0001-content";
 import { moderationOrderingMigrationSql } from "./migrations/0002-moderation-ordering";
+import { moderationSequenceMigrationSql } from "./migrations/0003-moderation-sequence";
 
 type InitializeDatabase = <T>(
   path: string,
@@ -46,6 +47,14 @@ function seedVersionTwo(database: SqliteDatabase): void {
   database
     .prepare("INSERT INTO schema_migrations (version, applied_at) VALUES (2, ?)")
     .run("2026-09-01T00:01:00.000Z");
+}
+
+function seedVersionThreeWithoutAuthority(database: SqliteDatabase): void {
+  seedVersionTwo(database);
+  database.exec(moderationSequenceMigrationSql);
+  database
+    .prepare("INSERT INTO schema_migrations (version, applied_at) VALUES (3, ?)")
+    .run("2026-09-01T00:02:00.000Z");
 }
 
 describe("database initialization ownership", () => {
@@ -95,7 +104,12 @@ describe("migrate", () => {
       database
         .prepare("SELECT version FROM schema_migrations ORDER BY version")
         .all(),
-    ).toEqual([{ version: 1 }, { version: 2 }, { version: 3 }]);
+    ).toEqual([
+      { version: 1 },
+      { version: 2 },
+      { version: 3 },
+      { version: 4 },
+    ]);
     expect(
       database
         .prepare(
@@ -134,7 +148,12 @@ describe("migrate", () => {
       database
         .prepare("SELECT version FROM schema_migrations ORDER BY version")
         .all(),
-    ).toEqual([{ version: 1 }, { version: 2 }, { version: 3 }]);
+    ).toEqual([
+      { version: 1 },
+      { version: 2 },
+      { version: 3 },
+      { version: 4 },
+    ]);
     expect(
       database
         .prepare(
@@ -152,6 +171,103 @@ describe("migrate", () => {
       review_event_created_at: null,
       review_event_id: null,
     });
+    database.close();
+  });
+
+  it("upgrades an already-applied version-three database with authority", () => {
+    const database = openDatabase(":memory:");
+    seedVersionThreeWithoutAuthority(database);
+    database
+      .prepare(
+        `INSERT INTO moderation_issue_states (
+          github_issue_number, decision, updated_at, snapshot_identity,
+          review_event_created_at, review_event_id
+        ) VALUES (?, 'withdrawn', ?, ?, ?, ?)`,
+      )
+      .run(
+        303,
+        "2026-09-01T10:00:00.000Z",
+        "historical-v3-withdrawal",
+        "2026-09-01T10:00:00.000Z",
+        "9002",
+      );
+
+    migrationModule.migrate(database);
+    migrationModule.migrate(database);
+
+    expect(
+      database
+        .prepare(
+          `SELECT decision, snapshot_identity, review_event_created_at,
+                  review_event_id, authoritative
+           FROM moderation_issue_states
+           WHERE github_issue_number = 303`,
+        )
+        .get(),
+    ).toEqual({
+      decision: "withdrawn",
+      snapshot_identity: "historical-v3-withdrawal",
+      review_event_created_at: "2026-09-01T10:00:00.000Z",
+      review_event_id: "9002",
+      authoritative: 0,
+    });
+    expect(
+      database
+        .prepare("SELECT version FROM schema_migrations ORDER BY version")
+        .all(),
+    ).toEqual([
+      { version: 1 },
+      { version: 2 },
+      { version: 3 },
+      { version: 4 },
+    ]);
+    database.close();
+  });
+
+  it("rolls back a failed version-four migration and succeeds on retry and rerun", () => {
+    const database = openDatabase(":memory:");
+    seedVersionThreeWithoutAuthority(database);
+    database.exec(`CREATE TRIGGER fail_version_four
+      BEFORE INSERT ON schema_migrations
+      WHEN NEW.version = 4
+      BEGIN
+        SELECT RAISE(ABORT, 'forced version four failure');
+      END;`);
+
+    expect(() => migrationModule.migrate(database)).toThrow(
+      "forced version four failure",
+    );
+    expect(
+      database
+        .prepare("SELECT version FROM schema_migrations ORDER BY version")
+        .all(),
+    ).toEqual([{ version: 1 }, { version: 2 }, { version: 3 }]);
+    expect(
+      database
+        .prepare("SELECT name FROM pragma_table_info('moderation_issue_states')")
+        .all(),
+    ).not.toContainEqual({ name: "authoritative" });
+
+    database.exec("DROP TRIGGER fail_version_four");
+    migrationModule.migrate(database);
+    migrationModule.migrate(database);
+
+    expect(
+      database
+        .prepare("SELECT version FROM schema_migrations ORDER BY version")
+        .all(),
+    ).toEqual([
+      { version: 1 },
+      { version: 2 },
+      { version: 3 },
+      { version: 4 },
+    ]);
+    const authorityColumns = database
+      .prepare("SELECT name FROM pragma_table_info('moderation_issue_states')")
+      .all() as Array<{ name: string }>;
+    expect(
+      authorityColumns.filter(({ name }) => name === "authoritative"),
+    ).toEqual([{ name: "authoritative" }]);
     database.close();
   });
 
@@ -188,7 +304,12 @@ describe("migrate", () => {
       database
         .prepare("SELECT version FROM schema_migrations ORDER BY version")
         .all(),
-    ).toEqual([{ version: 1 }, { version: 2 }, { version: 3 }]);
+    ).toEqual([
+      { version: 1 },
+      { version: 2 },
+      { version: 3 },
+      { version: 4 },
+    ]);
     const sequenceColumns = database
       .prepare("SELECT name FROM pragma_table_info('moderation_issue_states')")
       .all() as Array<{ name: string }>;
@@ -234,7 +355,12 @@ describe("migrate", () => {
       database
         .prepare("SELECT version FROM schema_migrations ORDER BY version")
         .all(),
-    ).toEqual([{ version: 1 }, { version: 2 }, { version: 3 }]);
+    ).toEqual([
+      { version: 1 },
+      { version: 2 },
+      { version: 3 },
+      { version: 4 },
+    ]);
     database.close();
   });
 });
