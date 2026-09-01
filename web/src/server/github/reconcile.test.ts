@@ -32,12 +32,27 @@ const changedIssue = (number: number, updatedAt = `2026-09-01T08:0${number}:00.0
   },
 });
 
+const basicIssue = (number: number, updatedAt = `2026-09-01T08:0${number}:00.000Z`) => ({
+  number,
+  title: `[interview] submission-${number}`,
+  body: "encoded-test-body",
+  labels: ["submission", "approved"],
+  state: "open" as const,
+  createdAt: "2026-09-01T08:00:00.000Z",
+  updatedAt,
+});
+
+const enrichExistingIssue = async (
+  issue: Omit<GitHubIssueSnapshot, "review">,
+): Promise<GitHubIssueSnapshot> => issue as GitHubIssueSnapshot;
+
 const TEST_RECONCILE_DEPS: ReconcileDependencies = {
   since: "2026-09-01T07:00:00.000Z",
   listIssues: vi
     .fn()
     .mockResolvedValueOnce([changedIssue(1), changedIssue(2), changedIssue(3)])
     .mockResolvedValueOnce([]),
+  enrichIssue: enrichExistingIssue,
   syncIssue: vi
     .fn()
     .mockResolvedValueOnce("published")
@@ -71,12 +86,13 @@ describe("reconcileIssues", () => {
       changedIssue(3, "2026-09-01T06:59:59.999Z"),
       changedIssue(2, "2026-09-01T06:58:00.000Z"),
     ]);
-    const syncIssue = vi.fn().mockResolvedValue("published");
+    const syncIssue = vi.fn(async () => "published" as const);
 
     await expect(
       reconcileIssues({
         since: "2026-09-01T07:00:00.000Z",
         listIssues,
+        enrichIssue: enrichExistingIssue,
         syncIssue,
       }),
     ).resolves.toEqual({ scanned: 1, synced: 1, failed: 0, failures: [] });
@@ -103,6 +119,7 @@ describe("reconcileIssues", () => {
             validIssue,
           ])
           .mockResolvedValueOnce([]),
+        enrichIssue: enrichExistingIssue,
         syncIssue,
       }),
     ).resolves.toEqual({
@@ -155,6 +172,7 @@ describe("reconcileIssues", () => {
         .fn()
         .mockResolvedValueOnce([removedUnpublish, reapproved])
         .mockResolvedValueOnce([]),
+      enrichIssue: enrichExistingIssue,
       syncIssue,
     });
 
@@ -182,6 +200,7 @@ describe("reconcileIssues", () => {
         .fn()
         .mockResolvedValueOnce([privateIssue])
         .mockResolvedValueOnce([]),
+      enrichIssue: enrichExistingIssue,
       syncIssue: vi.fn().mockRejectedValue(
         Object.assign(new Error(privateIssue.body), { code: "DATABASE" }),
       ),
@@ -201,6 +220,52 @@ describe("reconcileIssues", () => {
 });
 
 describe("reconcileFromCursor", () => {
+  it("keeps processing later issues when history enrichment failure", async () => {
+    const database = openDatabase(":memory:");
+    migrate(database);
+    const cursorStore = createReconciliationCursorStore(database);
+    await cursorStore.write("github-issues", "2026-09-01T08:00:00.000Z");
+    const issue41 = basicIssue(41, "2026-09-01T08:09:00.000Z");
+    const issue42 = basicIssue(42, "2026-09-01T08:08:00.000Z");
+    const enrichIssue = vi.fn(async (issue: typeof issue41) => {
+      if (issue.number === 41) {
+        throw Object.assign(new Error("private GitHub response"), {
+          code: "GITHUB",
+        });
+      }
+      return changedIssue(issue.number, issue.updatedAt);
+    });
+    const syncIssue = vi.fn().mockResolvedValue("published");
+
+    const report = await reconcileFromCursor({
+      cursorStore,
+      startedAt: "2026-09-01T08:10:00.000Z",
+      listIssues: vi
+        .fn()
+        .mockResolvedValueOnce([issue41, issue42])
+        .mockResolvedValueOnce([]),
+      enrichIssue,
+      syncIssue,
+    });
+
+    expect(report).toEqual({
+      scanned: 2,
+      synced: 1,
+      failed: 1,
+      failures: [{ issueNumber: 41, category: "GITHUB" }],
+    });
+    expect(syncIssue).toHaveBeenCalledExactlyOnceWith(
+      changedIssue(42, "2026-09-01T08:08:00.000Z"),
+      expect.stringMatching(
+        /^reconcile:42:2026-09-01T08:08:00\.000Z:[a-f0-9]{64}$/,
+      ),
+    );
+    await expect(cursorStore.read("github-issues")).resolves.toBe(
+      "2026-09-01T08:00:00.000Z",
+    );
+    database.close();
+  });
+
   it("starts at the Unix epoch and advances its cursor only after a failure-free scan", async () => {
     const database = openDatabase(":memory:");
     migrate(database);
@@ -216,6 +281,7 @@ describe("reconcileFromCursor", () => {
       cursorStore,
       startedAt: "2026-09-01T08:10:00.000Z",
       listIssues,
+      enrichIssue: enrichExistingIssue,
       syncIssue: vi.fn().mockResolvedValue("published"),
     });
 
@@ -246,6 +312,7 @@ describe("reconcileFromCursor", () => {
         .fn()
         .mockResolvedValueOnce([changedIssue(9, "2026-09-01T08:09:00.000Z")])
         .mockResolvedValueOnce([]),
+      enrichIssue: enrichExistingIssue,
       syncIssue: vi.fn().mockRejectedValue(new Error("private issue body")),
     });
 

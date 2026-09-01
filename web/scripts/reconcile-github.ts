@@ -24,12 +24,8 @@ async function main(): Promise<void> {
     const report = await reconcileFromCursor({
       cursorStore: createReconciliationCursorStore(database),
       startedAt,
-      listIssues: (page, perPage) => {
-        if (perPage !== 100) {
-          throw new Error("Reconciliation failed (INVALID_PAGE_SIZE)");
-        }
-        return github.listSubmissionIssues(page);
-      },
+      listIssues: (page) => github.listSubmissionIssues(page),
+      enrichIssue: (issue) => github.enrichReview(issue),
       syncIssue: webhook.syncIssue,
       onFailure: ({ issueNumber, category }) => {
         console.error(

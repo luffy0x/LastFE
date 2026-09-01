@@ -69,7 +69,7 @@ describe("GitHubSubmissionQueue", () => {
     });
   });
 
-  it("uses an issues-only server query so an empty page means reconciliation is exhausted", async () => {
+  it("lists basic issues through an issues-only server query without reading history", async () => {
     searchIssuesAndPullRequests.mockResolvedValue({
       data: {
         items: [
@@ -85,28 +85,6 @@ describe("GitHubSubmissionQueue", () => {
       ],
       },
     });
-    listIssueEvents.mockResolvedValue({
-      data: [
-        {
-          id: 7001,
-          event: "labeled",
-          label: { name: "approved" },
-          created_at: "2026-09-01T08:01:00.000Z",
-        },
-        {
-          id: 7002,
-          event: "labeled",
-          label: { name: "unpublish" },
-          created_at: "2026-09-01T08:03:00.000Z",
-        },
-        {
-          id: 7003,
-          event: "unlabeled",
-          label: { name: "unpublish" },
-          created_at: "2026-09-01T08:05:00.000Z",
-        },
-      ],
-    });
     const queue = new GitHubSubmissionQueue();
 
     await expect(queue.listSubmissionIssues(3)).resolves.toEqual([
@@ -118,15 +96,6 @@ describe("GitHubSubmissionQueue", () => {
         state: "open",
         createdAt: "2026-09-01T08:00:00.000Z",
         updatedAt: "2026-09-01T08:05:00.000Z",
-        review: {
-          source: "reconciliation",
-          latestRelevantEvent: {
-            id: "7003",
-            action: "unlabeled",
-            label: "unpublish",
-            createdAt: "2026-09-01T08:05:00.000Z",
-          },
-        },
       },
     ]);
     expect(searchIssuesAndPullRequests).toHaveBeenCalledExactlyOnceWith({
@@ -136,16 +105,10 @@ describe("GitHubSubmissionQueue", () => {
       page: 3,
       per_page: 100,
     });
-    expect(listIssueEvents).toHaveBeenCalledExactlyOnceWith({
-      owner: "moderation-owner",
-      repo: "private-submissions",
-      issue_number: 41,
-      page: 1,
-      per_page: 100,
-    });
+    expect(listIssueEvents).not.toHaveBeenCalled();
   });
 
-  it("selects the newest review event by timestamp and event id instead of response order", async () => {
+  it("enriches a basic issue from paged history and selects the newest event independently of response order", async () => {
     searchIssuesAndPullRequests.mockResolvedValue({
       data: {
         items: [
@@ -161,24 +124,35 @@ describe("GitHubSubmissionQueue", () => {
         ],
       },
     });
-    listIssueEvents.mockResolvedValue({
-      data: [
-        {
-          id: 7003,
-          event: "unlabeled",
-          label: { name: "unpublish" },
-          created_at: "2026-09-01T08:05:00.000Z",
-        },
-        {
-          id: 7002,
+    listIssueEvents
+      .mockResolvedValueOnce({
+        data: Array.from({ length: 100 }, (_, index) => ({
+          id: 6000 + index,
           event: "labeled",
           label: { name: "approved" },
-          created_at: "2026-09-01T08:05:00.000Z",
-        },
-      ],
-    });
+          created_at: "2026-09-01T08:04:00.000Z",
+        })),
+      })
+      .mockResolvedValueOnce({
+        data: [
+          {
+            id: 7003,
+            event: "unlabeled",
+            label: { name: "unpublish" },
+            created_at: "2026-09-01T08:05:00.000Z",
+          },
+          {
+            id: 7002,
+            event: "labeled",
+            label: { name: "approved" },
+            created_at: "2026-09-01T08:05:00.000Z",
+          },
+        ],
+      });
 
-    const [snapshot] = await new GitHubSubmissionQueue().listSubmissionIssues(1);
+    const queue = new GitHubSubmissionQueue();
+    const [issue] = await queue.listSubmissionIssues(1);
+    const snapshot = await queue.enrichReview(issue);
 
     expect(snapshot.review).toEqual({
       source: "reconciliation",
@@ -189,6 +163,52 @@ describe("GitHubSubmissionQueue", () => {
         createdAt: "2026-09-01T08:05:00.000Z",
       },
     });
+    expect(listIssueEvents).toHaveBeenNthCalledWith(1, {
+      owner: "moderation-owner",
+      repo: "private-submissions",
+      issue_number: 42,
+      page: 1,
+      per_page: 100,
+    });
+    expect(listIssueEvents).toHaveBeenNthCalledWith(2, {
+      owner: "moderation-owner",
+      repo: "private-submissions",
+      issue_number: 42,
+      page: 2,
+      per_page: 100,
+    });
+  });
+
+  it("converts history failures into a safe GitHub error", async () => {
+    const privateResponse = {
+      title: "private issue title",
+      body: "private issue body",
+      token: "private-token",
+      url: "https://private.example/history",
+    };
+    listIssueEvents.mockRejectedValue(privateResponse);
+    const queue = new GitHubSubmissionQueue();
+
+    let caught: unknown;
+    try {
+      await queue.enrichReview({
+        number: 42,
+        title: privateResponse.title,
+        body: privateResponse.body,
+        labels: ["submission", "approved"],
+        state: "open",
+        createdAt: "2026-09-01T08:00:00.000Z",
+        updatedAt: "2026-09-01T08:05:00.000Z",
+      });
+    } catch (error) {
+      caught = error;
+    }
+
+    expect(caught).toMatchObject({ code: "GITHUB" });
+    expect(String(caught)).not.toContain(privateResponse.title);
+    expect(String(caught)).not.toContain(privateResponse.body);
+    expect(String(caught)).not.toContain(privateResponse.token);
+    expect(String(caught)).not.toContain(privateResponse.url);
   });
 
   it("repairs publication only when the live issue still requests approval", async () => {

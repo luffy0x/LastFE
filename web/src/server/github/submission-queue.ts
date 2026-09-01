@@ -11,8 +11,18 @@ import {
   type ModerationDecision,
   type ReviewRelevantEvent,
 } from "./sync-issue";
+import type { ReconcileIssueSnapshot } from "./reconcile";
 
 const REVIEW_EVENT_PAGE_SIZE = 100;
+
+class GitHubHistoryError extends Error {
+  readonly code = "GITHUB" as const;
+
+  constructor() {
+    super("GitHub review history failed (GITHUB)");
+    this.name = "GitHubHistoryError";
+  }
+}
 
 function normalizeReviewEvent(value: unknown): ReviewRelevantEvent | null {
   if (!value || Array.isArray(value) || typeof value !== "object") return null;
@@ -68,7 +78,7 @@ export class GitHubSubmissionQueue implements SubmissionQueue {
 
   async listSubmissionIssues(
     page: number,
-  ): Promise<readonly GitHubIssueSnapshot[]> {
+  ): Promise<readonly ReconcileIssueSnapshot[]> {
     const response = await this.client.octokit.rest.search.issuesAndPullRequests({
       q: `repo:${this.client.owner}/${this.client.repo} is:issue label:submission`,
       sort: "updated",
@@ -77,14 +87,31 @@ export class GitHubSubmissionQueue implements SubmissionQueue {
       per_page: 100,
     });
 
-    const snapshots: GitHubIssueSnapshot[] = [];
+    const snapshots: ReconcileIssueSnapshot[] = [];
     for (const issue of response.data.items) {
       const labels = issue.labels.flatMap((label) => {
         if (typeof label === "string") return [label];
         return label.name ? [label.name] : [];
       });
-      let latestRelevantEvent: ReviewRelevantEvent | null = null;
-      if (labels.includes("approved") && !labels.includes("unpublish")) {
+      snapshots.push({
+        number: issue.number,
+        title: issue.title,
+        body: issue.body ?? "",
+        labels,
+        state: issue.state as GitHubIssueSnapshot["state"],
+        createdAt: issue.created_at,
+        updatedAt: issue.updated_at,
+      });
+    }
+    return snapshots;
+  }
+
+  async enrichReview(
+    issue: ReconcileIssueSnapshot,
+  ): Promise<GitHubIssueSnapshot> {
+    let latestRelevantEvent: ReviewRelevantEvent | null = null;
+    if (issue.labels.includes("approved") && !issue.labels.includes("unpublish")) {
+      try {
         for (let eventPage = 1; ; eventPage += 1) {
           const events = await this.client.octokit.rest.issues.listEvents({
             owner: this.client.owner,
@@ -101,20 +128,14 @@ export class GitHubSubmissionQueue implements SubmissionQueue {
           }
           if (events.data.length < REVIEW_EVENT_PAGE_SIZE) break;
         }
+      } catch {
+        throw new GitHubHistoryError();
       }
-
-      snapshots.push({
-        number: issue.number,
-        title: issue.title,
-        body: issue.body ?? "",
-        labels,
-        state: issue.state as GitHubIssueSnapshot["state"],
-        createdAt: issue.created_at,
-        updatedAt: issue.updated_at,
-        review: { source: "reconciliation", latestRelevantEvent },
-      });
     }
-    return snapshots;
+    return {
+      ...issue,
+      review: { source: "reconciliation", latestRelevantEvent },
+    };
   }
 
   async ensureReviewState(

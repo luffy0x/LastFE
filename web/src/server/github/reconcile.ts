@@ -14,12 +14,15 @@ import {
 export type { GitHubIssueSnapshot } from "./sync-issue";
 export type { ReconciliationCursorStore } from "@/server/db/client";
 
+export type ReconcileIssueSnapshot = Omit<GitHubIssueSnapshot, "review">;
+
 export type ReconcileDependencies = {
   since: string;
   listIssues(
     page: number,
     perPage: number,
-  ): Promise<readonly GitHubIssueSnapshot[]>;
+  ): Promise<readonly ReconcileIssueSnapshot[]>;
+  enrichIssue(issue: ReconcileIssueSnapshot): Promise<GitHubIssueSnapshot>;
   syncIssue(issue: GitHubIssueSnapshot, deliveryId: string): Promise<SyncResult>;
   onFailure?(failure: ReconcileFailure): void;
 };
@@ -124,9 +127,10 @@ export async function reconcileIssues(
 
       scanned += 1;
       try {
+        const enrichedIssue = await dependencies.enrichIssue(issue);
         await dependencies.syncIssue(
-          issue,
-          reconciliationDeliveryId(issue),
+          enrichedIssue,
+          reconciliationDeliveryId(enrichedIssue),
         );
         synced += 1;
       } catch (error) {
@@ -154,6 +158,7 @@ export async function reconcileFromCursor(
   const report = await reconcileIssues({
     since,
     listIssues: dependencies.listIssues,
+    enrichIssue: dependencies.enrichIssue,
     syncIssue: dependencies.syncIssue,
     onFailure: dependencies.onFailure,
   });
