@@ -1,11 +1,19 @@
-export type SubmissionFieldDefinition = {
+type SubmissionFieldBase = {
   name: string;
   label: string;
-  kind: "text" | "tags" | "url" | "select" | "markdown";
   required: boolean;
   maxLength?: number;
-  options?: readonly { value: string; label: string }[];
 };
+
+export type SubmissionFieldDefinition =
+  | (SubmissionFieldBase & { kind: "text" })
+  | (SubmissionFieldBase & { kind: "tags" })
+  | (SubmissionFieldBase & { kind: "url" })
+  | (SubmissionFieldBase & {
+      kind: "select";
+      options: readonly { value: string; label: string }[];
+    })
+  | (SubmissionFieldBase & { kind: "markdown" });
 
 type SubmissionBase = {
   tags: string[];
@@ -58,3 +66,11 @@ export type Submission =
   | FundamentalSubmission
   | ProjectSubmission
   | AlgorithmSubmission;
+
+export type SubmissionResponse =
+  | { ok: true; issueNumber: number }
+  | {
+      ok: false;
+      code: "INVALID" | "CHALLENGE" | "RATE_LIMIT" | "DUPLICATE" | "UPSTREAM";
+      message: string;
+    };

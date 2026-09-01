@@ -97,9 +97,7 @@ export function TerritoryPanel({ region, page }: TerritoryPanelProps) {
 
       <footer className="territory-panel__footer">
         <span>公开投稿需经站点维护者审批</span>
-        <button type="button" disabled>
-          投稿通道即将启用
-        </button>
+        <Link href={`/submit/${region.slug}`}>向{region.label}投稿</Link>
       </footer>
     </section>
   );

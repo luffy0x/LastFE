@@ -43,6 +43,10 @@ it("shows only content from the requested territory", async () => {
     "href",
     "/?region=interview",
   );
+  expect(screen.getByRole("link", { name: "向面经区投稿" })).toHaveAttribute(
+    "href",
+    "/submit/interview",
+  );
 });
 
 it("focuses the territory heading when the mobile sheet opens", async () => {

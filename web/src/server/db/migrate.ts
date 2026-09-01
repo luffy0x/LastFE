@@ -1,6 +1,5 @@
 import type { SqliteDatabase } from "./client";
-// @ts-expect-error -- Vite loads migration assets with the raw-query suffix.
-import migrationSql from "./migrations/0001_content.sql?raw";
+import { migrationSql } from "./migrations/0001-content";
 
 export function migrate(database: SqliteDatabase): void {
   database.exec(

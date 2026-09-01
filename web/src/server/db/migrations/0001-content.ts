@@ -1,4 +1,4 @@
-CREATE TABLE schema_migrations (
+export const migrationSql = `CREATE TABLE schema_migrations (
   version INTEGER PRIMARY KEY,
   applied_at TEXT NOT NULL
 );
@@ -51,3 +51,4 @@ CREATE INDEX contents_region_published_idx ON contents(region_slug, published_at
 CREATE INDEX contents_status_updated_idx ON contents(status, updated_at DESC);
 CREATE INDEX successful_submission_events_window_idx
   ON successful_submission_events(source_hash, succeeded_at DESC);
+`;
