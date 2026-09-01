@@ -1,18 +1,32 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import type { RegionDefinition } from "../types";
 
 type RegionListFallbackProps = {
   regions: readonly RegionDefinition[];
 };
 
-export function RegionListFallback({ regions }: RegionListFallbackProps) {
-  const [open, setOpen] = useState(true);
+const mobileQuery = "(max-width: 640px)";
 
-  useEffect(() => {
-    if (window.matchMedia?.("(max-width: 640px)").matches) setOpen(false);
-  }, []);
+function subscribeToViewport(onChange: () => void) {
+  if (typeof window === "undefined" || !window.matchMedia) return () => undefined;
+  const media = window.matchMedia(mobileQuery);
+  media.addEventListener("change", onChange);
+  return () => media.removeEventListener("change", onChange);
+}
+
+function getMobileSnapshot() {
+  return typeof window !== "undefined" && window.matchMedia
+    ? window.matchMedia(mobileQuery).matches
+    : false;
+}
+
+function RegionListDisclosure({
+  regions,
+  initiallyOpen,
+}: RegionListFallbackProps & { initiallyOpen: boolean }) {
+  const [open, setOpen] = useState(initiallyOpen);
 
   return (
     <details
@@ -32,5 +46,21 @@ export function RegionListFallback({ regions }: RegionListFallbackProps) {
           ))}
       </nav>
     </details>
+  );
+}
+
+export function RegionListFallback({ regions }: RegionListFallbackProps) {
+  const mobile = useSyncExternalStore(
+    subscribeToViewport,
+    getMobileSnapshot,
+    () => false,
+  );
+
+  return (
+    <RegionListDisclosure
+      key={mobile ? "mobile" : "desktop"}
+      regions={regions}
+      initiallyOpen={!mobile}
+    />
   );
 }

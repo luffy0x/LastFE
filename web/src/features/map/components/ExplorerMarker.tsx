@@ -8,6 +8,8 @@ type ExplorerMarkerProps = {
   targetLocked: boolean;
 };
 
+const ANIMATION_SETTLE_BUFFER_MS = 100;
+
 function samePoint(first: Point, second: Point) {
   return Math.abs(first.x - second.x) < 0.01 && Math.abs(first.y - second.y) < 0.01;
 }
@@ -68,28 +70,46 @@ export function createExplorerMotionAdapter(): ExplorerMotionAdapter {
         return points[index];
       };
 
-      const finished = animation.finished.then(
-        () => {
-          renderedPoint = destination;
-          marker.setAttribute(
-            "transform",
-            `translate(${destination.x} ${destination.y - 28})`,
-          );
-          animation.cancel();
-          return destination;
-        },
-        () => renderedPoint,
+      let settled = false;
+      let settleFinished!: (point: Point) => void;
+      const finished = new Promise<Point>((resolve) => {
+        settleFinished = (point) => {
+          if (settled) return;
+          settled = true;
+          window.clearTimeout(fallbackTimer);
+          resolve(point);
+        };
+      });
+      const finishAtDestination = () => {
+        if (settled) return;
+        renderedPoint = destination;
+        marker.setAttribute(
+          "transform",
+          `translate(${destination.x} ${destination.y - 28})`,
+        );
+        animation.cancel();
+        settleFinished(destination);
+      };
+
+      const fallbackTimer = window.setTimeout(
+        finishAtDestination,
+        durationMs + ANIMATION_SETTLE_BUFFER_MS,
       );
+      void animation.finished.then(finishAtDestination, () => {
+        settleFinished(renderedPoint);
+      });
 
       return {
         finished,
         cancel: () => {
+          if (settled) return renderedPoint;
           renderedPoint = pointAtCurrentTime();
           animation.cancel();
           marker.setAttribute(
             "transform",
             `translate(${renderedPoint.x} ${renderedPoint.y - 28})`,
           );
+          settleFinished(renderedPoint);
           return renderedPoint;
         },
       };

@@ -3,7 +3,6 @@
 import {
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useSyncExternalStore,
 } from "react";
@@ -74,14 +73,13 @@ export function StrategicMap({
     explicitRegion ??
     enabledRegions.find(({ slug }) => slug === "fundamentals") ??
     enabledRegions[0];
-  const initialCamera = useMemo(() => {
-    if (!explicitRegion) return { x: 0, y: 0, scale: 1 };
-    return {
-      x: 500 - explicitRegion.camera.x * explicitRegion.camera.scale,
-      y: 300 - explicitRegion.camera.y * explicitRegion.camera.scale,
-      scale: explicitRegion.camera.scale,
-    };
-  }, [explicitRegion]);
+  const initialCamera = explicitRegion
+    ? {
+        x: 500 - explicitRegion.camera.x * explicitRegion.camera.scale,
+        y: 300 - explicitRegion.camera.y * explicitRegion.camera.scale,
+        scale: explicitRegion.camera.scale,
+      }
+    : { x: 0, y: 0, scale: 1 };
   const camera = useMapCamera({
     bounds: CAMERA_BOUNDS,
     initial: initialCamera,
@@ -114,12 +112,14 @@ export function StrategicMap({
     },
     { restoreStored: !explicitRegion },
   );
+  const restoreCamera = camera.restore;
+  const restoreExplorer = explorer.restore;
 
   useEffect(() => {
     if (!restored || explicitRegion) return;
-    camera.restore(restored.camera);
-    explorer.restore(restored.explorerPoint, restored.selectedSlug);
-  }, [camera.restore, explorer.restore, explicitRegion, restored]);
+    restoreCamera(restored.camera);
+    restoreExplorer(restored.explorerPoint, restored.selectedSlug);
+  }, [explicitRegion, restoreCamera, restoreExplorer, restored]);
 
   const restoredFocusSlug = restored?.selectedSlug;
   useEffect(() => {

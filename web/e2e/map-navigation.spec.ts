@@ -12,13 +12,21 @@ test("moves the explorer and enters the selected territory", async ({ page }) =>
 test("replaces an in-flight destination without opening the old territory", async ({
   page,
 }) => {
+  const navigatedUrls: string[] = [];
+  page.on("framenavigated", (frame) => {
+    if (frame === page.mainFrame()) navigatedUrls.push(frame.url());
+  });
   await page.goto("/");
 
   await page.getByRole("button", { name: "进入学习资料区" }).click();
-  await page.getByRole("button", { name: "进入项目区" }).click();
+  const replacement = page.getByRole("button", { name: "进入项目区" });
+  await replacement.focus();
+  await page.keyboard.press("Enter");
 
   await expect(page).toHaveURL(/\/regions\/projects$/);
-  await expect(page).not.toHaveURL(/\/regions\/resources$/);
+  expect(navigatedUrls).not.toContain(
+    "http://127.0.0.1:3000/regions/resources",
+  );
 });
 
 test("reduced motion enters without a travel delay", async ({ page }) => {
@@ -31,6 +39,7 @@ test("reduced motion enters without a travel delay", async ({ page }) => {
 });
 
 test("keyboard Enter selects and enters a territory", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
   const territory = page.getByRole("button", { name: "进入面经区" });
   await territory.focus();
@@ -52,26 +61,26 @@ test("territory list provides equivalent mobile navigation", async ({ page }) =>
 
 test("pinch changes the camera and reset returns to global view", async ({ page }) => {
   await page.goto("/");
-  const surface = page.getByRole("application", { name: "战略地图画布" });
   const camera = page.getByTestId("camera-layer");
+  const client = await page.context().newCDPSession(page);
 
-  await surface.dispatchEvent("pointerdown", {
-    pointerId: 1,
-    pointerType: "touch",
-    clientX: 400,
-    clientY: 300,
+  await client.send("Input.dispatchTouchEvent", {
+    type: "touchStart",
+    touchPoints: [
+      { x: 400, y: 300, id: 1 },
+      { x: 600, y: 300, id: 2 },
+    ],
   });
-  await surface.dispatchEvent("pointerdown", {
-    pointerId: 2,
-    pointerType: "touch",
-    clientX: 600,
-    clientY: 300,
+  await client.send("Input.dispatchTouchEvent", {
+    type: "touchMove",
+    touchPoints: [
+      { x: 350, y: 300, id: 1 },
+      { x: 650, y: 300, id: 2 },
+    ],
   });
-  await surface.dispatchEvent("pointermove", {
-    pointerId: 2,
-    pointerType: "touch",
-    clientX: 700,
-    clientY: 300,
+  await client.send("Input.dispatchTouchEvent", {
+    type: "touchEnd",
+    touchPoints: [],
   });
 
   await expect(camera).not.toHaveAttribute("transform", "translate(0 0) scale(1)");

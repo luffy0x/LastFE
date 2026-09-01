@@ -37,3 +37,29 @@ it("starts collapsed on mobile and exposes equivalent territory links", async ()
     "/regions/projects",
   );
 });
+
+it("keeps the disclosure label in sync when toggled on desktop", async () => {
+  vi.stubGlobal(
+    "matchMedia",
+    vi.fn().mockReturnValue({
+      matches: false,
+      media: "(max-width: 640px)",
+      onchange: null,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    }),
+  );
+  const user = userEvent.setup();
+  const { container } = render(<RegionListFallback regions={REGIONS} />);
+  const details = container.querySelector("details");
+  if (!details) throw new Error("expected a details element");
+
+  expect(details).toHaveAttribute("open");
+  await user.click(screen.getByText("收起领地列表"));
+
+  expect(details).not.toHaveAttribute("open");
+  expect(screen.getByText("打开领地列表")).toBeInTheDocument();
+});
