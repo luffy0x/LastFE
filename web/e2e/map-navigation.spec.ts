@@ -144,6 +144,13 @@ for (const viewport of viewports) {
     await page.goto("/");
     await expect(page.getByRole("main", { name: "求职战略地图" })).toBeVisible();
 
+    const camera = page.getByTestId("camera-layer");
+    await page.getByRole("button", { name: "放大地图" }).click();
+    await expect(camera).not.toHaveAttribute("transform", "translate(0 0) scale(1)");
+    await page.getByRole("button", { name: "复位地图" }).click();
+    await expect(camera).toHaveAttribute("transform", "translate(0 0) scale(1)");
+    await page.mouse.move(1, 1);
+
     const hasHorizontalOverflow = await page.evaluate(
       () => document.documentElement.scrollWidth > window.innerWidth,
     );
@@ -152,5 +159,25 @@ for (const viewport of viewports) {
       animations: "disabled",
       fullPage: true,
     });
+
+    const searchTrigger = page.getByRole("button", { name: "打开全局搜索" });
+    await searchTrigger.click();
+    const dialog = page.getByRole("dialog", { name: "全局情报检索" });
+    await expect(dialog).toBeVisible();
+    await expect(
+      page.getByRole("searchbox", { name: "搜索全部公开情报" }),
+    ).toBeFocused();
+    const dialogFitsViewport = await dialog.evaluate((element) => {
+      const bounds = element.getBoundingClientRect();
+      return (
+        bounds.left >= 0 &&
+        bounds.top >= 0 &&
+        bounds.right <= window.innerWidth &&
+        bounds.bottom <= window.innerHeight
+      );
+    });
+    expect(dialogFitsViewport).toBe(true);
+    await page.keyboard.press("Escape");
+    await expect(searchTrigger).toBeFocused();
   });
 }

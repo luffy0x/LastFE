@@ -198,6 +198,7 @@ export function useSubmissionForm(region: RegionDefinition) {
     formMessage,
     handleSubmit,
     isSubmitting,
+    verificationComplete: altchaPayload !== null,
     refreshChallenge,
     widgetRef,
   };

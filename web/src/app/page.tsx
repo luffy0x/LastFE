@@ -1,3 +1,5 @@
+import { connection } from "next/server";
+
 import { getContentRepository } from "@/features/content/repository";
 import { MapExperience } from "@/features/map/components/MapExperience";
 import { REGIONS } from "@/features/map/regions";
@@ -7,6 +9,7 @@ type HomePageProps = {
 };
 
 export default async function HomePage({ searchParams }: HomePageProps) {
+  await connection();
   const query = await searchParams;
   const requestedSlug =
     typeof query.region === "string" ? query.region : undefined;

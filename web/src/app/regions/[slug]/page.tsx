@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
+import { connection } from "next/server";
 import { getContentRepository } from "@/features/content/repository";
 import { TerritoryPanel } from "@/features/content/components/TerritoryPanel";
 import { REGIONS } from "@/features/map/regions";
+import { parsePage } from "@/server/content/search";
 
 export function generateStaticParams() {
   return REGIONS.filter(({ enabled }) => enabled).map(({ slug }) => ({ slug }));
@@ -36,23 +38,49 @@ function TerritoryBackdrop({ selectedSlug }: { selectedSlug: string }) {
 
 export default async function TerritoryPage({
   params,
-}: PageProps<"/regions/[slug]">) {
+  searchParams,
+}: {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  await connection();
   const { slug } = await params;
   const region = REGIONS.find(
     (candidate) => candidate.slug === slug && candidate.enabled,
   );
   if (!region) notFound();
 
+  const rawQuery = await searchParams;
+  const firstValue = (value: string | string[] | undefined) =>
+    typeof value === "string" ? value : value?.[0];
+  const query = Object.fromEntries(
+    ["q", ...region.filterKeys]
+      .map((key) => [key, firstValue(rawQuery[key])?.trim()] as const)
+      .filter((entry): entry is readonly [string, string] => Boolean(entry[1])),
+  );
+  const tags = query.tags
+    ?.split(/[,，]/)
+    .map((tag) => tag.trim())
+    .filter(Boolean);
+  const filters = Object.fromEntries(
+    region.filterKeys
+      .filter((key) => key !== "tags" && query[key])
+      .map((key) => [key, query[key]]),
+  );
+
   const page = await getContentRepository().list({
     regionSlug: region.slug,
-    page: 1,
+    search: query.q,
+    tags,
+    filters,
+    page: parsePage(firstValue(rawQuery.page)),
     pageSize: 20,
   });
 
   return (
     <main id="main-content" className="territory-page">
       <TerritoryBackdrop selectedSlug={region.slug} />
-      <TerritoryPanel region={region} page={page} />
+      <TerritoryPanel region={region} page={page} query={query} />
     </main>
   );
 }

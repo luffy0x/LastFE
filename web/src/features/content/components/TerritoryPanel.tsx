@@ -9,6 +9,7 @@ import type { ContentSummary, Page } from "../types";
 type TerritoryPanelProps = {
   region: RegionDefinition;
   page: Page<ContentSummary>;
+  query?: Readonly<Record<string, string>>;
 };
 
 const FIELD_LABELS: Readonly<Record<string, string>> = {
@@ -26,10 +27,18 @@ const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
   day: "2-digit",
 });
 
-export function TerritoryPanel({ region, page }: TerritoryPanelProps) {
+export function TerritoryPanel({ region, page, query = {} }: TerritoryPanelProps) {
   const panelRef = useRef<HTMLElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   useMobileSheetFocus(panelRef, headingRef);
+  const hasActiveQuery = Object.keys(query).length > 0;
+  const pageCount = Math.max(1, Math.ceil(page.total / page.pageSize));
+  const pageHref = (pageNumber: number) => {
+    const parameters = new URLSearchParams(query);
+    if (pageNumber > 1) parameters.set("page", String(pageNumber));
+    const search = parameters.toString();
+    return `/regions/${region.slug}${search ? `?${search}` : ""}`;
+  };
 
   return (
     <section
@@ -55,20 +64,63 @@ export function TerritoryPanel({ region, page }: TerritoryPanelProps) {
         <p>{region.description}</p>
       </header>
 
-      <div className="territory-filters" aria-label="可用筛选维度">
-        {region.filterKeys.map((key) => (
-          <span key={key}>{FIELD_LABELS[key] ?? key}</span>
-        ))}
-      </div>
+      <form className="territory-filters" role="search" method="get">
+        <label>
+          <span>领地搜索</span>
+          <input
+            type="search"
+            name="q"
+            defaultValue={query.q ?? ""}
+            placeholder="搜索公开情报"
+          />
+        </label>
+        {region.filterKeys.map((key) => {
+          const field = region.submissionFields.find(({ name }) => name === key);
+          return (
+            <label key={key}>
+              <span>{FIELD_LABELS[key] ?? key}</span>
+              {field?.kind === "select" ? (
+                <select name={key} defaultValue={query[key] ?? ""}>
+                  <option value="">全部</option>
+                  {field.options.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  type="text"
+                  name={key}
+                  defaultValue={query[key] ?? ""}
+                />
+              )}
+            </label>
+          );
+        })}
+        <button type="submit">应用筛选</button>
+      </form>
 
       <div className="territory-feed">
         {page.items.length === 0 ? (
-          <p className="territory-empty">该领地还没有公开档案。</p>
+          <div className="territory-empty">
+            <p>
+              {hasActiveQuery || page.page > 1
+                ? "没有符合当前条件的公开档案。"
+                : "该领地还没有公开档案。"}
+            </p>
+            {hasActiveQuery || page.page > 1 ? (
+              <Link href={`/regions/${region.slug}`}>清除搜索与筛选</Link>
+            ) : null}
+          </div>
         ) : (
           page.items.map((item, index) => (
             <article key={item.id} className="intel-row">
               <span className="intel-row__index">
-                {String(index + 1).padStart(2, "0")}
+                {String((page.page - 1) * page.pageSize + index + 1).padStart(
+                  2,
+                  "0",
+                )}
               </span>
               <div className="intel-row__body">
                 <div className="intel-row__meta">
@@ -94,6 +146,28 @@ export function TerritoryPanel({ region, page }: TerritoryPanelProps) {
           ))
         )}
       </div>
+
+      {pageCount > 1 ? (
+        <nav className="territory-pagination" aria-label="内容分页">
+          {page.page > 1 ? (
+            <Link rel="prev" href={pageHref(page.page - 1)}>
+              上一页
+            </Link>
+          ) : (
+            <span />
+          )}
+          <span>
+            第 {page.page} / {pageCount} 页
+          </span>
+          {page.page < pageCount ? (
+            <Link rel="next" href={pageHref(page.page + 1)}>
+              下一页
+            </Link>
+          ) : (
+            <span />
+          )}
+        </nav>
+      ) : null}
 
       <footer className="territory-panel__footer">
         <span>公开投稿需经站点维护者审批</span>

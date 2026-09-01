@@ -6,8 +6,14 @@ import type {
   PublishedStats,
 } from "../../features/content/types";
 import type { ContentRepository } from "../../features/content/repository";
+import { REGIONS } from "../../features/map/regions";
 import type { SqliteDatabase } from "../db/client";
-import { buildSearchPredicate, normalizeTag, PAGE_SIZE } from "./search";
+import {
+  buildSearchPredicate,
+  escapeLikeLiteral,
+  normalizeTag,
+  PAGE_SIZE,
+} from "./search";
 
 type PublishedContent = ContentRecord & { githubIssueNumber: number };
 
@@ -131,6 +137,21 @@ export function createSqliteContentStores(database: SqliteDatabase): {
           ) = ?`);
           params.push(...normalizedTags, normalizedTags.length);
         }
+      }
+      for (const [key, value] of Object.entries(query.filters ?? {})) {
+        const region = REGIONS.find(({ slug }) => slug === query.regionSlug);
+        const isMetadataFilter =
+          key !== "tags" &&
+          region?.filterKeys.some((filterKey) => filterKey === key);
+        if (!isMetadataFilter) {
+          throw new Error(`Unsupported content filter: ${key}`);
+        }
+        const normalized = normalizeTag(value);
+        if (!normalized) continue;
+        where.push(
+          "LOWER(COALESCE(json_extract(c.metadata_json, ?), '')) LIKE ? ESCAPE '\\'",
+        );
+        params.push(`$.${key}`, `%${escapeLikeLiteral(normalized)}%`);
       }
       const predicate = where.join(" AND ");
       const count = database

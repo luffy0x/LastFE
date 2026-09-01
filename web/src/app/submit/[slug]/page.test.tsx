@@ -44,6 +44,16 @@ describe("territory submission page", () => {
     expect(screen.getByText(/不要提交个人隐私/)).toBeVisible();
   });
 
+  it("keeps the resource title field associated with its visible label", async () => {
+    render(
+      await SubmissionPage({
+        params: Promise.resolve({ slug: "resources" }),
+      }),
+    );
+
+    expect(screen.getByRole("textbox", { name: "标题" })).toBeVisible();
+  });
+
   it("rejects an unknown territory slug", async () => {
     await expect(
       SubmissionPage({ params: Promise.resolve({ slug: "unknown" }) }),

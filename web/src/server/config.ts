@@ -49,7 +49,7 @@ const optionalGitHubApiBaseUrl = (): string | undefined => {
   if (url.protocol !== "http:" && url.protocol !== "https:") {
     throw new Error("GITHUB_API_BASE_URL must use http or https");
   }
-  return url.toString();
+  return url.toString().replace(/\/$/, "");
 };
 
 export function getInternalAppOrigin(): string {
@@ -75,6 +75,10 @@ export function getInternalAppOrigin(): string {
   return url.origin;
 }
 
+export function getSqlitePath(): string {
+  return required("SQLITE_PATH");
+}
+
 export function getServerConfig(): ServerConfig {
   return {
     github: {
@@ -87,6 +91,6 @@ export function getServerConfig(): ServerConfig {
     altchaHmacKey: required("ALTCHA_HMAC_KEY"),
     altchaMaxNumber: optionalPositiveSafeInteger("ALTCHA_MAX_NUMBER"),
     rateLimitHmacKey: required("RATE_LIMIT_HMAC_KEY"),
-    sqlitePath: required("SQLITE_PATH"),
+    sqlitePath: getSqlitePath(),
   };
 }

@@ -372,6 +372,46 @@ describe("SQLite content repository", () => {
     ).resolves.toMatchObject({ total: 1, items: [{ id: "literal" }] });
   });
 
+  it.each([
+    ["interview", "companyDepartment", "星河科技"],
+    ["interview", "position", "后端开发"],
+    ["fundamentals", "category", "数据库"],
+    ["projects", "techStack", "React"],
+    ["algorithms", "source", "LeetCode"],
+    ["algorithms", "difficulty", "medium"],
+  ] as const)(
+    "filters %s records by configured %s metadata",
+    async (regionSlug, key, value) => {
+      const { repository, moderation } = setup();
+      await publish(
+        moderation,
+        record({ regionSlug, metadata: { [key]: value } }),
+      );
+
+      await expect(
+        repository.list({
+          regionSlug,
+          filters: { [key]: value.toLowerCase() },
+          page: 1,
+          pageSize: 20,
+        }),
+      ).resolves.toMatchObject({ total: 1, items: [{ id: "gh-101" }] });
+    },
+  );
+
+  it("rejects filter keys that are not configured for the territory", async () => {
+    const { repository } = setup();
+
+    await expect(
+      repository.list({
+        regionSlug: "interview",
+        filters: { difficulty: "medium" },
+        page: 1,
+        pageSize: 20,
+      }),
+    ).rejects.toThrow("Unsupported content filter: difficulty");
+  });
+
   it("fails closed when stored metadata is not an object of strings", async () => {
     const { db, repository } = setup();
     db.prepare(

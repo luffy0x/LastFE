@@ -23,7 +23,7 @@ export default async function SubmissionPage({
     <main
       id="main-content"
       className="submission-page submission-page--form"
-      aria-labelledby="submission-title"
+      aria-labelledby="submission-page-title"
     >
       <nav className="submission-page__back" aria-label="返回导航">
         <Link href="/submit">返回投稿目录</Link>
@@ -31,7 +31,7 @@ export default async function SubmissionPage({
 
       <header className="submission-page__header">
         <span>INTAKE / {region.slug.toUpperCase()}</span>
-        <h1 id="submission-title">{region.label}投稿</h1>
+        <h1 id="submission-page-title">{region.label}投稿</h1>
         <p>{region.description} 请按字段提示整理可公开的信息。</p>
       </header>
 

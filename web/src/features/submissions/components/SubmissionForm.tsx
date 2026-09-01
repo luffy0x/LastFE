@@ -46,6 +46,7 @@ export function SubmissionForm({ region }: { region: RegionDefinition }) {
     isSubmitting,
     refreshChallenge,
     widgetRef,
+    verificationComplete,
   } = useSubmissionForm(region);
 
   return (
@@ -88,6 +89,9 @@ export function SubmissionForm({ region }: { region: RegionDefinition }) {
               auto="off"
               configuration={JSON.stringify({ hideFooter: true })}
             />
+            <p className="submission-verification__status" role="status">
+              {verificationComplete ? "验证完成" : "等待验证"}
+            </p>
           </div>
         ) : challengeError ? (
           <div className="submission-verification__error" role="alert">
