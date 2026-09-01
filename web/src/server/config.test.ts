@@ -39,6 +39,16 @@ describe("getSqlitePath", () => {
 });
 
 describe("getServerConfig", () => {
+  it("does not read required configuration while the module is imported", async () => {
+    vi.stubEnv("GITHUB_TOKEN", "");
+    vi.stubEnv("SQLITE_PATH", "");
+    vi.resetModules();
+
+    await expect(import("./config")).resolves.toHaveProperty(
+      "getServerConfig",
+    );
+  });
+
   it("normalizes the optional GitHub API base URL for Octokit", () => {
     vi.stubEnv("GITHUB_API_BASE_URL", " http://127.0.0.1:4010/ ");
     vi.stubEnv("GITHUB_TOKEN", "test-token");
@@ -50,5 +60,21 @@ describe("getServerConfig", () => {
     vi.stubEnv("SQLITE_PATH", "test.sqlite");
 
     expect(getServerConfig().github.apiBaseUrl).toBe("http://127.0.0.1:4010");
+  });
+
+  it("rejects a GitHub API base URL override in production", () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("GITHUB_API_BASE_URL", "https://github-proxy.example");
+    vi.stubEnv("GITHUB_TOKEN", "test-token");
+    vi.stubEnv("GITHUB_OWNER", "test-owner");
+    vi.stubEnv("GITHUB_REPO", "test-repository");
+    vi.stubEnv("GITHUB_WEBHOOK_SECRET", "test-webhook-secret");
+    vi.stubEnv("ALTCHA_HMAC_KEY", "test-altcha-key");
+    vi.stubEnv("RATE_LIMIT_HMAC_KEY", "test-rate-limit-key");
+    vi.stubEnv("SQLITE_PATH", "test.sqlite");
+
+    expect(getServerConfig).toThrow(
+      "GITHUB_API_BASE_URL is not allowed in production",
+    );
   });
 });

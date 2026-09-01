@@ -18,6 +18,8 @@ type ReconciliationWebhookTransportDependencies = {
 type WebhookResponse = { ok: true; result: SyncResult };
 
 export class ReconciliationWebhookError extends Error {
+  readonly code = "WEBHOOK" as const;
+
   constructor() {
     super("Reconciliation webhook delivery failed (WEBHOOK)");
     this.name = "ReconciliationWebhookError";
@@ -25,7 +27,21 @@ export class ReconciliationWebhookError extends Error {
 }
 
 function bodyFor(issue: GitHubIssueSnapshot): string {
+  if (issue.review.source !== "reconciliation") {
+    throw new ReconciliationWebhookError();
+  }
   return JSON.stringify({
+    action: "reconciled",
+    reconciliation: {
+      latest_relevant_event: issue.review.latestRelevantEvent
+        ? {
+            id: issue.review.latestRelevantEvent.id,
+            action: issue.review.latestRelevantEvent.action,
+            label: issue.review.latestRelevantEvent.label,
+            created_at: issue.review.latestRelevantEvent.createdAt,
+          }
+        : null,
+    },
     issue: {
       number: issue.number,
       title: issue.title,
@@ -49,7 +65,8 @@ function isWebhookResponse(value: unknown): value is WebhookResponse {
       value.result === "withdrawn" ||
       value.result === "rejected" ||
       value.result === "ignored" ||
-      value.result === "duplicate")
+      value.result === "duplicate" ||
+      value.result === "stale")
   );
 }
 

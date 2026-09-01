@@ -8,6 +8,15 @@ import { createWebhookHandler, createWebhookRoute } from "./route";
 const SECRET = "webhook-secret";
 const VALID_PAYLOAD = {
   action: "labeled",
+  label: {
+    id: 3,
+    node_id: "label-3",
+    url: "https://example.invalid/3",
+    name: "approved",
+    color: "fff",
+    default: false,
+    description: null,
+  },
   issue: {
     number: 101,
     title: "[interview] 字节跳动/基础架构 · 后端开发",
@@ -75,6 +84,28 @@ describe("GitHub webhook route", () => {
     expect(loadHandler).toHaveBeenCalledTimes(2);
   });
 
+  it("shares one in-flight production initialization across concurrent requests", async () => {
+    type Handler = (request: Request) => Promise<Response>;
+    let resolveHandler!: (handler: Handler) => void;
+    const loading = new Promise<Handler>((resolve) => {
+      resolveHandler = resolve;
+    });
+    const loadHandler = vi.fn(() => loading);
+    const endpoint = createWebhookRoute(loadHandler);
+    const incoming = new Request("http://localhost/api/github/webhook", {
+      method: "POST",
+    });
+
+    const first = endpoint(incoming.clone());
+    const second = endpoint(incoming.clone());
+    expect(loadHandler).toHaveBeenCalledTimes(1);
+
+    resolveHandler(async () => Response.json({ ok: true }));
+    await expect(first).resolves.toMatchObject({ status: 200 });
+    await expect(second).resolves.toMatchObject({ status: 200 });
+    expect(loadHandler).toHaveBeenCalledTimes(1);
+  });
+
   it("verifies raw bytes and synchronizes an issues delivery", async () => {
     const raw = new TextEncoder().encode(JSON.stringify(VALID_PAYLOAD));
     const { handler, synchronize } = setup();
@@ -96,6 +127,11 @@ describe("GitHub webhook route", () => {
         state: "open",
         createdAt: "2026-09-01T08:00:00.000Z",
         updatedAt: "2026-09-01T08:05:00.000Z",
+        review: {
+          source: "webhook",
+          action: "labeled",
+          changedLabel: "approved",
+        },
       },
       "delivery-1",
     );

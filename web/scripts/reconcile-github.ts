@@ -31,6 +31,11 @@ async function main(): Promise<void> {
         return github.listSubmissionIssues(page);
       },
       syncIssue: webhook.syncIssue,
+      onFailure: ({ issueNumber, category }) => {
+        console.error(
+          `GitHub reconciliation issue #${issueNumber} failed (${category}).`,
+        );
+      },
     });
 
     console.info(

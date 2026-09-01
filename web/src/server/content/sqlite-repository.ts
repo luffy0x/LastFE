@@ -17,13 +17,28 @@ import {
 
 type PublishedContent = ContentRecord & { githubIssueNumber: number };
 
+export type ModerationOrdering = {
+  updatedAt: string;
+  snapshotIdentity: string;
+  authoritative: boolean;
+};
+
 export type ContentSyncCommand =
-  | { deliveryId: string; action: "publish"; record: PublishedContent }
-  | { deliveryId: string; action: "withdraw"; issueNumber: number; updatedAt: string }
-  | { deliveryId: string; action: "reject" | "ignore"; issueNumber: number };
+  | {
+      deliveryId: string;
+      action: "publish";
+      record: PublishedContent;
+      ordering: ModerationOrdering;
+    }
+  | {
+      deliveryId: string;
+      action: "withdraw" | "reject" | "ignore";
+      issueNumber: number;
+      ordering: ModerationOrdering;
+    };
 
 export interface ContentModerationStore {
-  apply(command: ContentSyncCommand): Promise<"applied" | "duplicate">;
+  apply(command: ContentSyncCommand): Promise<"applied" | "duplicate" | "stale">;
 }
 
 type ContentRow = {
@@ -199,50 +214,86 @@ export function createSqliteContentStores(database: SqliteDatabase): {
   };
 
   const apply = database.transaction((command: ContentSyncCommand) => {
+    const issueNumber =
+      command.action === "publish"
+        ? command.record.githubIssueNumber
+        : command.issueNumber;
+    const decision =
+      command.action === "publish"
+        ? "published"
+        : command.action === "withdraw"
+          ? "withdrawn"
+          : command.action === "reject"
+            ? "rejected"
+            : "ignored";
+    const incomingTimestamp = Date.parse(command.ordering.updatedAt);
+    if (
+      !Number.isFinite(incomingTimestamp) ||
+      !command.ordering.snapshotIdentity.trim()
+    ) {
+      throw new Error("Invalid moderation ordering key");
+    }
+
+    const current = database
+      .prepare(
+        `SELECT updated_at, snapshot_identity
+         FROM moderation_issue_states
+         WHERE github_issue_number = ?`,
+      )
+      .get(issueNumber) as
+      | { updated_at: string; snapshot_identity: string }
+      | undefined;
     const delivery = database
       .prepare("INSERT OR IGNORE INTO webhook_deliveries (delivery_id, processed_at) VALUES (?, ?)")
       .run(command.deliveryId, new Date().toISOString());
-    if (delivery.changes === 0) return "duplicate" as const;
-
-    if (command.action === "reject" || command.action === "ignore") {
-      return "applied" as const;
+    if (delivery.changes === 0) {
+      const stillCurrent =
+        current &&
+        incomingTimestamp === Date.parse(current.updated_at) &&
+        command.ordering.snapshotIdentity === current.snapshot_identity;
+      return stillCurrent ? ("duplicate" as const) : ("stale" as const);
+    }
+    if (current) {
+      const currentTimestamp = Date.parse(current.updated_at);
+      const isOlder = incomingTimestamp < currentTimestamp;
+      const isUnresolvedTie =
+        incomingTimestamp === currentTimestamp &&
+        (!command.ordering.authoritative ||
+          command.ordering.snapshotIdentity === current.snapshot_identity);
+      if (isOlder || isUnresolvedTie) return "stale" as const;
     }
 
-    if (command.action === "withdraw") {
-      const state = database
-        .prepare(
-          `INSERT INTO moderation_issue_states (github_issue_number, status, updated_at)
-           VALUES (?, 'withdrawn', ?)
-           ON CONFLICT(github_issue_number) DO UPDATE SET
-             status = excluded.status,
-             updated_at = excluded.updated_at
-           WHERE excluded.updated_at > moderation_issue_states.updated_at`,
-        )
-        .run(command.issueNumber, command.updatedAt);
-      if (state.changes === 0) return "applied" as const;
-      database
-        .prepare(
-          `UPDATE contents
-           SET status = 'withdrawn', updated_at = ?
-           WHERE github_issue_number = ? AND updated_at < ?`,
-        )
-        .run(command.updatedAt, command.issueNumber, command.updatedAt);
-      return "applied" as const;
-    }
-
-    if (command.action !== "publish") return "applied" as const;
-    const content = command.record;
-    const state = database
+    database
       .prepare(
-        `INSERT INTO moderation_issue_states (github_issue_number, status, updated_at)
-         VALUES (?, 'published', ?)
+        `INSERT INTO moderation_issue_states (
+           github_issue_number, decision, updated_at, snapshot_identity
+         ) VALUES (?, ?, ?, ?)
          ON CONFLICT(github_issue_number) DO UPDATE SET
-           status = excluded.status,
-           updated_at = excluded.updated_at
-         WHERE excluded.updated_at > moderation_issue_states.updated_at`,
+           decision = excluded.decision,
+           updated_at = excluded.updated_at,
+           snapshot_identity = excluded.snapshot_identity`,
       )
-      .run(content.githubIssueNumber, content.updatedAt);
-    if (state.changes === 0) return "applied" as const;
+      .run(
+        issueNumber,
+        decision,
+        command.ordering.updatedAt,
+        command.ordering.snapshotIdentity,
+      );
+
+    if (command.action !== "publish") {
+      if (command.action === "withdraw" || command.action === "reject") {
+        database
+          .prepare(
+            `UPDATE contents
+             SET status = 'withdrawn', updated_at = ?
+             WHERE github_issue_number = ?`,
+          )
+          .run(command.ordering.updatedAt, command.issueNumber);
+      }
+      return "applied" as const;
+    }
+
+    const content = command.record;
     const transition = database
       .prepare(
         `INSERT INTO contents (
@@ -259,8 +310,7 @@ export function createSqliteContentStores(database: SqliteDatabase): {
           external_url = excluded.external_url,
           metadata_json = excluded.metadata_json,
           created_at = excluded.created_at,
-          updated_at = excluded.updated_at
-        WHERE excluded.updated_at > contents.updated_at`,
+          updated_at = excluded.updated_at`,
       )
       .run(
         content.id,

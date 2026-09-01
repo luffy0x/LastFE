@@ -367,25 +367,47 @@ test.describe.serial("anonymous moderation flow", () => {
       action: "unlabeled",
       label: { name: "unpublish" },
     });
-    await expect(first.json()).resolves.toEqual({ ok: true, result: "published" });
-    const reopened = await mutateIssue(request, unlabeled, {
-      labels: ["submission", "region:interview", "approved", "published"],
-      state: "open",
+    await expect(first.json()).resolves.toEqual({ ok: true, result: "withdrawn" });
+    const stillHidden = await page.goto(`/content/gh-${original.number}`);
+    expect(stillHidden?.status()).toBe(404);
+
+    const approvalRemoved = await mutateIssue(request, unlabeled, {
+      labels: ["submission", "region:interview", "published"],
+      state: "closed",
       updated_at: "2026-09-02T03:00:00.000Z",
     });
-    const reopenedDelivery = await deliverIssue(
+    const removal = await deliverIssue(
       request,
-      reopened,
-      "e2e-republish-reopened",
-      { action: "reopened" },
+      approvalRemoved,
+      "e2e-republish-approved-removed",
+      { action: "unlabeled", label: { name: "approved" } },
     );
-    await expect(reopenedDelivery.json()).resolves.toEqual({
+    await expect(removal.json()).resolves.toEqual({
+      ok: true,
+      result: "rejected",
+    });
+
+    const reapproved = await mutateIssue(request, approvalRemoved, {
+      labels: ["submission", "region:interview", "approved", "published"],
+      state: "closed",
+      updated_at: "2026-09-02T04:00:00.000Z",
+    });
+    const reapproval = await deliverIssue(
+      request,
+      reapproved,
+      "e2e-republish-approved-readded",
+      { action: "labeled", label: { name: "approved" } },
+    );
+    await expect(reapproval.json()).resolves.toEqual({
       ok: true,
       result: "published",
     });
-    const duplicate = await deliverIssue(request, reopened, "e2e-republish-reopened", {
-      action: "reopened",
-    });
+    const duplicate = await deliverIssue(
+      request,
+      reapproved,
+      "e2e-republish-approved-readded",
+      { action: "labeled", label: { name: "approved" } },
+    );
     await expect(duplicate.json()).resolves.toEqual({ ok: true, result: "duplicate" });
 
     await page.goto(`/content/gh-${original.number}`);

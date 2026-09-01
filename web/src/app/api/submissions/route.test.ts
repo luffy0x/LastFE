@@ -3,12 +3,11 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { AbuseStoreError } from "@/server/security/abuse-store";
 
-import {
-  createSubmissionHandler,
-  POST,
-  type AbuseStore,
-  type SubmissionQueue,
-} from "./route";
+import * as submissionRoute from "./route";
+
+const { createSubmissionHandler, POST } = submissionRoute;
+type AbuseStore = import("./route").AbuseStore;
+type SubmissionQueue = import("./route").SubmissionQueue;
 
 const VALID_INTERVIEW_INPUT = {
   regionSlug: "interview",
@@ -380,5 +379,58 @@ describe("createSubmissionHandler", () => {
       code: "UPSTREAM",
     });
     vi.unstubAllEnvs();
+  });
+});
+
+describe("createSubmissionRoute", () => {
+  type Handler = (request: Request) => Promise<Response>;
+  type RouteFactory = (loadHandler: () => Promise<Handler>) => Handler;
+
+  function routeFactory(): RouteFactory {
+    const factory = (
+      submissionRoute as typeof submissionRoute & {
+        createSubmissionRoute?: RouteFactory;
+      }
+    ).createSubmissionRoute;
+    expect(factory).toBeTypeOf("function");
+    if (!factory) throw new Error("createSubmissionRoute is unavailable");
+    return factory;
+  }
+
+  it("retries initialization after one transient failure", async () => {
+    const loadHandler = vi
+      .fn<() => Promise<Handler>>()
+      .mockRejectedValueOnce(new Error("temporary database failure"))
+      .mockResolvedValueOnce(async () => Response.json({ ok: true }));
+    const endpoint = routeFactory()(loadHandler);
+    const incoming = makeRequest(VALID_INTERVIEW_INPUT);
+
+    const failed = await endpoint(incoming.clone());
+    const retried = await endpoint(incoming.clone());
+    const cached = await endpoint(incoming.clone());
+
+    expect(failed.status).toBe(503);
+    expect(retried.status).toBe(200);
+    expect(cached.status).toBe(200);
+    expect(loadHandler).toHaveBeenCalledTimes(2);
+  });
+
+  it("shares one in-flight initialization across concurrent requests", async () => {
+    let resolveHandler!: (handler: Handler) => void;
+    const loading = new Promise<Handler>((resolve) => {
+      resolveHandler = resolve;
+    });
+    const loadHandler = vi.fn(() => loading);
+    const endpoint = routeFactory()(loadHandler);
+    const incoming = makeRequest(VALID_INTERVIEW_INPUT);
+
+    const first = endpoint(incoming.clone());
+    const second = endpoint(incoming.clone());
+    expect(loadHandler).toHaveBeenCalledTimes(1);
+
+    resolveHandler(async () => Response.json({ ok: true }));
+    await expect(first).resolves.toMatchObject({ status: 200 });
+    await expect(second).resolves.toMatchObject({ status: 200 });
+    expect(loadHandler).toHaveBeenCalledTimes(1);
   });
 });

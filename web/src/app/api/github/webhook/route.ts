@@ -2,12 +2,12 @@ import { revalidatePath } from "next/cache";
 
 import { getServerConfig } from "@/server/config";
 import { createSqliteContentStores } from "@/server/content/sqlite-repository";
-import { openDatabase } from "@/server/db/client";
-import { migrate } from "@/server/db/migrate";
+import { initializeDatabase } from "@/server/db/migrate";
 import { GitHubSubmissionQueue } from "@/server/github/submission-queue";
 import {
   syncIssue,
   type GitHubIssueSnapshot,
+  type GitHubReviewEvidence,
   type SyncResult,
 } from "@/server/github/sync-issue";
 import { verifyGitHubSignature } from "@/server/github/verify-webhook";
@@ -89,19 +89,86 @@ function labelsFrom(value: unknown): string[] | null {
   return labels;
 }
 
+function normalizeWebhookReview(
+  payload: Record<string, unknown>,
+): GitHubReviewEvidence | null {
+  const action = payload.action;
+  if (typeof action !== "string" || !action.trim()) return null;
+
+  if (action === "reconciled") {
+    const reconciliation = payload.reconciliation;
+    if (
+      !reconciliation ||
+      Array.isArray(reconciliation) ||
+      typeof reconciliation !== "object"
+    ) {
+      return null;
+    }
+    const latest = (reconciliation as Record<string, unknown>)
+      .latest_relevant_event;
+    if (latest === null) {
+      return { source: "reconciliation", latestRelevantEvent: null };
+    }
+    if (!latest || Array.isArray(latest) || typeof latest !== "object") {
+      return null;
+    }
+    const value = latest as Record<string, unknown>;
+    if (
+      typeof value.id !== "string" ||
+      !value.id ||
+      (value.action !== "labeled" && value.action !== "unlabeled") ||
+      (value.label !== "approved" && value.label !== "unpublish") ||
+      typeof value.created_at !== "string" ||
+      !Number.isFinite(Date.parse(value.created_at))
+    ) {
+      return null;
+    }
+    return {
+      source: "reconciliation",
+      latestRelevantEvent: {
+        id: value.id,
+        action: value.action,
+        label: value.label,
+        createdAt: value.created_at,
+      },
+    };
+  }
+
+  let changedLabel: string | null = null;
+  if (action === "labeled" || action === "unlabeled") {
+    const label = payload.label;
+    if (
+      !label ||
+      Array.isArray(label) ||
+      typeof label !== "object" ||
+      !("name" in label) ||
+      typeof label.name !== "string" ||
+      !label.name
+    ) {
+      return null;
+    }
+    changedLabel = label.name;
+  }
+
+  return { source: "webhook", action, changedLabel };
+}
+
 function normalizeIssue(payload: unknown): GitHubIssueSnapshot | null {
   if (!payload || Array.isArray(payload) || typeof payload !== "object") return null;
-  const issue = (payload as Record<string, unknown>).issue;
+  const payloadRecord = payload as Record<string, unknown>;
+  const issue = payloadRecord.issue;
   if (!issue || Array.isArray(issue) || typeof issue !== "object") return null;
 
   const value = issue as Record<string, unknown>;
   const labels = labelsFrom(value.labels);
+  const review = normalizeWebhookReview(payloadRecord);
   if (
     !Number.isSafeInteger(value.number) ||
     (value.number as number) < 1 ||
     typeof value.title !== "string" ||
     typeof value.body !== "string" ||
     !labels ||
+    !review ||
     (value.state !== "open" && value.state !== "closed") ||
     typeof value.created_at !== "string" ||
     !Number.isFinite(Date.parse(value.created_at)) ||
@@ -119,6 +186,7 @@ function normalizeIssue(payload: unknown): GitHubIssueSnapshot | null {
     state: value.state,
     createdAt: value.created_at,
     updatedAt: value.updated_at,
+    review,
   };
 }
 
@@ -190,22 +258,22 @@ type WebhookHandler = ReturnType<typeof createWebhookHandler>;
 
 async function createProductionHandler(): Promise<WebhookHandler> {
   const config = getServerConfig();
-  const database = openDatabase(config.sqlitePath);
-  migrate(database);
-  const { moderation } = createSqliteContentStores(database);
-  const github = new GitHubSubmissionQueue();
+  return initializeDatabase(config.sqlitePath, (database) => {
+    const { moderation } = createSqliteContentStores(database);
+    const github = new GitHubSubmissionQueue();
 
-  return createWebhookHandler({
-    webhookSecret: config.githubWebhookSecret,
-    synchronize: (issue, deliveryId) =>
-      syncIssue(issue, deliveryId, {
-        moderation,
-        ensureReviewState: (issueNumber, decision) =>
-          github.ensureReviewState(issueNumber, decision),
-        invalidate: async (paths) => {
-          for (const path of paths) revalidatePath(path);
-        },
-      }),
+    return createWebhookHandler({
+      webhookSecret: config.githubWebhookSecret,
+      synchronize: (issue, deliveryId) =>
+        syncIssue(issue, deliveryId, {
+          moderation,
+          ensureReviewState: (issueNumber, decision) =>
+            github.ensureReviewState(issueNumber, decision),
+          invalidate: async (paths) => {
+            for (const path of paths) revalidatePath(path);
+          },
+        }),
+    });
   });
 }
 

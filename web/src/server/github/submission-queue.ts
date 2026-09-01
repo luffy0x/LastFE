@@ -9,7 +9,49 @@ import {
   decideModerationState,
   type GitHubIssueSnapshot,
   type ModerationDecision,
+  type ReviewRelevantEvent,
 } from "./sync-issue";
+
+const REVIEW_EVENT_PAGE_SIZE = 100;
+
+function normalizeReviewEvent(value: unknown): ReviewRelevantEvent | null {
+  if (!value || Array.isArray(value) || typeof value !== "object") return null;
+  const event = value as Record<string, unknown>;
+  if (event.event !== "labeled" && event.event !== "unlabeled") return null;
+  const label = event.label;
+  if (!label || Array.isArray(label) || typeof label !== "object") return null;
+  const name = (label as Record<string, unknown>).name;
+  if (name !== "approved" && name !== "unpublish") return null;
+  if (
+    (typeof event.id !== "number" && typeof event.id !== "string") ||
+    typeof event.created_at !== "string" ||
+    !Number.isFinite(Date.parse(event.created_at))
+  ) {
+    throw new Error("GitHub review history is invalid");
+  }
+  return {
+    id: String(event.id),
+    action: event.event,
+    label: name,
+    createdAt: event.created_at,
+  };
+}
+
+function isLaterReviewEvent(
+  candidate: ReviewRelevantEvent,
+  current: ReviewRelevantEvent | null,
+): boolean {
+  if (!current) return true;
+
+  const timestampDifference =
+    Date.parse(candidate.createdAt) - Date.parse(current.createdAt);
+  if (timestampDifference !== 0) return timestampDifference > 0;
+
+  if (/^\d+$/.test(candidate.id) && /^\d+$/.test(current.id)) {
+    return BigInt(candidate.id) > BigInt(current.id);
+  }
+  return candidate.id.localeCompare(current.id) > 0;
+}
 
 export class GitHubSubmissionQueue implements SubmissionQueue {
   constructor(private readonly client: GitHubClient = createGitHubClient()) {}
@@ -35,13 +77,33 @@ export class GitHubSubmissionQueue implements SubmissionQueue {
       per_page: 100,
     });
 
-    return response.data.items.map((issue) => {
+    const snapshots: GitHubIssueSnapshot[] = [];
+    for (const issue of response.data.items) {
       const labels = issue.labels.flatMap((label) => {
         if (typeof label === "string") return [label];
         return label.name ? [label.name] : [];
       });
+      let latestRelevantEvent: ReviewRelevantEvent | null = null;
+      if (labels.includes("approved") && !labels.includes("unpublish")) {
+        for (let eventPage = 1; ; eventPage += 1) {
+          const events = await this.client.octokit.rest.issues.listEvents({
+            owner: this.client.owner,
+            repo: this.client.repo,
+            issue_number: issue.number,
+            page: eventPage,
+            per_page: REVIEW_EVENT_PAGE_SIZE,
+          });
+          for (const value of events.data as unknown[]) {
+            const candidate = normalizeReviewEvent(value);
+            if (candidate && isLaterReviewEvent(candidate, latestRelevantEvent)) {
+              latestRelevantEvent = candidate;
+            }
+          }
+          if (events.data.length < REVIEW_EVENT_PAGE_SIZE) break;
+        }
+      }
 
-      return {
+      snapshots.push({
         number: issue.number,
         title: issue.title,
         body: issue.body ?? "",
@@ -49,8 +111,10 @@ export class GitHubSubmissionQueue implements SubmissionQueue {
         state: issue.state as GitHubIssueSnapshot["state"],
         createdAt: issue.created_at,
         updatedAt: issue.updated_at,
-      };
-    });
+        review: { source: "reconciliation", latestRelevantEvent },
+      });
+    }
+    return snapshots;
   }
 
   async ensureReviewState(

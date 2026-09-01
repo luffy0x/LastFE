@@ -4,8 +4,7 @@ import type {
   SubmissionResponse,
 } from "@/features/submissions/types";
 import { getServerConfig } from "@/server/config";
-import { openDatabase } from "@/server/db/client";
-import { migrate } from "@/server/db/migrate";
+import { initializeDatabaseAsync } from "@/server/db/migrate";
 import {
   AbuseStoreError,
   createSqliteAbuseStore,
@@ -199,34 +198,48 @@ export function createSubmissionHandler(
 }
 
 type SubmissionHandler = ReturnType<typeof createSubmissionHandler>;
-let productionHandlerPromise: Promise<SubmissionHandler> | undefined;
 
 async function createProductionHandler(): Promise<SubmissionHandler> {
   const config = getServerConfig();
-  const database = openDatabase(config.sqlitePath);
-  migrate(database);
-  const { GitHubSubmissionQueue } = await import(
-    "@/server/github/submission-queue"
-  );
+  return initializeDatabaseAsync(config.sqlitePath, async (database) => {
+    const { GitHubSubmissionQueue } = await import(
+      "@/server/github/submission-queue"
+    );
 
-  return createSubmissionHandler({
-    challenge: createAltchaChallengeService(
-      config.altchaHmacKey,
-      config.altchaMaxNumber,
-    ),
-    abuse: createSqliteAbuseStore(database),
-    queue: new GitHubSubmissionQueue(),
-    hashSource: createSourceHasher(config.rateLimitHmacKey),
-    now: () => new Date(),
+    return createSubmissionHandler({
+      challenge: createAltchaChallengeService(
+        config.altchaHmacKey,
+        config.altchaMaxNumber,
+      ),
+      abuse: createSqliteAbuseStore(database),
+      queue: new GitHubSubmissionQueue(),
+      hashSource: createSourceHasher(config.rateLimitHmacKey),
+      now: () => new Date(),
+    });
   });
 }
 
-export async function POST(request: Request): Promise<Response> {
-  try {
-    productionHandlerPromise ??= createProductionHandler();
-    const handler = await productionHandlerPromise;
-    return handler(request);
-  } catch {
-    return upstreamResponse();
-  }
+export function createSubmissionRoute(
+  loadHandler: () => Promise<SubmissionHandler>,
+): (request: Request) => Promise<Response> {
+  let handler: SubmissionHandler | undefined;
+  let loading: Promise<SubmissionHandler> | undefined;
+
+  return async (request) => {
+    try {
+      if (!handler) {
+        loading ??= loadHandler();
+        try {
+          handler = await loading;
+        } finally {
+          loading = undefined;
+        }
+      }
+      return handler(request);
+    } catch {
+      return upstreamResponse();
+    }
+  };
 }
+
+export const POST = createSubmissionRoute(createProductionHandler);

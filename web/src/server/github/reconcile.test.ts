@@ -21,6 +21,15 @@ const changedIssue = (number: number, updatedAt = `2026-09-01T08:0${number}:00.0
   state: "open",
   createdAt: "2026-09-01T08:00:00.000Z",
   updatedAt,
+  review: {
+    source: "reconciliation",
+    latestRelevantEvent: {
+      id: `event-${number}`,
+      action: "labeled",
+      label: "approved",
+      createdAt: updatedAt,
+    },
+  },
 });
 
 const TEST_RECONCILE_DEPS: ReconcileDependencies = {
@@ -40,12 +49,19 @@ describe("reconcileIssues", () => {
   it("syncs every changed submission issue and reports failures", async () => {
     const report = await reconcileIssues(TEST_RECONCILE_DEPS);
 
-    expect(report).toEqual({ scanned: 3, synced: 2, failed: 1 });
+    expect(report).toEqual({
+      scanned: 3,
+      synced: 2,
+      failed: 1,
+      failures: [{ issueNumber: 3, category: "UNKNOWN" }],
+    });
     expect(TEST_RECONCILE_DEPS.syncIssue).toHaveBeenCalledTimes(3);
     expect(TEST_RECONCILE_DEPS.syncIssue).toHaveBeenNthCalledWith(
       1,
       changedIssue(1),
-      "reconcile:1:2026-09-01T08:01:00.000Z",
+      expect.stringMatching(
+        /^reconcile:1:2026-09-01T08:01:00\.000Z:[a-f0-9]{64}$/,
+      ),
     );
   });
 
@@ -63,11 +79,13 @@ describe("reconcileIssues", () => {
         listIssues,
         syncIssue,
       }),
-    ).resolves.toEqual({ scanned: 1, synced: 1, failed: 0 });
+    ).resolves.toEqual({ scanned: 1, synced: 1, failed: 0, failures: [] });
     expect(listIssues).toHaveBeenCalledExactlyOnceWith(1, 100);
     expect(syncIssue).toHaveBeenCalledExactlyOnceWith(
       changedIssue(4, "2026-09-01T08:04:00.000Z"),
-      "reconcile:4:2026-09-01T08:04:00.000Z",
+      expect.stringMatching(
+        /^reconcile:4:2026-09-01T08:04:00\.000Z:[a-f0-9]{64}$/,
+      ),
     );
   });
 
@@ -87,11 +105,98 @@ describe("reconcileIssues", () => {
           .mockResolvedValueOnce([]),
         syncIssue,
       }),
-    ).resolves.toEqual({ scanned: 2, synced: 1, failed: 1 });
+    ).resolves.toEqual({
+      scanned: 2,
+      synced: 1,
+      failed: 1,
+      failures: [{ issueNumber: 4, category: "INVALID_TIMESTAMP" }],
+    });
     expect(syncIssue).toHaveBeenCalledExactlyOnceWith(
       validIssue,
-      "reconcile:5:2026-09-01T08:05:00.000Z",
+      expect.stringMatching(
+        /^reconcile:5:2026-09-01T08:05:00\.000Z:[a-f0-9]{64}$/,
+      ),
     );
+  });
+
+  it("uses distinct opaque delivery identities for different same-second snapshots", async () => {
+    const updatedAt = "2026-09-01T08:05:00.000Z";
+    const removedUnpublish: GitHubIssueSnapshot = {
+      ...changedIssue(8, updatedAt),
+      title: "private title must not enter the delivery id",
+      body: "private body and https://private.example/issue/8",
+      review: {
+        source: "reconciliation",
+        latestRelevantEvent: {
+          id: "event-unpublish-removed",
+          action: "unlabeled",
+          label: "unpublish",
+          createdAt: updatedAt,
+        },
+      },
+    };
+    const reapproved: GitHubIssueSnapshot = {
+      ...removedUnpublish,
+      review: {
+        source: "reconciliation",
+        latestRelevantEvent: {
+          id: "event-approved-again",
+          action: "labeled",
+          label: "approved",
+          createdAt: updatedAt,
+        },
+      },
+    };
+    const syncIssue = vi.fn().mockResolvedValue("published");
+
+    await reconcileIssues({
+      since: "2026-09-01T07:00:00.000Z",
+      listIssues: vi
+        .fn()
+        .mockResolvedValueOnce([removedUnpublish, reapproved])
+        .mockResolvedValueOnce([]),
+      syncIssue,
+    });
+
+    const deliveryIds = syncIssue.mock.calls.map(([, deliveryId]) => deliveryId);
+    expect(new Set(deliveryIds).size).toBe(2);
+    for (const deliveryId of deliveryIds) {
+      expect(deliveryId).toMatch(
+        /^reconcile:8:2026-09-01T08:05:00\.000Z:[a-f0-9]{64}$/,
+      );
+      expect(deliveryId).not.toContain("private");
+      expect(deliveryId).not.toContain("https://");
+    }
+  });
+
+  it("emits only the issue number and safe category at the operator boundary", async () => {
+    const onFailure = vi.fn();
+    const privateIssue = {
+      ...changedIssue(12, "2026-09-01T08:12:00.000Z"),
+      title: "private title",
+      body: "private body with token and https://private.example/12",
+    };
+    const dependencies = {
+      since: "2026-09-01T07:00:00.000Z",
+      listIssues: vi
+        .fn()
+        .mockResolvedValueOnce([privateIssue])
+        .mockResolvedValueOnce([]),
+      syncIssue: vi.fn().mockRejectedValue(
+        Object.assign(new Error(privateIssue.body), { code: "DATABASE" }),
+      ),
+      onFailure,
+    };
+
+    await reconcileIssues(dependencies);
+
+    expect(onFailure).toHaveBeenCalledExactlyOnceWith({
+      issueNumber: 12,
+      category: "DATABASE",
+    });
+    expect(JSON.stringify(onFailure.mock.calls)).not.toContain("private");
+    expect(JSON.stringify(onFailure.mock.calls)).not.toContain("token");
+    expect(JSON.stringify(onFailure.mock.calls)).not.toContain("https://");
   });
 });
 
@@ -114,7 +219,12 @@ describe("reconcileFromCursor", () => {
       syncIssue: vi.fn().mockResolvedValue("published"),
     });
 
-    expect(report).toEqual({ scanned: 1, synced: 1, failed: 0 });
+    expect(report).toEqual({
+      scanned: 1,
+      synced: 1,
+      failed: 0,
+      failures: [],
+    });
     expect(listIssues).toHaveBeenNthCalledWith(1, 1, 100);
     expect(listIssues).toHaveBeenNthCalledWith(2, 2, 100);
     await expect(cursorStore.read("github-issues")).resolves.toBe(
@@ -139,7 +249,13 @@ describe("reconcileFromCursor", () => {
       syncIssue: vi.fn().mockRejectedValue(new Error("private issue body")),
     });
 
-    expect(report).toEqual({ scanned: 1, synced: 0, failed: 1 });
+    expect(report).toEqual({
+      scanned: 1,
+      synced: 0,
+      failed: 1,
+      failures: [{ issueNumber: 9, category: "UNKNOWN" }],
+    });
+    expect(JSON.stringify(report)).not.toContain("private issue body");
     await expect(cursorStore.read("github-issues")).resolves.toBe(
       "2026-09-01T08:00:00.000Z",
     );

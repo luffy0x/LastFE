@@ -23,7 +23,19 @@ const submission = (position = "后端开发") =>
   });
 
 function issue(
-  overrides: Partial<GitHubIssueSnapshot> = {},
+  overrides: Partial<GitHubIssueSnapshot> & {
+    review?:
+      | { source: "webhook"; action: string; changedLabel: string | null }
+      | {
+          source: "reconciliation";
+          latestRelevantEvent: {
+            id: string;
+            action: "labeled" | "unlabeled";
+            label: "approved" | "unpublish";
+            createdAt: string;
+          } | null;
+        };
+  } = {},
 ): GitHubIssueSnapshot {
   const encoded = encodeIssue(submission());
   return {
@@ -34,8 +46,13 @@ function issue(
     state: "open",
     createdAt: "2026-09-01T08:00:00.000Z",
     updatedAt: "2026-09-01T08:05:00.000Z",
+    review: {
+      source: "webhook",
+      action: "labeled",
+      changedLabel: "approved",
+    },
     ...overrides,
-  };
+  } as GitHubIssueSnapshot;
 }
 
 function fakeDependencies(
@@ -71,6 +88,11 @@ describe("syncIssue", () => {
     expect(dependencies.moderation.apply).toHaveBeenLastCalledWith({
       deliveryId: "delivery-1",
       action: "publish",
+      ordering: {
+        updatedAt: "2026-09-01T08:05:00.000Z",
+        snapshotIdentity: expect.stringMatching(/^[a-f0-9]{64}$/),
+        authoritative: false,
+      },
       record: {
         id: "gh-101",
         githubIssueNumber: 101,
@@ -103,6 +125,59 @@ describe("syncIssue", () => {
       101,
       "published",
     );
+  });
+
+  it("does not run cache or GitHub repair for a stale database decision", async () => {
+    const dependencies = fakeDependencies(
+      vi.fn().mockResolvedValue("stale"),
+    );
+
+    await expect(
+      syncIssue(issue(), "stale-approved-delivery", dependencies),
+    ).resolves.toBe("stale");
+    expect(dependencies.invalidate).not.toHaveBeenCalled();
+    expect(dependencies.ensureReviewState).not.toHaveBeenCalled();
+  });
+
+  it("does not repair a duplicate delivery after a newer decision supersedes it", async () => {
+    const database = openDatabase(":memory:");
+    migrate(database);
+    const { moderation } = createSqliteContentStores(database);
+    const dependencies: SyncIssueDependencies = {
+      moderation,
+      ensureReviewState: vi.fn().mockResolvedValue(undefined),
+      invalidate: vi.fn().mockResolvedValue(undefined),
+    };
+    const approved = issue({ updatedAt: "2026-09-01T08:05:00.000Z" });
+
+    await syncIssue(approved, "superseded-approval", dependencies);
+    await syncIssue(
+      issue({
+        labels: [
+          "submission",
+          "region:interview",
+          "approved",
+          "unpublish",
+        ],
+        updatedAt: "2026-09-01T09:00:00.000Z",
+        review: {
+          source: "webhook",
+          action: "labeled",
+          changedLabel: "unpublish",
+        },
+      }),
+      "newer-withdrawal",
+      dependencies,
+    );
+    vi.mocked(dependencies.invalidate).mockClear();
+    vi.mocked(dependencies.ensureReviewState).mockClear();
+
+    await expect(
+      syncIssue(approved, "superseded-approval", dependencies),
+    ).resolves.toBe("stale");
+    expect(dependencies.invalidate).not.toHaveBeenCalled();
+    expect(dependencies.ensureReviewState).not.toHaveBeenCalled();
+    database.close();
   });
 
   it.each([
@@ -189,16 +264,20 @@ describe("syncIssue", () => {
       dependencies,
     );
 
-    expect(dependencies.moderation.apply).toHaveBeenCalledWith({
+    expect(dependencies.moderation.apply).toHaveBeenCalledWith(expect.objectContaining({
       deliveryId: `delivery-${regionSlug}`,
       action: "publish",
+      ordering: expect.objectContaining({
+        updatedAt: "2026-09-01T08:05:00.000Z",
+        authoritative: false,
+      }),
       record: expect.objectContaining({
         regionSlug,
         title: parsed.title,
         tags: parsed.tags,
         ...fields,
       }),
-    });
+    }));
   });
 
   it.each([
@@ -211,7 +290,6 @@ describe("syncIssue", () => {
         deliveryId: "delivery-state",
         action: "withdraw",
         issueNumber: 101,
-        updatedAt: "2026-09-01T08:05:00.000Z",
       },
     },
     {
@@ -243,7 +321,14 @@ describe("syncIssue", () => {
       syncIssue(issue({ labels, state }), "delivery-state", dependencies),
     ).resolves.toBe(decision);
 
-    expect(dependencies.moderation.apply).toHaveBeenCalledWith(command);
+    expect(dependencies.moderation.apply).toHaveBeenCalledWith({
+      ...command,
+      ordering: {
+        updatedAt: "2026-09-01T08:05:00.000Z",
+        snapshotIdentity: expect.stringMatching(/^[a-f0-9]{64}$/),
+        authoritative: false,
+      },
+    });
     expect(dependencies.ensureReviewState).toHaveBeenCalledWith(101, decision);
   });
 
@@ -313,6 +398,203 @@ describe("syncIssue", () => {
       publishedAt: "2026-09-01T08:05:00.000Z",
       updatedAt: "2026-09-01T11:00:00.000Z",
     });
+    database.close();
+  });
+
+  it("keeps content withdrawn until approved is explicitly removed and re-added", async () => {
+    const database = openDatabase(":memory:");
+    migrate(database);
+    const { repository, moderation } = createSqliteContentStores(database);
+    const dependencies: SyncIssueDependencies = {
+      moderation,
+      ensureReviewState: vi.fn().mockResolvedValue(undefined),
+      invalidate: vi.fn().mockResolvedValue(undefined),
+    };
+
+    await syncIssue(issue(), "explicit-approve", dependencies);
+    await syncIssue(
+      issue({
+        labels: ["submission", "region:interview", "approved", "unpublish"],
+        updatedAt: "2026-09-01T09:00:00.000Z",
+        review: {
+          source: "webhook",
+          action: "labeled",
+          changedLabel: "unpublish",
+        },
+      }),
+      "explicit-withdraw",
+      dependencies,
+    );
+
+    await expect(
+      syncIssue(
+        issue({
+          labels: ["submission", "region:interview", "approved"],
+          state: "closed",
+          updatedAt: "2026-09-01T10:00:00.000Z",
+          review: {
+            source: "webhook",
+            action: "unlabeled",
+            changedLabel: "unpublish",
+          },
+        }),
+        "remove-unpublish-only",
+        dependencies,
+      ),
+    ).resolves.toBe("withdrawn");
+    await expect(repository.get("gh-101")).resolves.toBeNull();
+
+    await expect(
+      syncIssue(
+        issue({
+          labels: ["submission", "region:interview"],
+          state: "closed",
+          updatedAt: "2026-09-01T11:00:00.000Z",
+          review: {
+            source: "webhook",
+            action: "unlabeled",
+            changedLabel: "approved",
+          },
+        }),
+        "remove-approved",
+        dependencies,
+      ),
+    ).resolves.toBe("rejected");
+    await expect(repository.get("gh-101")).resolves.toBeNull();
+
+    await expect(
+      syncIssue(
+        issue({
+          labels: ["submission", "region:interview", "approved"],
+          state: "closed",
+          updatedAt: "2026-09-01T12:00:00.000Z",
+          review: {
+            source: "webhook",
+            action: "labeled",
+            changedLabel: "approved",
+          },
+        }),
+        "readd-approved",
+        dependencies,
+      ),
+    ).resolves.toBe("published");
+    await expect(repository.get("gh-101")).resolves.toMatchObject({
+      status: "published",
+      updatedAt: "2026-09-01T12:00:00.000Z",
+    });
+    database.close();
+  });
+
+  it("uses reconciliation review history instead of an approved snapshot alone", async () => {
+    const database = openDatabase(":memory:");
+    migrate(database);
+    const { repository, moderation } = createSqliteContentStores(database);
+    const dependencies: SyncIssueDependencies = {
+      moderation,
+      ensureReviewState: vi.fn().mockResolvedValue(undefined),
+      invalidate: vi.fn().mockResolvedValue(undefined),
+    };
+
+    await syncIssue(issue(), "history-approve", dependencies);
+    await syncIssue(
+      issue({
+        labels: ["submission", "region:interview", "approved", "unpublish"],
+        updatedAt: "2026-09-01T09:00:00.000Z",
+        review: {
+          source: "webhook",
+          action: "labeled",
+          changedLabel: "unpublish",
+        },
+      }),
+      "history-withdraw",
+      dependencies,
+    );
+
+    const removedUnpublish = issue({
+      labels: ["submission", "region:interview", "approved"],
+      state: "closed",
+      updatedAt: "2026-09-01T10:00:00.000Z",
+      review: {
+        source: "reconciliation",
+        latestRelevantEvent: {
+          id: "9001",
+          action: "unlabeled",
+          label: "unpublish",
+          createdAt: "2026-09-01T10:00:00.000Z",
+        },
+      },
+    });
+    await expect(
+      syncIssue(removedUnpublish, "history-unpublish-removed", dependencies),
+    ).resolves.toBe("withdrawn");
+    await expect(repository.get("gh-101")).resolves.toBeNull();
+
+    await expect(
+      syncIssue(
+        issue({
+          ...removedUnpublish,
+          updatedAt: "2026-09-01T11:00:00.000Z",
+          review: {
+            source: "reconciliation",
+            latestRelevantEvent: {
+              id: "9002",
+              action: "labeled",
+              label: "approved",
+              createdAt: "2026-09-01T11:00:00.000Z",
+            },
+          },
+        }),
+        "history-approved-again",
+        dependencies,
+      ),
+    ).resolves.toBe("published");
+    await expect(repository.get("gh-101")).resolves.toMatchObject({
+      status: "published",
+    });
+    database.close();
+  });
+
+  it("uses authoritative same-second history to recover a missed withdrawal", async () => {
+    const database = openDatabase(":memory:");
+    migrate(database);
+    const { repository, moderation } = createSqliteContentStores(database);
+    const dependencies: SyncIssueDependencies = {
+      moderation,
+      ensureReviewState: vi.fn().mockResolvedValue(undefined),
+      invalidate: vi.fn().mockResolvedValue(undefined),
+    };
+    const updatedAt = "2026-09-01T10:00:00.000Z";
+
+    await syncIssue(
+      issue({ updatedAt }),
+      "out-of-order-approval",
+      dependencies,
+    );
+    await expect(repository.get("gh-101")).resolves.toMatchObject({
+      status: "published",
+    });
+
+    await expect(
+      syncIssue(
+        issue({
+          labels: ["submission", "region:interview", "approved"],
+          state: "closed",
+          updatedAt,
+          review: {
+            source: "reconciliation",
+            latestRelevantEvent: {
+              id: "9003",
+              action: "unlabeled",
+              label: "unpublish",
+              createdAt: updatedAt,
+            },
+          },
+        }),
+        "reconcile-missed-withdrawal",
+        dependencies,
+      ),
+    ).resolves.toBe("withdrawn");
+    await expect(repository.get("gh-101")).resolves.toBeNull();
     database.close();
   });
 

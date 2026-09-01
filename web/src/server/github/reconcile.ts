@@ -6,6 +6,10 @@ import type {
   GitHubIssueSnapshot,
   SyncResult,
 } from "./sync-issue";
+import {
+  moderationDecisionFor,
+  moderationSnapshotIdentity,
+} from "./sync-issue";
 
 export type { GitHubIssueSnapshot } from "./sync-issue";
 export type { ReconciliationCursorStore } from "@/server/db/client";
@@ -17,12 +21,28 @@ export type ReconcileDependencies = {
     perPage: number,
   ): Promise<readonly GitHubIssueSnapshot[]>;
   syncIssue(issue: GitHubIssueSnapshot, deliveryId: string): Promise<SyncResult>;
+  onFailure?(failure: ReconcileFailure): void;
 };
 
 export type ReconcileReport = {
   scanned: number;
   synced: number;
   failed: number;
+  failures: readonly ReconcileFailure[];
+};
+
+export type ReconcileFailureCategory =
+  | "INVALID_TIMESTAMP"
+  | "INVALID_ISSUE"
+  | "DATABASE"
+  | "CACHE"
+  | "GITHUB"
+  | "WEBHOOK"
+  | "UNKNOWN";
+
+export type ReconcileFailure = {
+  issueNumber: number;
+  category: ReconcileFailureCategory;
 };
 
 type ReconcileFromCursorDependencies = Omit<ReconcileDependencies, "since"> & {
@@ -33,6 +53,13 @@ type ReconcileFromCursorDependencies = Omit<ReconcileDependencies, "since"> & {
 const CURSOR_NAME = "github-issues";
 const FIRST_RECONCILIATION_CURSOR = new Date(0).toISOString();
 const PAGE_SIZE = 100;
+const SAFE_FAILURE_CATEGORIES = new Set<ReconcileFailureCategory>([
+  "INVALID_ISSUE",
+  "DATABASE",
+  "CACHE",
+  "GITHUB",
+  "WEBHOOK",
+]);
 
 function timestamp(value: string): number {
   const parsed = Date.parse(value);
@@ -42,6 +69,27 @@ function timestamp(value: string): number {
   return parsed;
 }
 
+function reconciliationDeliveryId(issue: GitHubIssueSnapshot): string {
+  const identity = moderationSnapshotIdentity(
+    issue,
+    moderationDecisionFor(issue),
+  );
+  return `reconcile:${issue.number}:${issue.updatedAt}:${identity}`;
+}
+
+function failureCategory(error: unknown): ReconcileFailureCategory {
+  if (
+    error &&
+    typeof error === "object" &&
+    "code" in error &&
+    typeof error.code === "string" &&
+    SAFE_FAILURE_CATEGORIES.has(error.code as ReconcileFailureCategory)
+  ) {
+    return error.code as ReconcileFailureCategory;
+  }
+  return "UNKNOWN";
+}
+
 export async function reconcileIssues(
   dependencies: ReconcileDependencies,
 ): Promise<ReconcileReport> {
@@ -49,6 +97,7 @@ export async function reconcileIssues(
   let scanned = 0;
   let synced = 0;
   let failed = 0;
+  const failures: ReconcileFailure[] = [];
 
   for (let page = 1; ; page += 1) {
     const issues = await dependencies.listIssues(page, PAGE_SIZE);
@@ -61,26 +110,38 @@ export async function reconcileIssues(
       } catch {
         scanned += 1;
         failed += 1;
+        const failure = {
+          issueNumber: issue.number,
+          category: "INVALID_TIMESTAMP" as const,
+        };
+        failures.push(failure);
+        dependencies.onFailure?.(failure);
         continue;
       }
       if (updatedAt < since) {
-        return { scanned, synced, failed };
+        return { scanned, synced, failed, failures };
       }
 
       scanned += 1;
       try {
         await dependencies.syncIssue(
           issue,
-          `reconcile:${issue.number}:${issue.updatedAt}`,
+          reconciliationDeliveryId(issue),
         );
         synced += 1;
-      } catch {
+      } catch (error) {
         failed += 1;
+        const failure = {
+          issueNumber: issue.number,
+          category: failureCategory(error),
+        };
+        failures.push(failure);
+        dependencies.onFailure?.(failure);
       }
     }
   }
 
-  return { scanned, synced, failed };
+  return { scanned, synced, failed, failures };
 }
 
 export async function reconcileFromCursor(
@@ -94,6 +155,7 @@ export async function reconcileFromCursor(
     since,
     listIssues: dependencies.listIssues,
     syncIssue: dependencies.syncIssue,
+    onFailure: dependencies.onFailure,
   });
   if (report.failed === 0) {
     await dependencies.cursorStore.write(CURSOR_NAME, dependencies.startedAt);

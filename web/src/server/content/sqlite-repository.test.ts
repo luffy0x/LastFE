@@ -39,12 +39,31 @@ function setup() {
   return { db, ...createSqliteContentStores(db) };
 }
 
+function moderationOrdering(
+  updatedAt: string,
+  snapshotIdentity: string,
+  authoritative = false,
+) {
+  return { updatedAt, snapshotIdentity, authoritative };
+}
+
 async function publish(
   moderation: ReturnType<typeof setup>["moderation"],
   content: PublishedRecord,
   deliveryId = `delivery-${content.id}`,
+  ordering = {
+    updatedAt: content.updatedAt,
+    snapshotIdentity: `snapshot-${deliveryId}`,
+    authoritative: false,
+  },
 ) {
-  return moderation.apply({ deliveryId, action: "publish", record: content });
+  const command = {
+    deliveryId,
+    action: "publish" as const,
+    record: content,
+    ordering,
+  };
+  return moderation.apply(command);
 }
 
 describe("SQLite content repository", () => {
@@ -94,7 +113,10 @@ describe("SQLite content repository", () => {
         deliveryId: "withdrawn",
         action: "withdraw",
         issueNumber: 101,
-        updatedAt: "2026-09-02T08:00:00.000Z",
+        ordering: moderationOrdering(
+          "2026-09-02T08:00:00.000Z",
+          "withdrawn",
+        ),
       }),
     ).resolves.toBe("applied");
 
@@ -123,7 +145,7 @@ describe("SQLite content repository", () => {
       deliveryId: "withdrawn-203",
       action: "withdraw",
       issueNumber: 203,
-      updatedAt: BASE_TIME,
+      ordering: moderationOrdering(BASE_TIME, "withdrawn-203"),
     });
 
     await expect(repository.stats(new Date(BASE_TIME))).resolves.toEqual({
@@ -196,7 +218,10 @@ describe("SQLite content repository", () => {
       deliveryId: "withdraw-t3",
       action: "withdraw",
       issueNumber: 101,
-      updatedAt: "2026-09-01T10:00:00.000Z",
+      ordering: moderationOrdering(
+        "2026-09-01T10:00:00.000Z",
+        "withdraw-t3",
+      ),
     });
     await expect(
       publish(
@@ -207,7 +232,7 @@ describe("SQLite content repository", () => {
         }),
         "publish-t2",
       ),
-    ).resolves.toBe("applied");
+    ).resolves.toBe("stale");
 
     await expect(repository.get("gh-101")).resolves.toBeNull();
     expect(
@@ -226,10 +251,13 @@ describe("SQLite content repository", () => {
       deliveryId: "unseen-withdraw-t3",
       action: "withdraw",
       issueNumber: 701,
-      updatedAt: "2026-09-01T10:00:00.000Z",
+      ordering: moderationOrdering(
+        "2026-09-01T10:00:00.000Z",
+        "unseen-withdraw-t3",
+      ),
     });
 
-    await expect(publish(moderation, delayed, "unseen-publish-t2")).resolves.toBe("applied");
+    await expect(publish(moderation, delayed, "unseen-publish-t2")).resolves.toBe("stale");
     await expect(repository.get("unseen-withdrawal")).resolves.toBeNull();
     await expect(repository.list({ page: 1, pageSize: 20 })).resolves.toMatchObject({
       total: 0,
@@ -238,7 +266,80 @@ describe("SQLite content repository", () => {
     expect(
       db.prepare("SELECT delivery_id FROM webhook_deliveries WHERE delivery_id = ?").get("unseen-publish-t2"),
     ).toEqual({ delivery_id: "unseen-publish-t2" });
-    await expect(publish(moderation, delayed, "unseen-publish-t2")).resolves.toBe("duplicate");
+    await expect(publish(moderation, delayed, "unseen-publish-t2")).resolves.toBe("stale");
+  });
+
+  it.each(["reject", "ignore"] as const)(
+    "keeps a newer %s decision as a tombstone against a delayed approval",
+    async (action) => {
+      const { repository, moderation } = setup();
+      const decision = {
+        deliveryId: `${action}-t3`,
+        action,
+        issueNumber: 703,
+        ordering: {
+          updatedAt: "2026-09-01T10:00:00.000Z",
+          snapshotIdentity: `${action}-snapshot-t3`,
+          authoritative: false,
+        },
+      };
+
+      await moderation.apply(decision);
+      await publish(
+        moderation,
+        record({
+          id: `stale-after-${action}`,
+          githubIssueNumber: 703,
+          updatedAt: "2026-09-01T09:00:00.000Z",
+        }),
+        `publish-before-${action}`,
+      );
+
+      await expect(repository.get(`stale-after-${action}`)).resolves.toBeNull();
+    },
+  );
+
+  it("lets an authoritative snapshot correct a different decision in the same GitHub second", async () => {
+    const { repository, moderation } = setup();
+    const updatedAt = "2026-09-01T10:00:00.000Z";
+
+    await publish(
+      moderation,
+      record({ updatedAt }),
+      "same-second-publish",
+      {
+        updatedAt,
+        snapshotIdentity: "webhook-published",
+        authoritative: false,
+      },
+    );
+    const ambiguousWebhook = {
+      deliveryId: "same-second-withdraw-webhook",
+      action: "withdraw" as const,
+      issueNumber: 101,
+      updatedAt,
+      ordering: {
+        updatedAt,
+        snapshotIdentity: "webhook-withdrawn",
+        authoritative: false,
+      },
+    };
+    await expect(moderation.apply(ambiguousWebhook)).resolves.toBe("stale");
+    await expect(repository.get("gh-101")).resolves.toMatchObject({
+      status: "published",
+    });
+
+    const authoritativeSnapshot = {
+      ...ambiguousWebhook,
+      deliveryId: "same-second-withdraw-reconciliation",
+      ordering: {
+        ...ambiguousWebhook.ordering,
+        snapshotIdentity: "reconciliation-withdrawn",
+        authoritative: true,
+      },
+    };
+    await expect(moderation.apply(authoritativeSnapshot)).resolves.toBe("applied");
+    await expect(repository.get("gh-101")).resolves.toBeNull();
   });
 
   it("allows a newer publish after an unseen withdrawal and ignores later stale transitions", async () => {
@@ -247,7 +348,10 @@ describe("SQLite content repository", () => {
       deliveryId: "unseen-withdraw-t3",
       action: "withdraw",
       issueNumber: 702,
-      updatedAt: "2026-09-01T10:00:00.000Z",
+      ordering: moderationOrdering(
+        "2026-09-01T10:00:00.000Z",
+        "unseen-withdraw-t3",
+      ),
     });
     await publish(
       moderation,
@@ -263,7 +367,10 @@ describe("SQLite content repository", () => {
       deliveryId: "unseen-withdraw-t2",
       action: "withdraw",
       issueNumber: 702,
-      updatedAt: "2026-09-01T09:00:00.000Z",
+      ordering: moderationOrdering(
+        "2026-09-01T09:00:00.000Z",
+        "unseen-withdraw-t2",
+      ),
     });
     await publish(
       moderation,
@@ -295,9 +402,12 @@ describe("SQLite content repository", () => {
         deliveryId: "withdraw-t2",
         action: "withdraw",
         issueNumber: 101,
-        updatedAt: "2026-09-01T09:00:00.000Z",
+        ordering: moderationOrdering(
+          "2026-09-01T09:00:00.000Z",
+          "withdraw-t2",
+        ),
       }),
-    ).resolves.toBe("applied");
+    ).resolves.toBe("stale");
 
     await expect(repository.get("gh-101")).resolves.toMatchObject({
       status: "published",

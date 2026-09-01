@@ -14,6 +14,15 @@ const ISSUE: GitHubIssueSnapshot = {
   state: "open",
   createdAt: "2026-09-01T08:00:00.000Z",
   updatedAt: "2026-09-01T08:05:00.000Z",
+  review: {
+    source: "reconciliation",
+    latestRelevantEvent: {
+      id: "7001",
+      action: "labeled",
+      label: "approved",
+      createdAt: "2026-09-01T08:05:00.000Z",
+    },
+  },
 };
 
 describe("reconciliation webhook transport", () => {
@@ -42,6 +51,22 @@ describe("reconciliation webhook transport", () => {
     );
   });
 
+  it("treats a stale synchronization result as a successful delivery", async () => {
+    const handler = createWebhookHandler({
+      webhookSecret: WEBHOOK_SECRET,
+      synchronize: vi.fn().mockResolvedValue("stale"),
+    });
+    const transport = createReconciliationWebhookTransport({
+      appOrigin: "http://moderation-app:3000",
+      webhookSecret: WEBHOOK_SECRET,
+      fetch: (input, init) => handler(new Request(input, init)),
+    });
+
+    await expect(
+      transport.syncIssue(ISSUE, "reconcile-stale"),
+    ).resolves.toBe("stale");
+  });
+
   it("returns a safe failure when the webhook endpoint rejects a reconciliation delivery", async () => {
     const privateIssue = { ...ISSUE, body: "private submission body" };
     const transport = createReconciliationWebhookTransport({
@@ -57,6 +82,7 @@ describe("reconciliation webhook transport", () => {
       caught = error;
     }
 
+    expect(caught).toMatchObject({ code: "WEBHOOK" });
     expect(String(caught)).toContain("WEBHOOK");
     expect(String(caught)).not.toContain(privateIssue.body);
     expect(String(caught)).not.toContain(WEBHOOK_SECRET);

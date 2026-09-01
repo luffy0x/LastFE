@@ -2,8 +2,7 @@ import "server-only";
 
 import { getSqlitePath } from "@/server/config";
 import { createSqliteContentStores } from "@/server/content/sqlite-repository";
-import { openDatabase } from "@/server/db/client";
-import { migrate } from "@/server/db/migrate";
+import { initializeDatabase } from "@/server/db/migrate";
 import type {
   ContentQuery,
   ContentRecord,
@@ -24,10 +23,10 @@ const globalRepository = globalThis as typeof globalThis & {
 
 export function getContentRepository(): ContentRepository {
   if (!globalRepository.__knowledgeFrontierContentRepository) {
-    const database = openDatabase(getSqlitePath());
-    migrate(database);
-    globalRepository.__knowledgeFrontierContentRepository =
-      createSqliteContentStores(database).repository;
+    globalRepository.__knowledgeFrontierContentRepository = initializeDatabase(
+      getSqlitePath(),
+      (database) => createSqliteContentStores(database).repository,
+    );
   }
   return globalRepository.__knowledgeFrontierContentRepository;
 }

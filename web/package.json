@@ -10,7 +10,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest",
-    "reconcile:github": "tsx scripts/reconcile-github.ts",
+    "reconcile:github": "tsx --conditions=react-server scripts/reconcile-github.ts",
     "test:e2e": "playwright test"
   },
   "dependencies": {

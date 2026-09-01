@@ -1,5 +1,7 @@
 import "server-only";
 
+import { createHash } from "node:crypto";
+
 import type { Submission } from "@/features/submissions/types";
 import type {
   ContentModerationStore,
@@ -7,6 +9,24 @@ import type {
 } from "@/server/content/sqlite-repository";
 
 import { decodeIssue } from "./issue-codec";
+
+export type ReviewRelevantEvent = {
+  id: string;
+  action: "labeled" | "unlabeled";
+  label: "approved" | "unpublish";
+  createdAt: string;
+};
+
+export type GitHubReviewEvidence =
+  | {
+      source: "webhook";
+      action: string;
+      changedLabel: string | null;
+    }
+  | {
+      source: "reconciliation";
+      latestRelevantEvent: ReviewRelevantEvent | null;
+    };
 
 export type GitHubIssueSnapshot = {
   number: number;
@@ -16,6 +36,7 @@ export type GitHubIssueSnapshot = {
   state: "open" | "closed";
   createdAt: string;
   updatedAt: string;
+  review: GitHubReviewEvidence;
 };
 
 export type ModerationDecision =
@@ -29,7 +50,7 @@ export type ModerationState = {
   labels: ReadonlySet<string>;
 };
 
-export type SyncResult = ModerationDecision | "duplicate";
+export type SyncResult = ModerationDecision | "duplicate" | "stale";
 
 export type SyncIssueDependencies = {
   moderation: ContentModerationStore;
@@ -62,11 +83,48 @@ export function decideModerationState(
   return "ignored";
 }
 
-function decide(event: GitHubIssueSnapshot): ModerationDecision {
-  return decideModerationState({
+export function moderationDecisionFor(
+  event: GitHubIssueSnapshot,
+): ModerationDecision {
+  const snapshotDecision = decideModerationState({
     isClosed: event.state === "closed",
     labels: new Set(event.labels),
   });
+  if (snapshotDecision !== "published") return snapshotDecision;
+
+  const latestAction =
+    event.review.source === "webhook"
+      ? {
+          action: event.review.action,
+          label: event.review.changedLabel,
+        }
+      : event.review.latestRelevantEvent;
+  if (latestAction?.label === "unpublish") return "withdrawn";
+  if (
+    latestAction?.action === "labeled" &&
+    latestAction.label === "approved"
+  ) {
+    return "published";
+  }
+  return "ignored";
+}
+
+export function moderationSnapshotIdentity(
+  event: GitHubIssueSnapshot,
+  decision: ModerationDecision,
+): string {
+  const canonical = JSON.stringify({
+    issueNumber: event.number,
+    state: event.state,
+    labels: [...new Set(event.labels)].sort(),
+    createdAt: event.createdAt,
+    updatedAt: event.updatedAt,
+    title: event.title,
+    body: event.body,
+    review: event.review,
+    decision,
+  });
+  return createHash("sha256").update(canonical).digest("hex");
 }
 
 type PublishedRecord = Extract<
@@ -126,11 +184,17 @@ function contentFields(submission: Submission): Pick<
 function publishCommand(
   event: GitHubIssueSnapshot,
   deliveryId: string,
+  decision: ModerationDecision,
   submission: Submission,
 ): ContentSyncCommand {
   return {
     deliveryId,
     action: "publish",
+    ordering: {
+      updatedAt: event.updatedAt,
+      snapshotIdentity: moderationSnapshotIdentity(event, decision),
+      authoritative: event.review.source === "reconciliation",
+    },
     record: {
       id: `gh-${event.number}`,
       githubIssueNumber: event.number,
@@ -154,20 +218,22 @@ function commandFor(
   submission: Submission,
 ): ContentSyncCommand {
   if (decision === "published") {
-    return publishCommand(event, deliveryId, submission);
-  }
-  if (decision === "withdrawn") {
-    return {
-      deliveryId,
-      action: "withdraw",
-      issueNumber: event.number,
-      updatedAt: event.updatedAt,
-    };
+    return publishCommand(event, deliveryId, decision, submission);
   }
   return {
     deliveryId,
-    action: decision === "rejected" ? "reject" : "ignore",
+    action:
+      decision === "withdrawn"
+        ? "withdraw"
+        : decision === "rejected"
+          ? "reject"
+          : "ignore",
     issueNumber: event.number,
+    ordering: {
+      updatedAt: event.updatedAt,
+      snapshotIdentity: moderationSnapshotIdentity(event, decision),
+      authoritative: event.review.source === "reconciliation",
+    },
   };
 }
 
@@ -211,8 +277,8 @@ export async function syncIssue(
   if (!deliveryId.trim()) throw new SyncIssueError("INVALID_ISSUE");
 
   const submission = decodeSubmission(event);
-  const decision = decide(event);
-  let result: "applied" | "duplicate";
+  const decision = moderationDecisionFor(event);
+  let result: "applied" | "duplicate" | "stale";
   try {
     result = await dependencies.moderation.apply(
       commandFor(event, deliveryId, decision, submission),
@@ -220,6 +286,8 @@ export async function syncIssue(
   } catch {
     throw new SyncIssueError("DATABASE");
   }
+
+  if (result === "stale") return "stale";
 
   const contentId = `gh-${event.number}`;
   try {

@@ -7,6 +7,7 @@ const getIssue = vi.fn();
 const removeLabel = vi.fn();
 const addLabels = vi.fn();
 const updateIssue = vi.fn();
+const listIssueEvents = vi.fn();
 const searchIssuesAndPullRequests = vi.fn();
 
 vi.mock("./client", () => ({
@@ -21,6 +22,7 @@ vi.mock("./client", () => ({
           removeLabel,
           addLabels,
           update: updateIssue,
+          listEvents: listIssueEvents,
         },
         search: { issuesAndPullRequests: searchIssuesAndPullRequests },
       },
@@ -43,6 +45,7 @@ describe("GitHubSubmissionQueue", () => {
     removeLabel.mockResolvedValue({});
     addLabels.mockResolvedValue({});
     updateIssue.mockResolvedValue({});
+    listIssueEvents.mockResolvedValue({ data: [] });
     searchIssuesAndPullRequests.mockResolvedValue({ data: { items: [] } });
   });
 
@@ -82,6 +85,28 @@ describe("GitHubSubmissionQueue", () => {
       ],
       },
     });
+    listIssueEvents.mockResolvedValue({
+      data: [
+        {
+          id: 7001,
+          event: "labeled",
+          label: { name: "approved" },
+          created_at: "2026-09-01T08:01:00.000Z",
+        },
+        {
+          id: 7002,
+          event: "labeled",
+          label: { name: "unpublish" },
+          created_at: "2026-09-01T08:03:00.000Z",
+        },
+        {
+          id: 7003,
+          event: "unlabeled",
+          label: { name: "unpublish" },
+          created_at: "2026-09-01T08:05:00.000Z",
+        },
+      ],
+    });
     const queue = new GitHubSubmissionQueue();
 
     await expect(queue.listSubmissionIssues(3)).resolves.toEqual([
@@ -93,6 +118,15 @@ describe("GitHubSubmissionQueue", () => {
         state: "open",
         createdAt: "2026-09-01T08:00:00.000Z",
         updatedAt: "2026-09-01T08:05:00.000Z",
+        review: {
+          source: "reconciliation",
+          latestRelevantEvent: {
+            id: "7003",
+            action: "unlabeled",
+            label: "unpublish",
+            createdAt: "2026-09-01T08:05:00.000Z",
+          },
+        },
       },
     ]);
     expect(searchIssuesAndPullRequests).toHaveBeenCalledExactlyOnceWith({
@@ -101,6 +135,59 @@ describe("GitHubSubmissionQueue", () => {
       order: "desc",
       page: 3,
       per_page: 100,
+    });
+    expect(listIssueEvents).toHaveBeenCalledExactlyOnceWith({
+      owner: "moderation-owner",
+      repo: "private-submissions",
+      issue_number: 41,
+      page: 1,
+      per_page: 100,
+    });
+  });
+
+  it("selects the newest review event by timestamp and event id instead of response order", async () => {
+    searchIssuesAndPullRequests.mockResolvedValue({
+      data: {
+        items: [
+          {
+            number: 42,
+            title: "[interview] candidate",
+            body: "encoded-submission",
+            labels: [{ name: "submission" }, { name: "approved" }],
+            state: "closed",
+            created_at: "2026-09-01T08:00:00.000Z",
+            updated_at: "2026-09-01T08:05:00.000Z",
+          },
+        ],
+      },
+    });
+    listIssueEvents.mockResolvedValue({
+      data: [
+        {
+          id: 7003,
+          event: "unlabeled",
+          label: { name: "unpublish" },
+          created_at: "2026-09-01T08:05:00.000Z",
+        },
+        {
+          id: 7002,
+          event: "labeled",
+          label: { name: "approved" },
+          created_at: "2026-09-01T08:05:00.000Z",
+        },
+      ],
+    });
+
+    const [snapshot] = await new GitHubSubmissionQueue().listSubmissionIssues(1);
+
+    expect(snapshot.review).toEqual({
+      source: "reconciliation",
+      latestRelevantEvent: {
+        id: "7003",
+        action: "unlabeled",
+        label: "unpublish",
+        createdAt: "2026-09-01T08:05:00.000Z",
+      },
     });
   });
 
