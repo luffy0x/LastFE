@@ -41,6 +41,7 @@ const EXPLORER_MOTION = createExplorerMotionAdapter();
 const readyImmediately = async () => undefined;
 const ignoreNavigation = () => undefined;
 const reducedMotionQuery = "(prefers-reduced-motion: reduce)";
+const fullMapQuery = "(min-width: 641px) and (max-aspect-ratio: 1/1)";
 
 function subscribeToReducedMotion(onChange: () => void) {
   if (typeof window === "undefined" || !window.matchMedia) return () => undefined;
@@ -52,6 +53,19 @@ function subscribeToReducedMotion(onChange: () => void) {
 function getReducedMotionSnapshot() {
   return typeof window !== "undefined" && window.matchMedia
     ? window.matchMedia(reducedMotionQuery).matches
+    : false;
+}
+
+function subscribeToFullMap(onChange: () => void) {
+  if (typeof window === "undefined" || !window.matchMedia) return () => undefined;
+  const media = window.matchMedia(fullMapQuery);
+  media.addEventListener("change", onChange);
+  return () => media.removeEventListener("change", onChange);
+}
+
+function getFullMapSnapshot() {
+  return typeof window !== "undefined" && window.matchMedia
+    ? window.matchMedia(fullMapQuery).matches
     : false;
 }
 
@@ -87,6 +101,11 @@ export function StrategicMap({
   const prefersReducedMotion = useSyncExternalStore(
     subscribeToReducedMotion,
     getReducedMotionSnapshot,
+    () => false,
+  );
+  const showFullMap = useSyncExternalStore(
+    subscribeToFullMap,
+    getFullMapSnapshot,
     () => false,
   );
   const focusCamera = camera.focus;
@@ -161,7 +180,7 @@ export function StrategicMap({
         role="application"
         aria-label="战略地图画布"
         viewBox="0 0 1000 600"
-        preserveAspectRatio="xMidYMid slice"
+        preserveAspectRatio={showFullMap ? "xMidYMid meet" : "xMidYMid slice"}
         className="strategic-map__canvas"
         {...camera.bind}
       >

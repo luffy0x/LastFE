@@ -131,6 +131,37 @@ test("return link restores the territory and focus on the map", async ({ page })
   await expect(territory).toBeFocused();
 });
 
+test("keeps every territory label inside the tablet viewport", async ({ page }) => {
+  await page.setViewportSize({ width: 768, height: 900 });
+  await page.goto("/");
+
+  const labels = page.locator(".region-label");
+  await expect(labels).toHaveCount(5);
+  for (let index = 0; index < 5; index += 1) {
+    await expect(labels.nth(index)).toBeVisible();
+  }
+
+  const labelBounds = await labels.evaluateAll((elements) =>
+    elements.map((element) => {
+      const bounds = element.getBoundingClientRect();
+      return {
+        label: element.textContent,
+        left: bounds.left,
+        top: bounds.top,
+        right: bounds.right,
+        bottom: bounds.bottom,
+      };
+    }),
+  );
+
+  for (const bounds of labelBounds) {
+    expect.soft(bounds.left, `${bounds.label} left edge`).toBeGreaterThanOrEqual(0);
+    expect.soft(bounds.top, `${bounds.label} top edge`).toBeGreaterThanOrEqual(0);
+    expect.soft(bounds.right, `${bounds.label} right edge`).toBeLessThanOrEqual(768);
+    expect.soft(bounds.bottom, `${bounds.label} bottom edge`).toBeLessThanOrEqual(900);
+  }
+});
+
 const viewports = [
   { width: 375, height: 812 },
   { width: 768, height: 900 },
