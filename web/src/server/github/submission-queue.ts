@@ -61,6 +61,18 @@ function isLaterReviewEvent(
   return compareReviewEventIds(candidate.id, current.id) > 0;
 }
 
+function latestReviewEvent(
+  events: readonly ReviewRelevantEvent[],
+  predicate: (event: ReviewRelevantEvent) => boolean = () => true,
+): ReviewRelevantEvent | null {
+  return events
+    .filter(predicate)
+    .reduce<ReviewRelevantEvent | null>(
+      (latest, event) => isLaterReviewEvent(event, latest) ? event : latest,
+      null,
+    );
+}
+
 export class GitHubSubmissionQueue implements SubmissionQueue {
   constructor(private readonly client: GitHubClient = createGitHubClient()) {}
 
@@ -113,6 +125,7 @@ export class GitHubSubmissionQueue implements SubmissionQueue {
       issue.labels.includes("unpublish")
     ) {
       try {
+        const reviewEvents: ReviewRelevantEvent[] = [];
         for (let eventPage = 1; ; eventPage += 1) {
           const events = await this.client.octokit.rest.issues.listEvents({
             owner: this.client.owner,
@@ -123,12 +136,16 @@ export class GitHubSubmissionQueue implements SubmissionQueue {
           });
           for (const value of events.data as unknown[]) {
             const candidate = normalizeReviewEvent(value);
-            if (candidate && isLaterReviewEvent(candidate, latestRelevantEvent)) {
-              latestRelevantEvent = candidate;
-            }
+            if (candidate) reviewEvents.push(candidate);
           }
           if (events.data.length < REVIEW_EVENT_PAGE_SIZE) break;
         }
+        latestRelevantEvent = latestReviewEvent(
+          reviewEvents,
+          issue.labels.includes("unpublish")
+            ? (event) => event.action === "labeled" && event.label === "unpublish"
+            : undefined,
+        );
       } catch {
         throw new GitHubHistoryError();
       }

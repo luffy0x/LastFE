@@ -225,7 +225,44 @@ describe("GitHubSubmissionQueue", () => {
     });
   });
 
-  it("keeps a newer same-second withdrawal hidden when queue snapshots arrive in reverse order", async () => {
+  it.each([
+    [
+      "withdrawal before reapproval",
+      [
+        {
+          id: 9002,
+          event: "labeled",
+          label: { name: "unpublish" },
+          created_at: "2026-09-01T10:00:00.000Z",
+        },
+        {
+          id: 9003,
+          event: "labeled",
+          label: { name: "approved" },
+          created_at: "2026-09-01T10:00:00.000Z",
+        },
+      ],
+    ],
+    [
+      "reapproval before withdrawal",
+      [
+        {
+          id: 9003,
+          event: "labeled",
+          label: { name: "approved" },
+          created_at: "2026-09-01T10:00:00.000Z",
+        },
+        {
+          id: 9002,
+          event: "labeled",
+          label: { name: "unpublish" },
+          created_at: "2026-09-01T10:00:00.000Z",
+        },
+      ],
+    ],
+  ])(
+    "keeps explicit same-second reapproval live after a stale withdrawal snapshot (%s)",
+    async (_order, history) => {
     const encoded = encodeIssue(
       parseSubmission("interview", {
         regionSlug: "interview",
@@ -254,48 +291,49 @@ describe("GitHubSubmissionQueue", () => {
       invalidate: vi.fn().mockResolvedValue(undefined),
     };
 
-    listIssueEvents.mockResolvedValue({
-      data: [
-        {
-          id: 9002,
-          event: "labeled",
-          label: { name: "unpublish" },
-          created_at: updatedAt,
-        },
-      ],
-    });
-    const newerWithdrawal = await queue.enrichReview({
+    listIssueEvents.mockResolvedValue({ data: history });
+    const staleWithdrawal = await queue.enrichReview({
       ...baseIssue,
       labels: [...encoded.labels, "approved", "unpublish"],
     });
-
-    listIssueEvents.mockReset();
-    listIssueEvents.mockResolvedValue({
-      data: [
-        {
-          id: 9001,
-          event: "labeled",
-          label: { name: "approved" },
-          created_at: updatedAt,
-        },
-      ],
+    expect(staleWithdrawal.review).toEqual({
+      source: "reconciliation",
+      latestRelevantEvent: {
+        id: "9002",
+        action: "labeled",
+        label: "unpublish",
+        createdAt: updatedAt,
+      },
     });
-    const olderApproval = await queue.enrichReview({
-      ...baseIssue,
-      labels: [...encoded.labels, "approved"],
-    });
-
     await expect(
-      syncIssue(newerWithdrawal, "queue-withdrawal-9002", dependencies),
+      syncIssue(staleWithdrawal, "queue-withdrawal-9002", dependencies),
     ).resolves.toBe("withdrawn");
-    await expect(
-      syncIssue(olderApproval, "queue-approval-9001", dependencies),
-    ).resolves.toBe("stale");
     await expect(
       repository.list({ page: 1, pageSize: 20 }),
     ).resolves.toMatchObject({ total: 0, items: [] });
+
+    const currentReapproval = await queue.enrichReview({
+      ...baseIssue,
+      labels: [...encoded.labels, "approved"],
+    });
+    expect(currentReapproval.review).toEqual({
+      source: "reconciliation",
+      latestRelevantEvent: {
+        id: "9003",
+        action: "labeled",
+        label: "approved",
+        createdAt: updatedAt,
+      },
+    });
+    await expect(
+      syncIssue(currentReapproval, "queue-reapproval-9003", dependencies),
+    ).resolves.toBe("published");
+    await expect(
+      repository.list({ page: 1, pageSize: 20 }),
+    ).resolves.toMatchObject({ total: 1, items: [{ id: "gh-42" }] });
     database.close();
-  });
+    },
+  );
 
   it("converts history failures into a safe GitHub error", async () => {
     const privateResponse = {
