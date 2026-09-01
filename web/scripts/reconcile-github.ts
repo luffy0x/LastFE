@@ -1,7 +1,4 @@
-import { revalidatePath } from "next/cache";
-
-import { getServerConfig } from "@/server/config";
-import { createSqliteContentStores } from "@/server/content/sqlite-repository";
+import { getInternalAppOrigin, getServerConfig } from "@/server/config";
 import {
   createReconciliationCursorStore,
   openDatabase,
@@ -9,7 +6,7 @@ import {
 import { migrate } from "@/server/db/migrate";
 import { GitHubSubmissionQueue } from "@/server/github/submission-queue";
 import { reconcileFromCursor } from "@/server/github/reconcile";
-import { syncIssue } from "@/server/github/sync-issue";
+import { createReconciliationWebhookTransport } from "@/server/github/reconciliation-webhook-transport";
 
 async function main(): Promise<void> {
   const startedAt = new Date().toISOString();
@@ -18,8 +15,12 @@ async function main(): Promise<void> {
 
   try {
     migrate(database);
-    const { moderation } = createSqliteContentStores(database);
     const github = new GitHubSubmissionQueue();
+    const webhook = createReconciliationWebhookTransport({
+      appOrigin: getInternalAppOrigin(),
+      webhookSecret: config.githubWebhookSecret,
+      fetch: globalThis.fetch,
+    });
     const report = await reconcileFromCursor({
       cursorStore: createReconciliationCursorStore(database),
       startedAt,
@@ -29,15 +30,7 @@ async function main(): Promise<void> {
         }
         return github.listSubmissionIssues(page);
       },
-      syncIssue: (issue, deliveryId) =>
-        syncIssue(issue, deliveryId, {
-          moderation,
-          ensureReviewState: (issueNumber, decision) =>
-            github.ensureReviewState(issueNumber, decision),
-          invalidate: async (paths) => {
-            for (const path of paths) revalidatePath(path);
-          },
-        }),
+      syncIssue: webhook.syncIssue,
     });
 
     console.info(

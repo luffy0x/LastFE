@@ -27,36 +27,29 @@ export class GitHubSubmissionQueue implements SubmissionQueue {
   async listSubmissionIssues(
     page: number,
   ): Promise<readonly GitHubIssueSnapshot[]> {
-    const response = await this.client.octokit.rest.issues.listForRepo({
-      owner: this.client.owner,
-      repo: this.client.repo,
-      labels: "submission",
-      state: "all",
+    const response = await this.client.octokit.rest.search.issuesAndPullRequests({
+      q: `repo:${this.client.owner}/${this.client.repo} is:issue label:submission`,
       sort: "updated",
-      direction: "desc",
+      order: "desc",
       page,
       per_page: 100,
     });
 
-    return response.data.flatMap((issue) => {
-      if (issue.pull_request || (issue.state !== "open" && issue.state !== "closed")) {
-        return [];
-      }
+    return response.data.items.map((issue) => {
       const labels = issue.labels.flatMap((label) => {
         if (typeof label === "string") return [label];
         return label.name ? [label.name] : [];
       });
-      if (!labels.includes("submission")) return [];
 
-      return [{
+      return {
         number: issue.number,
         title: issue.title,
         body: issue.body ?? "",
         labels,
-        state: issue.state,
+        state: issue.state as GitHubIssueSnapshot["state"],
         createdAt: issue.created_at,
         updatedAt: issue.updated_at,
-      }];
+      };
     });
   }
 

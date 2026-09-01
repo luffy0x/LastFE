@@ -52,6 +52,29 @@ const optionalGitHubApiBaseUrl = (): string | undefined => {
   return url.toString();
 };
 
+export function getInternalAppOrigin(): string {
+  const value = required("INTERNAL_APP_ORIGIN");
+  let url: URL;
+  try {
+    url = new URL(value);
+  } catch {
+    throw new Error("INTERNAL_APP_ORIGIN must be an absolute URL");
+  }
+  if (url.protocol !== "http:" && url.protocol !== "https:") {
+    throw new Error("INTERNAL_APP_ORIGIN must use http or https");
+  }
+  if (
+    url.pathname !== "/" ||
+    url.search ||
+    url.hash ||
+    url.username ||
+    url.password
+  ) {
+    throw new Error("INTERNAL_APP_ORIGIN must be an origin");
+  }
+  return url.origin;
+}
+
 export function getServerConfig(): ServerConfig {
   return {
     github: {

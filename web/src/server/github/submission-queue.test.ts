@@ -7,7 +7,7 @@ const getIssue = vi.fn();
 const removeLabel = vi.fn();
 const addLabels = vi.fn();
 const updateIssue = vi.fn();
-const listForRepo = vi.fn();
+const searchIssuesAndPullRequests = vi.fn();
 
 vi.mock("./client", () => ({
   createGitHubClient: () => ({
@@ -21,8 +21,8 @@ vi.mock("./client", () => ({
           removeLabel,
           addLabels,
           update: updateIssue,
-          listForRepo,
         },
+        search: { issuesAndPullRequests: searchIssuesAndPullRequests },
       },
     },
   }),
@@ -43,7 +43,7 @@ describe("GitHubSubmissionQueue", () => {
     removeLabel.mockResolvedValue({});
     addLabels.mockResolvedValue({});
     updateIssue.mockResolvedValue({});
-    listForRepo.mockResolvedValue({ data: [] });
+    searchIssuesAndPullRequests.mockResolvedValue({ data: { items: [] } });
   });
 
   it("creates a private moderation issue and returns only its number", async () => {
@@ -66,9 +66,10 @@ describe("GitHubSubmissionQueue", () => {
     });
   });
 
-  it("lists only submission issues by newest update and excludes pull requests", async () => {
-    listForRepo.mockResolvedValue({
-      data: [
+  it("uses an issues-only server query so an empty page means reconciliation is exhausted", async () => {
+    searchIssuesAndPullRequests.mockResolvedValue({
+      data: {
+        items: [
         {
           number: 41,
           title: "[interview] candidate",
@@ -78,17 +79,8 @@ describe("GitHubSubmissionQueue", () => {
           created_at: "2026-09-01T08:00:00.000Z",
           updated_at: "2026-09-01T08:05:00.000Z",
         },
-        {
-          number: 42,
-          title: "pull request",
-          body: "not-a-submission",
-          labels: [{ name: "submission" }],
-          state: "open",
-          created_at: "2026-09-01T08:00:00.000Z",
-          updated_at: "2026-09-01T08:06:00.000Z",
-          pull_request: { url: "https://api.github.test/repos/owner/repo/pulls/42" },
-        },
       ],
+      },
     });
     const queue = new GitHubSubmissionQueue();
 
@@ -103,13 +95,10 @@ describe("GitHubSubmissionQueue", () => {
         updatedAt: "2026-09-01T08:05:00.000Z",
       },
     ]);
-    expect(listForRepo).toHaveBeenCalledExactlyOnceWith({
-      owner: "moderation-owner",
-      repo: "private-submissions",
-      labels: "submission",
-      state: "all",
+    expect(searchIssuesAndPullRequests).toHaveBeenCalledExactlyOnceWith({
+      q: "repo:moderation-owner/private-submissions is:issue label:submission",
       sort: "updated",
-      direction: "desc",
+      order: "desc",
       page: 3,
       per_page: 100,
     });
