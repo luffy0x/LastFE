@@ -1,21 +1,18 @@
 import Link from "next/link";
 import { REGIONS } from "@/features/map/regions";
+import { SafeMarkdown } from "@/features/markdown/SafeMarkdown";
+import { isSafeHttpUrl } from "@/features/submissions/schemas";
 import type { ContentRecord } from "../types";
 
 type DossierProps = { record: ContentRecord };
 
-function MarkdownBody({ markdown }: { markdown: string }) {
-  return markdown.split("\n\n").map((block, index) => {
-    if (block.startsWith("## ")) {
-      return <h2 key={`${block}-${index}`}>{block.slice(3)}</h2>;
-    }
-    return <p key={`${block}-${index}`}>{block}</p>;
-  });
-}
-
 export function Dossier({ record }: DossierProps) {
   const region = REGIONS.find(({ slug }) => slug === record.regionSlug);
   const regionLabel = region?.label ?? "领地";
+  const externalUrl =
+    record.externalUrl && isSafeHttpUrl(record.externalUrl)
+      ? record.externalUrl
+      : null;
 
   return (
     <article className="dossier">
@@ -52,19 +49,18 @@ export function Dossier({ record }: DossierProps) {
 
       {record.markdown ? (
         <section className="dossier__body" aria-label="档案正文">
-          <MarkdownBody markdown={record.markdown} />
+          <SafeMarkdown source={record.markdown} />
         </section>
       ) : null}
 
-      {record.externalUrl ? (
+      {externalUrl ? (
         <a
           className="dossier__external"
-          href={record.externalUrl}
+          href={externalUrl}
           target="_blank"
-          rel="noreferrer"
+          rel="nofollow noopener noreferrer"
         >
-          打开外部链接
-          <span aria-hidden="true">↗</span>
+          站外链接（本站不托管或检查文件）
         </a>
       ) : null}
     </article>
