@@ -1,10 +1,12 @@
-import { act, renderHook } from "@testing-library/react";
+import { act, render, renderHook, waitFor } from "@testing-library/react";
+import { StrictMode, useLayoutEffect, useRef } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { REGION_ANCHORS, REGIONS } from "../regions";
 import type { Point } from "../types";
 import {
   useExplorerNavigation,
   type ExplorerMotionAdapter,
+  type ExplorerNavigationOptions,
 } from "./use-explorer-navigation";
 
 function timedMotion(): ExplorerMotionAdapter {
@@ -32,11 +34,86 @@ function timedMotion(): ExplorerMotionAdapter {
   };
 }
 
+function SelectBeforePassiveEffects({
+  options,
+}: {
+  options: ExplorerNavigationOptions;
+}) {
+  const navigation = useExplorerNavigation(options);
+  const hasSelected = useRef(false);
+
+  useLayoutEffect(() => {
+    if (hasSelected.current) return;
+    hasSelected.current = true;
+    navigation.selectRegion("interview");
+  }, [navigation]);
+
+  return <output data-phase={navigation.phase}>{navigation.phase}</output>;
+}
+
 afterEach(() => {
   vi.useRealTimers();
 });
 
 describe("useExplorerNavigation", () => {
+  it("keeps a selection made before the initial Strict Mode passive effect cycle", async () => {
+    const navigate = vi.fn();
+    const motion: ExplorerMotionAdapter = {
+      start: (_legs, from) => ({
+        finished: Promise.resolve(from),
+        cancel: () => from,
+      }),
+    };
+
+    const { getByText } = render(
+      <StrictMode>
+        <SelectBeforePassiveEffects
+          options={{
+            regions: REGIONS,
+            initialRegion: "fundamentals",
+            prepare: () => Promise.resolve(),
+            focus: vi.fn(),
+            navigate,
+            motion,
+            reducedMotion: false,
+          }}
+        />
+      </StrictMode>,
+    );
+
+    await waitFor(() => {
+      expect(getByText("idle")).toBeInTheDocument();
+      expect(navigate).toHaveBeenCalledWith("/regions/interview");
+    });
+  });
+
+  it("cancels navigation when the explorer unmounts during a selection", async () => {
+    let finishPreparation!: () => void;
+    const prepare = () =>
+      new Promise<void>((resolve) => {
+        finishPreparation = resolve;
+      });
+    const navigate = vi.fn();
+    const motion = timedMotion();
+    const { result, unmount } = renderHook(() =>
+      useExplorerNavigation({
+        regions: REGIONS,
+        initialRegion: "fundamentals",
+        prepare,
+        focus: vi.fn(),
+        navigate,
+        motion,
+        reducedMotion: false,
+      }),
+    );
+
+    act(() => result.current.selectRegion("interview"));
+    unmount();
+    await act(async () => finishPreparation());
+
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
   it("navigates only to the latest selected territory", async () => {
     vi.useFakeTimers();
     const navigate = vi.fn();

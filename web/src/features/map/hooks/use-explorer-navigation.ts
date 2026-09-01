@@ -77,6 +77,7 @@ export function useExplorerNavigation({
   const pointRef = useRef<Point>(initial.anchor);
   const currentSlugRef = useRef(initial.slug);
   const tokenRef = useRef(0);
+  const mountedRef = useRef(false);
   const activeMotionRef = useRef<ExplorerMotionHandle | null>(null);
 
   const runSelection = useCallback(
@@ -131,7 +132,7 @@ export function useExplorerNavigation({
       }
 
       void motionFinished.then((point) => {
-        if (selectionToken !== tokenRef.current) return;
+        if (selectionToken !== tokenRef.current || !mountedRef.current) return;
 
         pointRef.current = point;
         currentSlugRef.current = target.slug;
@@ -142,7 +143,9 @@ export function useExplorerNavigation({
 
       void Promise.allSettled([motionFinished, preparation]).then(
         ([motionResult, preparationResult]) => {
-          if (selectionToken !== tokenRef.current) return;
+          if (selectionToken !== tokenRef.current || !mountedRef.current) {
+            return;
+          }
 
           const finalPoint =
             motionResult.status === "fulfilled"
@@ -217,9 +220,13 @@ export function useExplorerNavigation({
   }, []);
 
   useEffect(
-    () => () => {
-      tokenRef.current += 1;
-      activeMotionRef.current?.cancel();
+    () => {
+      mountedRef.current = true;
+
+      return () => {
+        mountedRef.current = false;
+        activeMotionRef.current?.cancel();
+      };
     },
     [],
   );
