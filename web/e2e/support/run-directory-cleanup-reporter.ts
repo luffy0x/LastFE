@@ -1,16 +1,20 @@
 import { existsSync, rmSync } from "node:fs";
-import { basename, dirname, resolve } from "node:path";
-import { tmpdir } from "node:os";
+import { resolve } from "node:path";
 
 import type { FullResult, Reporter } from "@playwright/test/reporter";
 
-const RUN_DIRECTORY_PREFIX = "knowledge-frontier-playwright-";
+import { hasRunDirectoryOwnership } from "./run-directory-ownership";
 
 export default class RunDirectoryCleanupReporter implements Reporter {
   private readonly runDirectory: string;
+  private readonly ownershipToken: string;
 
-  constructor(options: { e2eRunDirectory: string }) {
+  constructor(options: {
+    e2eRunDirectory: string;
+    ownershipToken: string;
+  }) {
     this.runDirectory = resolve(options.e2eRunDirectory);
+    this.ownershipToken = options.ownershipToken;
   }
 
   printsToStdio(): boolean {
@@ -20,11 +24,9 @@ export default class RunDirectoryCleanupReporter implements Reporter {
   async onEnd(
     result: FullResult,
   ): Promise<{ status?: FullResult["status"] } | undefined> {
-    const ownsRunDirectory =
-      dirname(this.runDirectory) === resolve(tmpdir()) &&
-      basename(this.runDirectory).startsWith(RUN_DIRECTORY_PREFIX);
-
-    if (!ownsRunDirectory) {
+    if (
+      !hasRunDirectoryOwnership(this.runDirectory, this.ownershipToken)
+    ) {
       process.exitCode = 1;
       process.stderr.write(
         `[e2e-cleanup] refused unexpected directory: ${this.runDirectory}\n`,

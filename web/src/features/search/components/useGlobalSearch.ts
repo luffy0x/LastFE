@@ -20,6 +20,7 @@ type SettledSearch = SearchResponse & {
 export function useGlobalSearch() {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const requestGenerationRef = useRef(0);
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
   const deferredQuery = useDeferredValue(query);
@@ -37,6 +38,8 @@ export function useGlobalSearch() {
   }, []);
 
   const restoreTrigger = useCallback(() => {
+    requestGenerationRef.current += 1;
+    setSettledSearch(null);
     setIsOpen(false);
     triggerRef.current?.focus();
   }, []);
@@ -67,11 +70,13 @@ export function useGlobalSearch() {
   useEffect(() => {
     if (!isOpen || settledSearch?.query === deferredQuery) return;
     const controller = new AbortController();
+    const requestGeneration = requestGenerationRef.current;
     void request<SearchResponse>(
       `/api/search?q=${encodeURIComponent(deferredQuery)}`,
       { signal: controller.signal },
     )
       .then((response) => {
+        if (requestGeneration !== requestGenerationRef.current) return;
         setSettledSearch({
           groups: response.groups,
           query: deferredQuery,
@@ -80,6 +85,7 @@ export function useGlobalSearch() {
       })
       .catch((error: unknown) => {
         if (error instanceof DOMException && error.name === "AbortError") return;
+        if (requestGeneration !== requestGenerationRef.current) return;
         setSettledSearch({ groups: [], query: deferredQuery, state: "error" });
       });
     return () => controller.abort();

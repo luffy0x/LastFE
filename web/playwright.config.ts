@@ -1,20 +1,11 @@
 import { defineConfig, devices } from "@playwright/test";
-import { mkdtempSync } from "node:fs";
-import { basename, dirname, join, resolve } from "node:path";
-import { tmpdir } from "node:os";
+import { join } from "node:path";
 
-const RUN_DIRECTORY_PREFIX = "knowledge-frontier-playwright-";
-const inheritedRunDirectory = process.env.KNOWLEDGE_FRONTIER_E2E_RUN_DIRECTORY;
-const ownsInheritedRunDirectory =
-  inheritedRunDirectory !== undefined &&
-  dirname(resolve(inheritedRunDirectory)) === resolve(tmpdir()) &&
-  basename(inheritedRunDirectory).startsWith(RUN_DIRECTORY_PREFIX);
-const e2eRunDirectory = ownsInheritedRunDirectory
-  ? resolve(inheritedRunDirectory)
-  : mkdtempSync(join(tmpdir(), RUN_DIRECTORY_PREFIX));
+import { initializeRunDirectory } from "./e2e/support/run-directory-ownership";
+
+const { e2eRunDirectory, ownershipToken } = initializeRunDirectory();
 const e2eDatabasePath = join(e2eRunDirectory, "content.sqlite");
 
-process.env.KNOWLEDGE_FRONTIER_E2E_RUN_DIRECTORY = e2eRunDirectory;
 process.env.SQLITE_PATH = e2eDatabasePath;
 
 export default defineConfig({
@@ -27,7 +18,10 @@ export default defineConfig({
   reporter: [
     ["line"],
     ["html"],
-    ["./e2e/support/run-directory-cleanup-reporter.ts", { e2eRunDirectory }],
+    [
+      "./e2e/support/run-directory-cleanup-reporter.ts",
+      { e2eRunDirectory, ownershipToken },
+    ],
   ],
   use: {
     baseURL: "http://127.0.0.1:3000",
