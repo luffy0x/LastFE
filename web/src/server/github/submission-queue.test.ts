@@ -7,6 +7,7 @@ const getIssue = vi.fn();
 const removeLabel = vi.fn();
 const addLabels = vi.fn();
 const updateIssue = vi.fn();
+const listForRepo = vi.fn();
 
 vi.mock("./client", () => ({
   createGitHubClient: () => ({
@@ -20,6 +21,7 @@ vi.mock("./client", () => ({
           removeLabel,
           addLabels,
           update: updateIssue,
+          listForRepo,
         },
       },
     },
@@ -41,6 +43,7 @@ describe("GitHubSubmissionQueue", () => {
     removeLabel.mockResolvedValue({});
     addLabels.mockResolvedValue({});
     updateIssue.mockResolvedValue({});
+    listForRepo.mockResolvedValue({ data: [] });
   });
 
   it("creates a private moderation issue and returns only its number", async () => {
@@ -60,6 +63,55 @@ describe("GitHubSubmissionQueue", () => {
       title: "[interview] 字节跳动/基础架构 · 后端开发",
       body: expect.stringContaining("<!-- submission-content -->\n面试记录"),
       labels: ["submission", "pending", "region:interview"],
+    });
+  });
+
+  it("lists only submission issues by newest update and excludes pull requests", async () => {
+    listForRepo.mockResolvedValue({
+      data: [
+        {
+          number: 41,
+          title: "[interview] candidate",
+          body: "encoded-submission",
+          labels: [{ name: "submission" }, { name: "approved" }],
+          state: "open",
+          created_at: "2026-09-01T08:00:00.000Z",
+          updated_at: "2026-09-01T08:05:00.000Z",
+        },
+        {
+          number: 42,
+          title: "pull request",
+          body: "not-a-submission",
+          labels: [{ name: "submission" }],
+          state: "open",
+          created_at: "2026-09-01T08:00:00.000Z",
+          updated_at: "2026-09-01T08:06:00.000Z",
+          pull_request: { url: "https://api.github.test/repos/owner/repo/pulls/42" },
+        },
+      ],
+    });
+    const queue = new GitHubSubmissionQueue();
+
+    await expect(queue.listSubmissionIssues(3)).resolves.toEqual([
+      {
+        number: 41,
+        title: "[interview] candidate",
+        body: "encoded-submission",
+        labels: ["submission", "approved"],
+        state: "open",
+        createdAt: "2026-09-01T08:00:00.000Z",
+        updatedAt: "2026-09-01T08:05:00.000Z",
+      },
+    ]);
+    expect(listForRepo).toHaveBeenCalledExactlyOnceWith({
+      owner: "moderation-owner",
+      repo: "private-submissions",
+      labels: "submission",
+      state: "all",
+      sort: "updated",
+      direction: "desc",
+      page: 3,
+      per_page: 100,
     });
   });
 

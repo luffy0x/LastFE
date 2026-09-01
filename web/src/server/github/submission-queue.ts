@@ -7,6 +7,7 @@ import { createGitHubClient, type GitHubClient } from "./client";
 import { encodeIssue } from "./issue-codec";
 import {
   decideModerationState,
+  type GitHubIssueSnapshot,
   type ModerationDecision,
 } from "./sync-issue";
 
@@ -21,6 +22,42 @@ export class GitHubSubmissionQueue implements SubmissionQueue {
       ...issue,
     });
     return { issueNumber: response.data.number };
+  }
+
+  async listSubmissionIssues(
+    page: number,
+  ): Promise<readonly GitHubIssueSnapshot[]> {
+    const response = await this.client.octokit.rest.issues.listForRepo({
+      owner: this.client.owner,
+      repo: this.client.repo,
+      labels: "submission",
+      state: "all",
+      sort: "updated",
+      direction: "desc",
+      page,
+      per_page: 100,
+    });
+
+    return response.data.flatMap((issue) => {
+      if (issue.pull_request || (issue.state !== "open" && issue.state !== "closed")) {
+        return [];
+      }
+      const labels = issue.labels.flatMap((label) => {
+        if (typeof label === "string") return [label];
+        return label.name ? [label.name] : [];
+      });
+      if (!labels.includes("submission")) return [];
+
+      return [{
+        number: issue.number,
+        title: issue.title,
+        body: issue.body ?? "",
+        labels,
+        state: issue.state,
+        createdAt: issue.created_at,
+        updatedAt: issue.updated_at,
+      }];
+    });
   }
 
   async ensureReviewState(
