@@ -186,14 +186,18 @@ export function createSqliteContentStores(database: SqliteDatabase): {
     if (command.action !== "publish") {
       if (command.action === "withdraw") {
         database
-          .prepare("UPDATE contents SET status = 'withdrawn', updated_at = ? WHERE github_issue_number = ?")
-          .run(command.updatedAt, command.issueNumber);
+          .prepare(
+            `UPDATE contents
+             SET status = 'withdrawn', updated_at = ?
+             WHERE github_issue_number = ? AND updated_at < ?`,
+          )
+          .run(command.updatedAt, command.issueNumber, command.updatedAt);
       }
       return "applied" as const;
     }
 
     const content = command.record;
-    database
+    const transition = database
       .prepare(
         `INSERT INTO contents (
           id, github_issue_number, region_slug, status, title, summary, nickname,
@@ -209,8 +213,8 @@ export function createSqliteContentStores(database: SqliteDatabase): {
           external_url = excluded.external_url,
           metadata_json = excluded.metadata_json,
           created_at = excluded.created_at,
-          published_at = excluded.published_at,
-          updated_at = excluded.updated_at`,
+          updated_at = excluded.updated_at
+        WHERE excluded.updated_at > contents.updated_at`,
       )
       .run(
         content.id,
@@ -226,6 +230,7 @@ export function createSqliteContentStores(database: SqliteDatabase): {
         content.publishedAt,
         content.updatedAt,
       );
+    if (transition.changes === 0) return "applied" as const;
 
     const stored = database
       .prepare("SELECT id FROM contents WHERE github_issue_number = ?")

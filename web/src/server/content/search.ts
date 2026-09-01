@@ -12,16 +12,19 @@ export function buildSearchPredicate(search: string): {
   sql: string;
   params: string[];
 } {
-  const pattern = `%${escapeLikeLiteral(search.trim().toLowerCase())}%`;
+  const pattern = `%${escapeLikeLiteral(normalizeTag(search))}%`;
   const tags = `EXISTS (
     SELECT 1 FROM content_tags search_ct
     JOIN tags search_t ON search_t.id = search_ct.tag_id
-    WHERE search_ct.content_id = c.id AND LOWER(search_t.label) LIKE ? ESCAPE '\\'
+    WHERE search_ct.content_id = c.id AND search_t.normalized LIKE ? ESCAPE '\\'
   )`;
   const matches = (...fields: string[]) =>
-    `(${[...fields, tags]
-      .map((field) => `LOWER(COALESCE(${field}, '')) LIKE ? ESCAPE '\\'`)
-      .join(" OR ")})`;
+    `(${[
+      ...fields.map(
+        (field) => `LOWER(COALESCE(${field}, '')) LIKE ? ESCAPE '\\'`,
+      ),
+      tags,
+    ].join(" OR ")})`;
 
   const regions = [
     ["interview", matches("c.title", "json_extract(c.metadata_json, '$.companyDepartment')", "json_extract(c.metadata_json, '$.position')", "c.markdown")],

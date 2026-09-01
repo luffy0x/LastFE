@@ -69,7 +69,11 @@ describe("SQLite content repository", () => {
     await publish(moderation, record({ tags: [" Go ", "一面"] }), "initial");
     await publish(
       moderation,
-      record({ title: "更新后的面试记录", tags: ["go", "系统设计"] }),
+      record({
+        title: "更新后的面试记录",
+        tags: ["go", "系统设计"],
+        updatedAt: "2026-09-01T08:01:00.000Z",
+      }),
       "update",
     );
 
@@ -159,6 +163,108 @@ describe("SQLite content repository", () => {
 
     await expect(repository.get("gh-101")).resolves.toMatchObject({
       title: "字节跳动/基础架构 · 后端开发",
+    });
+  });
+
+  it("searches content by a normalized tag alone", async () => {
+    const { repository, moderation } = setup();
+    await publish(
+      moderation,
+      record({
+        id: "tag-only",
+        githubIssueNumber: 350,
+        title: "unrelated title",
+        summary: "unrelated summary",
+        markdown: "unrelated body",
+        tags: ["  Go  "],
+      }),
+    );
+
+    await expect(
+      repository.list({ search: "go", page: 1, pageSize: 20 }),
+    ).resolves.toMatchObject({ total: 1, items: [{ id: "tag-only" }] });
+  });
+
+  it("records a stale publish delivery without restoring content withdrawn by a newer event", async () => {
+    const { db, repository, moderation } = setup();
+    await publish(
+      moderation,
+      record({ updatedAt: "2026-09-01T08:00:00.000Z" }),
+      "publish-t1",
+    );
+    await moderation.apply({
+      deliveryId: "withdraw-t3",
+      action: "withdraw",
+      issueNumber: 101,
+      updatedAt: "2026-09-01T10:00:00.000Z",
+    });
+    await expect(
+      publish(
+        moderation,
+        record({
+          title: "delayed publish must not restore",
+          updatedAt: "2026-09-01T09:00:00.000Z",
+        }),
+        "publish-t2",
+      ),
+    ).resolves.toBe("applied");
+
+    await expect(repository.get("gh-101")).resolves.toBeNull();
+    expect(
+      db.prepare("SELECT delivery_id FROM webhook_deliveries WHERE delivery_id = ?").get("publish-t2"),
+    ).toEqual({ delivery_id: "publish-t2" });
+  });
+
+  it("does not let a stale withdrawal override a newer publish", async () => {
+    const { db, repository, moderation } = setup();
+    await publish(
+      moderation,
+      record({ updatedAt: "2026-09-01T10:00:00.000Z" }),
+      "publish-t3",
+    );
+
+    await expect(
+      moderation.apply({
+        deliveryId: "withdraw-t2",
+        action: "withdraw",
+        issueNumber: 101,
+        updatedAt: "2026-09-01T09:00:00.000Z",
+      }),
+    ).resolves.toBe("applied");
+
+    await expect(repository.get("gh-101")).resolves.toMatchObject({
+      status: "published",
+    });
+    expect(
+      db.prepare("SELECT delivery_id FROM webhook_deliveries WHERE delivery_id = ?").get("withdraw-t2"),
+    ).toEqual({ delivery_id: "withdraw-t2" });
+  });
+
+  it("preserves the first publication time when a newer publish updates content", async () => {
+    const { repository, moderation } = setup();
+    await publish(
+      moderation,
+      record({
+        publishedAt: "2026-09-01T08:00:00.000Z",
+        updatedAt: "2026-09-01T08:00:00.000Z",
+      }),
+      "publish-first",
+    );
+    await publish(
+      moderation,
+      record({
+        title: "newer approved content",
+        tags: ["Rust"],
+        publishedAt: "2026-09-02T08:00:00.000Z",
+        updatedAt: "2026-09-02T08:00:00.000Z",
+      }),
+      "publish-newer",
+    );
+
+    await expect(repository.get("gh-101")).resolves.toMatchObject({
+      title: "newer approved content",
+      tags: ["Rust"],
+      publishedAt: "2026-09-01T08:00:00.000Z",
     });
   });
 
