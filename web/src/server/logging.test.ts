@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { log, redact } from "./logging";
+import { log, redact, requestIdFromHeaders } from "./logging";
 
 describe("redact", () => {
   it("redacts sensitive fields recursively", () => {
@@ -37,5 +37,17 @@ describe("log", () => {
       nested: { ipAddress: "[REDACTED]" },
     });
     write.mockRestore();
+  });
+});
+
+describe("requestIdFromHeaders", () => {
+  it("rejects a whitespace-padded raw request ID", () => {
+    const headers = { get: () => " request_42 " } as unknown as Headers;
+    const requestId = requestIdFromHeaders(headers);
+
+    expect(requestId).toMatch(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
+    );
+    expect(requestId).not.toBe("request_42");
   });
 });

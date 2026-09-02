@@ -21,7 +21,7 @@ export function redact(value: unknown): unknown {
 }
 
 export function requestIdFromHeaders(headers: Headers): string {
-  const requestId = headers.get("x-request-id")?.trim();
+  const requestId = headers.get("x-request-id");
   return requestId && VALID_REQUEST_ID.test(requestId)
     ? requestId
     : crypto.randomUUID();
