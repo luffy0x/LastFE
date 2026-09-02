@@ -1,5 +1,6 @@
 services:
   app:
+    image: ${APP_IMAGE:-knowledge-frontier-app:local}
     build:
       context: ./web
       target: app
@@ -36,6 +37,7 @@ services:
 
   maintenance:
     profiles: ["maintenance"]
+    image: ${MAINTENANCE_IMAGE:-knowledge-frontier-maintenance:local}
     build:
       context: ./web
       target: maintenance

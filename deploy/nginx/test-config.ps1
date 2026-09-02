@@ -21,6 +21,10 @@ $appService = Get-ServiceBlock 'app'
 $nginxService = Get-ServiceBlock 'nginx'
 $maintenanceService = Get-ServiceBlock 'maintenance'
 
+if ($appService -notmatch '(?m)^    image: \$\{APP_IMAGE:-knowledge-frontier-app:local\}$') { throw 'app image is not selectable by immutable deployment tag' }
+if ($appService -notmatch '(?ms)^    build:\r?\n      context: \./web\r?\n      target: app$') { throw 'app image selection must preserve the app build target' }
+if ($maintenanceService -notmatch '(?m)^    image: \$\{MAINTENANCE_IMAGE:-knowledge-frontier-maintenance:local\}$') { throw 'maintenance image is not selectable by immutable deployment tag' }
+if ($maintenanceService -notmatch '(?ms)^    build:\r?\n      context: \./web\r?\n      target: maintenance$') { throw 'maintenance image selection must preserve the maintenance build target' }
 if ($main -notmatch 'limit_req_zone\s+\$binary_remote_addr\s+zone=submissions:10m\s+rate=12r/m') { throw 'missing burst limit zone' }
 if ($site -notmatch 'location = /api/submissions') { throw 'missing submission route' }
 if ($site -notmatch 'limit_req\s+zone=submissions\s+burst=5\s+nodelay') { throw 'missing submission burst limit' }
