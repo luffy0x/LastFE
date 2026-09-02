@@ -48,15 +48,14 @@ stable_target_dir="/proc/self/fd/$target_fd/."
 [[ "$(realpath -e -- "$stable_target_dir")" == "$target_dir" ]] || fail 'RESTORE_DIRECTORY changed during validation'
 [[ -z "$(find "$stable_target_dir" -mindepth 1 -maxdepth 1 -print -quit)" ]] || fail 'RESTORE_DIRECTORY must be absent or empty'
 restored_db="$stable_target_dir/restored.db"
-staging_dir="$(mktemp -d "$stable_target_dir/.knowledge-frontier-restore.XXXXXX")" || fail 'could not create private restore staging directory'
-chmod 700 -- "$staging_dir"
-staged_db="$staging_dir/restored.db"
-
 cleanup_staging() {
   rm -rf -- "$staging_dir"
   exec {target_fd}<&-
 }
+staging_dir="$(mktemp -d "$stable_target_dir/.knowledge-frontier-restore.XXXXXX")" || fail 'could not create private restore staging directory'
 trap cleanup_staging EXIT
+chmod 700 -- "$staging_dir"
+staged_db="$staging_dir/restored.db"
 
 cp -- "$backup_db" "$staged_db"
 integrity_result="$(sqlite3 "$staged_db" 'PRAGMA integrity_check;' | tr -d '\r')"
@@ -65,7 +64,7 @@ integrity_result="$(sqlite3 "$staged_db" 'PRAGMA integrity_check;' | tr -d '\r')
 # The target was empty before staging; stop if another entry appeared before publication.
 [[ -z "$(find "$stable_target_dir" -mindepth 1 -maxdepth 1 ! -name "$(basename "$staging_dir")" -print -quit)" ]] || fail 'RESTORE_DIRECTORY changed during verification'
 # This no-clobber link cannot follow or replace a raced restored.db symlink.
-ln -- "$staged_db" "$restored_db" || fail 'RESTORE_DIRECTORY changed during verification'
+ln -T -- "$staged_db" "$restored_db" || fail 'RESTORE_DIRECTORY changed during verification'
 rm -f -- "$staged_db"
 rmdir -- "$staging_dir"
 trap - EXIT

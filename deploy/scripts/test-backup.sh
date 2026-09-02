@@ -29,8 +29,25 @@ assert_non_lossy_lock() {
     echo "FAIL: $unit_path must wait for the maintenance lock" >&2
     exit 1
   fi
-  if ! grep -Eq 'flock( [^ ]+)* -w [1-9][0-9]*' "$unit_path"; then
-    echo "FAIL: $unit_path must use a bounded flock wait" >&2
+  if ! grep -Fqx 'TimeoutStartSec=32min' "$unit_path"; then
+    echo "FAIL: $unit_path must reserve lock wait plus a full execution window" >&2
+    exit 1
+  fi
+  if ! grep -Fq 'flock -w 960 -E 75' "$unit_path"; then
+    echo "FAIL: $unit_path must wait long enough for a bounded peer" >&2
+    exit 1
+  fi
+  if ! grep -Fq '/usr/bin/timeout --foreground 15m /usr/bin/docker compose' "$unit_path"; then
+    echo "FAIL: $unit_path must bound command execution independently of lock wait" >&2
+    exit 1
+  fi
+}
+
+assert_no_follow_publication() {
+  local script_path="$1"
+
+  if ! grep -Fq 'ln -T --' "$script_path"; then
+    echo "FAIL: $script_path must use no-follow link publication" >&2
     exit 1
   fi
 }
@@ -41,6 +58,8 @@ for unit_path in "$reconcile_unit" "$backup_unit"; do
   assert_unit_line "$unit_path" 'Environment=APP_ENV_FILE=/etc/knowledge-frontier/app.env'
   assert_non_lossy_lock "$unit_path"
 done
+assert_no_follow_publication "$backup_script"
+assert_no_follow_publication "$restore_script"
 
 for required_command in sqlite3 realpath find touch cp ln; do
   if ! command -v "$required_command" >/dev/null 2>&1; then
@@ -85,6 +104,24 @@ apostrophe_backup_dir="$test_root/backups-with-'quote"
 SQLITE_PATH="$source_db" BACKUP_DIR="$apostrophe_backup_dir" "$backup_script"
 test -n "$(find "$apostrophe_backup_dir" -maxdepth 1 -type f -name '*.db' -print -quit)"
 
+fake_ln_bin="$test_root/fake-ln-bin"
+mkdir "$fake_ln_bin"
+real_ln="$(command -v ln)"
+printf '%s\n' \
+  '#!/usr/bin/env bash' \
+  'set -euo pipefail' \
+  'destination="${!#}"' \
+  '"$REAL_LN" -s -- "$RACE_REDIRECT_DIR" "$destination"' \
+  'exec "$REAL_LN" "$@"' > "$fake_ln_bin/ln"
+chmod +x "$fake_ln_bin/ln"
+backup_race_dir="$test_root/backup-race"
+backup_redirect_dir="$test_root/backup-redirect"
+mkdir "$backup_redirect_dir"
+expect_failure 'backup does not publish through a raced destination directory symlink' \
+  env PATH="$fake_ln_bin:$PATH" REAL_LN="$real_ln" RACE_REDIRECT_DIR="$backup_redirect_dir" SQLITE_PATH="$source_db" BACKUP_DIR="$backup_race_dir" \
+  "$backup_script"
+test -z "$(find "$backup_redirect_dir" -maxdepth 1 -type f -print -quit)"
+
 expect_failure 'restore rejects the live database parent' \
   env SQLITE_PATH="$source_db" "$restore_script" "$backup_file" "$test_root"
 
@@ -97,6 +134,15 @@ SQLITE_PATH="$source_db" "$restore_script" "$backup_file" "$restore_dir"
 test "$(sqlite3 "$restore_dir/restored.db" 'select value from probe;')" = 'ok'
 
 sqlite3 "$source_db" "update probe set value = 'live';"
+restore_directory_race="$test_root/restore-directory-race"
+restore_redirect_dir="$test_root/restore-redirect"
+mkdir "$restore_redirect_dir"
+expect_failure 'restore does not publish through a raced destination directory symlink' \
+  env PATH="$fake_ln_bin:$PATH" REAL_LN="$real_ln" RACE_REDIRECT_DIR="$restore_redirect_dir" SQLITE_PATH="$source_db" \
+  "$restore_script" "$backup_file" "$restore_directory_race"
+test -z "$(find "$restore_redirect_dir" -maxdepth 1 -type f -name '*.db' -print -quit)"
+test "$(sqlite3 "$source_db" 'select value from probe;')" = 'live'
+
 race_target="$test_root/race-restore"
 mkdir "$race_target"
 fake_bin="$test_root/fake-bin"
