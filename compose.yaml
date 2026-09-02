@@ -7,6 +7,8 @@ services:
     volumes:
       - /srv/knowledge-frontier/data:/data
     expose: ["3000"]
+    networks:
+      - app_internal
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "node", "healthcheck.mjs"]
@@ -27,6 +29,8 @@ services:
     environment:
       TLS_CERT_PATH: /etc/nginx/tls/fullchain.pem
       TLS_KEY_PATH: /etc/nginx/tls/privkey.pem
+    networks:
+      - app_internal
     restart: unless-stopped
 
   maintenance:
@@ -39,3 +43,7 @@ services:
       - /srv/knowledge-frontier/data:/data
       - /srv/knowledge-frontier/backups:/backups
       - ./deploy/scripts:/opt/knowledge-frontier/scripts:ro
+
+networks:
+  app_internal:
+    internal: true
