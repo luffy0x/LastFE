@@ -1,0 +1,41 @@
+services:
+  app:
+    build:
+      context: ./web
+      target: app
+    env_file: ${APP_ENV_FILE:-./deploy/.env.example}
+    volumes:
+      - /srv/knowledge-frontier/data:/data
+    expose: ["3000"]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "healthcheck.mjs"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  nginx:
+    image: nginx:alpine
+    depends_on:
+      app:
+        condition: service_healthy
+    ports: ["80:80", "443:443"]
+    volumes:
+      - ./deploy/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./deploy/nginx/conf.d/site.conf.template:/etc/nginx/templates/default.conf.template:ro
+      - ${TLS_CERT_DIR:-./deploy/nginx/dev-certs}:/etc/nginx/tls:ro
+    environment:
+      TLS_CERT_PATH: /etc/nginx/tls/fullchain.pem
+      TLS_KEY_PATH: /etc/nginx/tls/privkey.pem
+    restart: unless-stopped
+
+  maintenance:
+    profiles: ["maintenance"]
+    build:
+      context: ./web
+      target: maintenance
+    env_file: ${APP_ENV_FILE:-./deploy/.env.example}
+    volumes:
+      - /srv/knowledge-frontier/data:/data
+      - /srv/knowledge-frontier/backups:/backups
+      - ./deploy/scripts:/opt/knowledge-frontier/scripts:ro
