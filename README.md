@@ -12,7 +12,7 @@ Knowledge Frontier 是一个以科幻战略地图呈现求职知识的 Next.js �
 
 ## 本地开发
 
-需要 Node.js 20.9 或更高版本，并使用仓库声明的 `pnpm@11.19.0`。
+需要 Node.js 22 或更高版本，并使用仓库声明的 `pnpm@11.19.0`。
 
 ```powershell
 Set-Location web
