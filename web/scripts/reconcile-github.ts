@@ -14,10 +14,11 @@ import { log } from "@/server/logging";
 async function main(): Promise<void> {
   const requestId = randomUUID();
   const startedAt = new Date().toISOString();
-  const config = getServerConfig();
-  const database = openDatabase(config.sqlitePath);
+  let database: ReturnType<typeof openDatabase> | undefined;
 
   try {
+    const config = getServerConfig();
+    database = openDatabase(config.sqlitePath);
     migrate(database);
     const github = new GitHubSubmissionQueue();
     const webhook = createReconciliationWebhookTransport({
@@ -49,7 +50,7 @@ async function main(): Promise<void> {
     });
     process.exitCode = 1;
   } finally {
-    database.close();
+    database?.close();
   }
 }
 
