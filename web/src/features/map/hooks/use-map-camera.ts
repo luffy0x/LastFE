@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import type { PointerEvent, WheelEvent } from "react";
 import type { CameraTarget, Point } from "../types";
+import { cameraStateForTarget, cameraTransform } from "../camera-state";
 
 export type MapCameraState = Point & { scale: number };
 
@@ -116,16 +117,7 @@ export function useMapCamera({
 
   const focus = useCallback(
     (target: CameraTarget) => {
-      setState(
-        clampCamera(
-          {
-            x: 500 - target.x * target.scale,
-            y: 300 - target.y * target.scale,
-            scale: target.scale,
-          },
-          bounds,
-        ),
-      );
+      setState(cameraStateForTarget(target, bounds));
     },
     [bounds],
   );
@@ -264,7 +256,7 @@ export function useMapCamera({
 
   return {
     state,
-    transform: `translate(${state.x} ${state.y}) scale(${state.scale})`,
+    transform: cameraTransform(state),
     panBy,
     zoomAt,
     focus,

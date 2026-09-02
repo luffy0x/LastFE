@@ -2,20 +2,28 @@ import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { getContentRepository } from "@/features/content/repository";
 import { TerritoryPanel } from "@/features/content/components/TerritoryPanel";
+import {
+  cameraStateForTarget,
+  cameraTransform,
+} from "@/features/map/camera-state";
+import { ExplorerMarker } from "@/features/map/components/ExplorerMarker";
 import { REGIONS } from "@/features/map/regions";
+import type { RegionDefinition } from "@/features/map/types";
 import { parsePage } from "@/server/content/search";
 
 export function generateStaticParams() {
   return REGIONS.filter(({ enabled }) => enabled).map(({ slug }) => ({ slug }));
 }
 
-function TerritoryBackdrop({ selectedSlug }: { selectedSlug: string }) {
+function TerritoryBackdrop({ region }: { region: RegionDefinition }) {
+  const transform = cameraTransform(cameraStateForTarget(region.camera));
+
   return (
     <svg
       className="territory-backdrop"
       viewBox="0 0 1000 600"
       preserveAspectRatio="xMidYMid slice"
-      aria-hidden="true"
+      aria-label={`${region.label}地图背景`}
     >
       <defs>
         <pattern id="panel-grid" width="50" height="50" patternUnits="userSpaceOnUse">
@@ -24,14 +32,21 @@ function TerritoryBackdrop({ selectedSlug }: { selectedSlug: string }) {
       </defs>
       <rect width="1000" height="600" className="map-field" />
       <rect width="1000" height="600" fill="url(#panel-grid)" />
-      {REGIONS.map((region) => (
-        <path
-          key={region.slug}
-          d={region.svgPath}
-          className="territory-backdrop__region"
-          data-active={region.slug === selectedSlug ? "true" : "false"}
+      <g data-testid="territory-camera-layer" transform={transform}>
+        {REGIONS.map((candidate) => (
+          <path
+            key={candidate.slug}
+            d={candidate.svgPath}
+            className="territory-backdrop__region"
+            data-active={candidate.slug === region.slug ? "true" : "false"}
+          />
+        ))}
+        <ExplorerMarker
+          point={region.anchor}
+          regionLabel={region.label}
+          targetLocked
         />
-      ))}
+      </g>
     </svg>
   );
 }
@@ -79,7 +94,7 @@ export default async function TerritoryPage({
 
   return (
     <main id="main-content" className="territory-page">
-      <TerritoryBackdrop selectedSlug={region.slug} />
+      <TerritoryBackdrop region={region} />
       <TerritoryPanel region={region} page={page} query={query} />
     </main>
   );

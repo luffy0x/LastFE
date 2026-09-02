@@ -1,5 +1,85 @@
 import { expect, test } from "@playwright/test";
 
+test("direct territory links focus the camera and explorer on the requested region", async ({
+  page,
+}) => {
+  await page.goto("/regions/projects");
+
+  await expect(page.getByTestId("territory-camera-layer")).toHaveAttribute(
+    "transform",
+    "translate(163.6 -240) scale(1.45)",
+  );
+  await expect(
+    page.getByRole("img", { name: "探索者当前位置：项目区" }),
+  ).toHaveAttribute("transform", "translate(232 357)");
+  await expect(page.getByRole("heading", { name: "项目区" })).toBeVisible();
+});
+
+test("server rendering uses the settled tablet composition", async ({
+  browser,
+}) => {
+  const tabletContext = await browser.newContext({
+    javaScriptEnabled: false,
+    viewport: { width: 768, height: 900 },
+  });
+  const tabletPage = await tabletContext.newPage();
+  await tabletPage.goto("/");
+  await expect(
+    tabletPage.getByRole("application", { name: "战略地图画布" }),
+  ).toHaveAttribute("preserveAspectRatio", "xMidYMid meet");
+  await tabletContext.close();
+});
+
+test("server rendering starts with the mobile territory list collapsed", async ({
+  browser,
+}) => {
+  const mobileContext = await browser.newContext({
+    javaScriptEnabled: false,
+    viewport: { width: 375, height: 812 },
+  });
+  const mobilePage = await mobileContext.newPage();
+  await mobilePage.goto("/");
+  await expect(mobilePage.locator("details.region-list")).not.toHaveAttribute(
+    "open",
+    "",
+  );
+  await mobileContext.close();
+});
+
+test("hydration keeps the tablet composition stable with acceptable CLS", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 768, height: 900 });
+  await page.addInitScript(() => {
+    const state = window as typeof window & { __layoutShiftScore?: number };
+    state.__layoutShiftScore = 0;
+    new PerformanceObserver((list) => {
+      for (const entry of list.getEntries()) {
+        const shift = entry as PerformanceEntry & {
+          hadRecentInput: boolean;
+          value: number;
+        };
+        if (!shift.hadRecentInput) {
+          state.__layoutShiftScore =
+            (state.__layoutShiftScore ?? 0) + shift.value;
+        }
+      }
+    }).observe({ type: "layout-shift", buffered: true });
+  });
+
+  await page.goto("/");
+  await expect(
+    page.getByRole("application", { name: "战略地图画布" }),
+  ).toHaveAttribute("preserveAspectRatio", "xMidYMid meet");
+  await page.waitForLoadState("networkidle");
+  const layoutShiftScore = await page.evaluate(
+    () =>
+      (window as typeof window & { __layoutShiftScore?: number })
+        .__layoutShiftScore ?? 0,
+  );
+  expect(layoutShiftScore).toBeLessThanOrEqual(0.1);
+});
+
 test("moves the explorer and enters the selected territory", async ({ page }) => {
   await page.goto("/");
 
@@ -115,7 +195,11 @@ test("failed destination preparation can be retried", async ({ page }) => {
   await expect(page).toHaveURL(/\/$/);
 
   await page.unroute(availability);
-  await page.getByRole("button", { name: "重试同步" }).click();
+  const retry = page.getByRole("button", { name: "重试同步" });
+  const retryBounds = await retry.boundingBox();
+  expect(retryBounds?.width).toBeGreaterThanOrEqual(44);
+  expect(retryBounds?.height).toBeGreaterThanOrEqual(44);
+  await retry.click();
 
   await expect(page).toHaveURL(/\/regions\/interview$/);
 });

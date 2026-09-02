@@ -20,8 +20,10 @@ describe("StrategicMap", () => {
       screen.getByRole("application", { name: "战略地图画布" }),
     ).toBeVisible();
     expect(screen.getAllByRole("button", { name: /^进入.+区$/ })).toHaveLength(5);
-    expect(screen.getByRole("navigation", { name: "领地列表" })).toBeVisible();
-    expect(screen.getAllByRole("link", { name: /区$/ })).toHaveLength(5);
+    expect(
+      screen.getAllByRole("navigation", { name: "领地列表" }),
+    ).toHaveLength(2);
+    expect(screen.getAllByRole("link", { name: /区$/ })).toHaveLength(10);
   });
 
   it("selects a territory with the keyboard and reports its status", async () => {

@@ -6,6 +6,7 @@ import {
   useRef,
   useSyncExternalStore,
 } from "react";
+import { cameraStateForTarget, MAP_CAMERA_BOUNDS } from "../camera-state";
 import { useExplorerNavigation } from "../hooks/use-explorer-navigation";
 import { useMapCamera } from "../hooks/use-map-camera";
 import { useMapSession } from "../hooks/use-map-session";
@@ -28,20 +29,11 @@ type StrategicMapProps = {
   initialRegionSlug?: string;
 };
 
-const CAMERA_BOUNDS = {
-  minX: -420,
-  maxX: 420,
-  minY: -240,
-  maxY: 240,
-  minScale: 0.8,
-  maxScale: 2.4,
-};
 const EXPLORER_MOTION = createExplorerMotionAdapter();
 
 const readyImmediately = async () => undefined;
 const ignoreNavigation = () => undefined;
 const reducedMotionQuery = "(prefers-reduced-motion: reduce)";
-const fullMapQuery = "(min-width: 641px) and (max-aspect-ratio: 1/1)";
 
 function subscribeToReducedMotion(onChange: () => void) {
   if (typeof window === "undefined" || !window.matchMedia) return () => undefined;
@@ -53,19 +45,6 @@ function subscribeToReducedMotion(onChange: () => void) {
 function getReducedMotionSnapshot() {
   return typeof window !== "undefined" && window.matchMedia
     ? window.matchMedia(reducedMotionQuery).matches
-    : false;
-}
-
-function subscribeToFullMap(onChange: () => void) {
-  if (typeof window === "undefined" || !window.matchMedia) return () => undefined;
-  const media = window.matchMedia(fullMapQuery);
-  media.addEventListener("change", onChange);
-  return () => media.removeEventListener("change", onChange);
-}
-
-function getFullMapSnapshot() {
-  return typeof window !== "undefined" && window.matchMedia
-    ? window.matchMedia(fullMapQuery).matches
     : false;
 }
 
@@ -88,24 +67,15 @@ export function StrategicMap({
     enabledRegions.find(({ slug }) => slug === "fundamentals") ??
     enabledRegions[0];
   const initialCamera = explicitRegion
-    ? {
-        x: 500 - explicitRegion.camera.x * explicitRegion.camera.scale,
-        y: 300 - explicitRegion.camera.y * explicitRegion.camera.scale,
-        scale: explicitRegion.camera.scale,
-      }
+    ? cameraStateForTarget(explicitRegion.camera)
     : { x: 0, y: 0, scale: 1 };
   const camera = useMapCamera({
-    bounds: CAMERA_BOUNDS,
+    bounds: MAP_CAMERA_BOUNDS,
     initial: initialCamera,
   });
   const prefersReducedMotion = useSyncExternalStore(
     subscribeToReducedMotion,
     getReducedMotionSnapshot,
-    () => false,
-  );
-  const showFullMap = useSyncExternalStore(
-    subscribeToFullMap,
-    getFullMapSnapshot,
     () => false,
   );
   const focusCamera = camera.focus;
@@ -180,7 +150,7 @@ export function StrategicMap({
         role="application"
         aria-label="战略地图画布"
         viewBox="0 0 1000 600"
-        preserveAspectRatio={showFullMap ? "xMidYMid meet" : "xMidYMid slice"}
+        preserveAspectRatio="xMidYMid meet"
         className="strategic-map__canvas"
         {...camera.bind}
       >

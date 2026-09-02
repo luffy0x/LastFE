@@ -140,10 +140,12 @@ a {
 
 .strategic-map__canvas {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  top: 50%;
+  left: 50%;
+  width: max(100%, calc(100dvh * 5 / 3));
+  height: max(100%, calc(100vw * 3 / 5));
   touch-action: none;
+  transform: translate(-50%, -50%);
 }
 
 .camera-layer {
@@ -676,7 +678,8 @@ a {
 }
 
 .map-status button {
-  min-height: 32px;
+  min-width: 44px;
+  min-height: 44px;
   margin-top: 6px;
   padding: 0 10px;
   border: 1px solid var(--target);
@@ -705,6 +708,10 @@ a {
   background: oklch(0.19 0.014 232 / 94%);
 }
 
+.region-list--mobile {
+  display: none;
+}
+
 .region-list summary {
   display: none;
   min-height: 44px;
@@ -713,6 +720,24 @@ a {
   color: var(--text-strong);
   cursor: pointer;
   font-size: 14px;
+}
+
+.region-list summary span {
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+}
+
+.region-list__open-label {
+  display: none;
+}
+
+.region-list--mobile[open] .region-list__closed-label {
+  display: none;
+}
+
+.region-list--mobile[open] .region-list__open-label {
+  display: inline;
 }
 
 .region-list nav {
@@ -788,6 +813,13 @@ a {
 
   .map-instructions {
     display: none;
+  }
+}
+
+@media (min-width: 641px) and (max-aspect-ratio: 1 / 1) {
+  .strategic-map__canvas {
+    width: 100%;
+    height: 100%;
   }
 }
 
@@ -871,6 +903,14 @@ a {
     left: 20px;
     max-height: 124px;
     overflow: auto;
+  }
+
+  .region-list--desktop {
+    display: none;
+  }
+
+  .region-list--mobile {
+    display: block;
   }
 
   .region-list summary {
