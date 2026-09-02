@@ -122,10 +122,10 @@ sudo certbot certonly --standalone --non-interactive --agree-tos --email '<appro
 
 ```bash
 openssl x509 -in "/etc/letsencrypt/live/$DOMAIN/fullchain.pem" -noout -subject -issuer -dates
-test -r "/etc/letsencrypt/live/$DOMAIN/privkey.pem"
+sudo test -r "/etc/letsencrypt/live/$DOMAIN/privkey.pem"
 ```
 
-预期：subject 覆盖批准域名、issuer 正确、有效期合理且私钥可由部署进程读取。由于 ACME `live` 目录中的文件通常是指向 `archive` 的链接，不能只把 `live/$DOMAIN` bind mount 到容器。审批门：确认源证书和目标路径后，把实际文件复制到专用目录：
+预期：subject 覆盖批准域名、issuer 正确且有效期合理；root 可以读取私钥。源 Certbot 私钥只需由主机 root 在校验和复制时读取，复制到专用目录后的私钥则需由 Nginx 容器主进程（root）读取。由于 ACME `live` 目录中的文件通常是指向 `archive` 的链接，不能只把 `live/$DOMAIN` bind mount 到容器。审批门：确认源证书和目标路径后，把实际文件复制到专用目录：
 
 ```bash
 sudo install -d -m 0750 /etc/knowledge-frontier/tls
