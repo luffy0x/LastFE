@@ -29,16 +29,16 @@ assert_non_lossy_lock() {
     echo "FAIL: $unit_path must wait for the maintenance lock" >&2
     exit 1
   fi
-  if ! grep -Fqx 'TimeoutStartSec=32min' "$unit_path"; then
-    echo "FAIL: $unit_path must reserve lock wait plus a full execution window" >&2
+  if ! grep -Fqx 'TimeoutStartSec=34min' "$unit_path"; then
+    echo "FAIL: $unit_path must exceed the complete lock, command, and kill budget" >&2
     exit 1
   fi
-  if ! grep -Fq 'flock -w 960 -E 75' "$unit_path"; then
+  if ! grep -Fq 'flock -w 1020 -E 75' "$unit_path"; then
     echo "FAIL: $unit_path must wait long enough for a bounded peer" >&2
     exit 1
   fi
-  if ! grep -Fq '/usr/bin/timeout --foreground 15m /usr/bin/docker compose' "$unit_path"; then
-    echo "FAIL: $unit_path must bound command execution independently of lock wait" >&2
+  if ! grep -Fq '/usr/bin/timeout --foreground --kill-after=30s 15m /usr/bin/docker compose' "$unit_path"; then
+    echo "FAIL: $unit_path must forcibly bound command execution independently of lock wait" >&2
     exit 1
   fi
 }

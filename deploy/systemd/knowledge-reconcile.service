@@ -8,5 +8,5 @@ Type=oneshot
 WorkingDirectory=/srv/knowledge-frontier/current
 UMask=0077
 Environment=APP_ENV_FILE=/etc/knowledge-frontier/app.env
-TimeoutStartSec=32min
-ExecStart=/usr/bin/flock -w 960 -E 75 /run/lock/knowledge-frontier-maintenance.lock /usr/bin/timeout --foreground 15m /usr/bin/docker compose --profile maintenance run --rm maintenance pnpm reconcile:github
+TimeoutStartSec=34min
+ExecStart=/usr/bin/flock -w 1020 -E 75 /run/lock/knowledge-frontier-maintenance.lock /usr/bin/timeout --foreground --kill-after=30s 15m /usr/bin/docker compose --profile maintenance run --rm maintenance pnpm reconcile:github
