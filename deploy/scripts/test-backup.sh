@@ -37,8 +37,12 @@ assert_non_lossy_lock() {
     echo "FAIL: $unit_path must wait long enough for a bounded peer" >&2
     exit 1
   fi
-  if ! grep -Fq '/usr/bin/timeout --foreground --kill-after=30s 15m /usr/bin/docker compose' "$unit_path"; then
-    echo "FAIL: $unit_path must forcibly bound command execution independently of lock wait" >&2
+  if grep -Fq '/usr/bin/timeout --foreground' "$unit_path"; then
+    echo "FAIL: $unit_path must time out the complete command process group" >&2
+    exit 1
+  fi
+  if ! grep -Fq '/usr/bin/timeout --kill-after=30s 15m /usr/bin/docker compose' "$unit_path"; then
+    echo "FAIL: $unit_path must forcibly bound command-group execution independently of lock wait" >&2
     exit 1
   fi
 }
