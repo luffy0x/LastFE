@@ -1,0 +1,10 @@
+[Unit]
+Description=Create a consistent Knowledge Frontier SQLite backup
+After=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/srv/knowledge-frontier/current
+UMask=0077
+TimeoutStartSec=15min
+ExecStart=/usr/bin/flock -n -E 75 /run/lock/knowledge-frontier-maintenance.lock /usr/bin/docker compose --profile maintenance run --rm maintenance /opt/knowledge-frontier/scripts/backup-sqlite.sh

@@ -1,0 +1,11 @@
+[Unit]
+Description=Reconcile Knowledge Frontier GitHub submissions
+Wants=network-online.target
+After=network-online.target docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/srv/knowledge-frontier/current
+UMask=0077
+TimeoutStartSec=15min
+ExecStart=/usr/bin/flock -n -E 75 /run/lock/knowledge-frontier-maintenance.lock /usr/bin/docker compose --profile maintenance run --rm maintenance pnpm reconcile:github

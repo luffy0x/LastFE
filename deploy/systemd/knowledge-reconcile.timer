@@ -1,0 +1,10 @@
+[Unit]
+Description=Reconcile Knowledge Frontier GitHub submissions every ten minutes
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=10min
+Unit=knowledge-reconcile.service
+
+[Install]
+WantedBy=timers.target
