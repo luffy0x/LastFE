@@ -374,6 +374,121 @@ describe("GitHubSubmissionQueue", () => {
     },
   );
 
+  it("does not republish when reconciliation missed only an unpublish removal", async () => {
+    const encoded = encodeIssue(
+      parseSubmission("interview", {
+        regionSlug: "interview",
+        companyDepartment: "字节跳动/基础架构",
+        position: "后端开发",
+        tags: ["一面"],
+        markdown: "面试记录",
+      }),
+    );
+    const initial = {
+      number: 42,
+      title: encoded.title,
+      body: encoded.body,
+      labels: [...encoded.labels, "approved"],
+      state: "open" as const,
+      createdAt: "2026-09-01T08:00:00.000Z",
+      updatedAt: "2026-09-01T08:10:00.000Z",
+    };
+    const withdrawn = {
+      ...initial,
+      labels: [...encoded.labels, "approved", "unpublish"],
+      updatedAt: "2026-09-01T09:10:00.000Z",
+    };
+    const stable = {
+      ...initial,
+      updatedAt: "2026-09-01T10:10:00.000Z",
+    };
+    const asIssueResponse = (snapshot: typeof initial | typeof withdrawn) => ({
+      data: {
+        state: snapshot.state,
+        labels: snapshot.labels.map((name) => ({ name })),
+        title: snapshot.title,
+        body: snapshot.body,
+        created_at: snapshot.createdAt,
+        updated_at: snapshot.updatedAt,
+      },
+    });
+    const approval = {
+      id: 9001,
+      event: "labeled",
+      label: { name: "approved" },
+      created_at: "2026-09-01T08:05:00.000Z",
+    };
+    const withdrawal = {
+      id: 9002,
+      event: "labeled",
+      label: { name: "unpublish" },
+      created_at: "2026-09-01T09:05:00.000Z",
+    };
+    const missedUnpublishRemoval = {
+      id: 9003,
+      event: "unlabeled",
+      label: { name: "unpublish" },
+      created_at: "2026-09-01T10:05:00.000Z",
+    };
+    const queue = new GitHubSubmissionQueue();
+    const database = openDatabase(":memory:");
+    migrate(database);
+    const { repository, moderation } = createSqliteContentStores(database);
+    const dependencies: SyncIssueDependencies = {
+      moderation,
+      ensureReviewState: vi.fn().mockResolvedValue(undefined),
+      invalidate: vi.fn().mockResolvedValue(undefined),
+    };
+
+    getIssue
+      .mockResolvedValueOnce(asIssueResponse(initial))
+      .mockResolvedValueOnce(asIssueResponse(withdrawn))
+      .mockResolvedValueOnce(asIssueResponse(stable));
+    listIssueEvents
+      .mockResolvedValueOnce({ data: [approval] })
+      .mockResolvedValueOnce({ data: [approval, withdrawal] })
+      .mockResolvedValueOnce({
+        data: [approval, withdrawal, missedUnpublishRemoval],
+      });
+
+    const published = await queue.enrichReview(initial);
+    await expect(
+      syncIssue(published, "queue-approved-9001", dependencies),
+    ).resolves.toBe("published");
+    await expect(repository.list({ page: 1, pageSize: 20 })).resolves.toMatchObject({
+      total: 1,
+      items: [{ id: "gh-42" }],
+    });
+
+    const reconciledWithdrawal = await queue.enrichReview(withdrawn);
+    await expect(
+      syncIssue(reconciledWithdrawal, "queue-withdrawal-9002", dependencies),
+    ).resolves.toBe("withdrawn");
+    await expect(repository.list({ page: 1, pageSize: 20 })).resolves.toMatchObject({
+      total: 0,
+      items: [],
+    });
+
+    const stableSnapshot = await queue.enrichReview(stable);
+    expect(stableSnapshot.review).toEqual({
+      source: "reconciliation",
+      latestRelevantEvent: {
+        id: "9003",
+        action: "unlabeled",
+        label: "unpublish",
+        createdAt: "2026-09-01T10:05:00.000Z",
+      },
+    });
+    await expect(
+      syncIssue(stableSnapshot, "queue-unpublish-removed-9003", dependencies),
+    ).resolves.toBe("withdrawn");
+    await expect(repository.list({ page: 1, pageSize: 20 })).resolves.toMatchObject({
+      total: 0,
+      items: [],
+    });
+    database.close();
+  });
+
   it("keeps missed same-second review removals from locking published content", async () => {
     const encoded = encodeIssue(
       parseSubmission("interview", {

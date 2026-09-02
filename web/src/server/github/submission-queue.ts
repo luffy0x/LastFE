@@ -149,10 +149,21 @@ function reviewEventForSnapshot(
     );
   }
   if (issue.labels.includes("approved")) {
-    return latestReviewEvent(
-      events,
-      (event) => event.action === "labeled" && event.label === "approved",
-    );
+    return latestReviewEvent(events, (event) => {
+      if (event.action === "labeled" && event.label === "approved") {
+        return true;
+      }
+      return (
+        event.action === "unlabeled" &&
+        event.label === "unpublish" &&
+        events.some(
+          (candidate) =>
+            candidate.action === "labeled" &&
+            candidate.label === "unpublish" &&
+            isLaterReviewEvent(event, candidate),
+        )
+      );
+    });
   }
   return latestReviewEvent(events, (event) => event.action === "unlabeled");
 }
