@@ -18,7 +18,7 @@ RUN pnpm install --frozen-lockfile
 
 FROM dependencies AS build
 
-COPY eslint.config.mjs next-env.d.ts next.config.ts postcss.config.mjs tsconfig.json vitest.config.ts ./
+COPY eslint.config.mjs next.config.ts postcss.config.mjs tsconfig.json vitest.config.ts ./
 COPY public ./public
 COPY scripts ./scripts
 COPY src ./src
