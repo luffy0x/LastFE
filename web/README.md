@@ -4,7 +4,7 @@ Knowledge Frontier 是一个面向求职知识分享的 Next.js 应用。首页�
 
 ## 本地运行
 
-需要 Node.js 20.9 或更高版本，以及仓库声明的 pnpm 版本。
+需要 Node.js 22 或更高版本，以及仓库声明的 pnpm 版本。
 
 ```powershell
 pnpm install --frozen-lockfile
