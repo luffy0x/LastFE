@@ -3,8 +3,11 @@ FROM node:24-bookworm-slim AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV COREPACK_HOME="/corepack"
 
-RUN corepack enable && corepack prepare pnpm@11.19.0 --activate
+RUN corepack enable \
+    && corepack prepare pnpm@11.19.0 --activate \
+    && chown --recursive 1001:1001 "$COREPACK_HOME"
 
 WORKDIR /app
 
@@ -55,6 +58,7 @@ RUN apt-get update \
     && install --directory --owner=nextjs --group=nextjs /data /backups
 
 WORKDIR /app
+ENV NODE_ENV=production
 COPY --from=dependencies --chown=nextjs:nextjs /app/node_modules ./node_modules
 COPY --chown=nextjs:nextjs package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY --chown=nextjs:nextjs next.config.ts tsconfig.json ./

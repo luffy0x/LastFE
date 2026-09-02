@@ -9,3 +9,8 @@ assert.match(dockerfile, /FROM .* AS maintenance/);
 assert.match(dockerfile, /COPY .*healthcheck\.mjs/);
 assert.match(healthcheck, /\/api\/health/);
 assert.doesNotMatch(dockerfile, /GITHUB_TOKEN|WEBHOOK_SECRET|ALTCHA_HMAC_KEY/);
+assert.match(dockerfile, /ENV COREPACK_HOME="\/corepack"/);
+assert.match(dockerfile, /chown --recursive 1001:1001 "\$COREPACK_HOME"/);
+
+const maintenance = dockerfile.slice(dockerfile.indexOf("FROM base AS maintenance"));
+assert.match(maintenance, /ENV NODE_ENV=production/);
