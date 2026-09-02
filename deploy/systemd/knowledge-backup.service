@@ -6,5 +6,6 @@ After=docker.service
 Type=oneshot
 WorkingDirectory=/srv/knowledge-frontier/current
 UMask=0077
+Environment=APP_ENV_FILE=/etc/knowledge-frontier/app.env
 TimeoutStartSec=15min
-ExecStart=/usr/bin/flock -n -E 75 /run/lock/knowledge-frontier-maintenance.lock /usr/bin/docker compose --profile maintenance run --rm maintenance /opt/knowledge-frontier/scripts/backup-sqlite.sh
+ExecStart=/usr/bin/flock -w 600 -E 75 /run/lock/knowledge-frontier-maintenance.lock /usr/bin/docker compose --profile maintenance run --rm maintenance /opt/knowledge-frontier/scripts/backup-sqlite.sh

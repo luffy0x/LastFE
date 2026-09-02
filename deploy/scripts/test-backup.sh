@@ -12,7 +12,37 @@ for required_script in "$backup_script" "$restore_script"; do
   fi
 done
 
-for required_command in sqlite3 realpath find touch; do
+assert_unit_line() {
+  local unit_path="$1"
+  local expected_line="$2"
+
+  if ! grep -Fqx "$expected_line" "$unit_path"; then
+    echo "FAIL: expected $unit_path to contain: $expected_line" >&2
+    exit 1
+  fi
+}
+
+assert_non_lossy_lock() {
+  local unit_path="$1"
+
+  if grep -Fq 'flock -n' "$unit_path"; then
+    echo "FAIL: $unit_path must wait for the maintenance lock" >&2
+    exit 1
+  fi
+  if ! grep -Eq 'flock( [^ ]+)* -w [1-9][0-9]*' "$unit_path"; then
+    echo "FAIL: $unit_path must use a bounded flock wait" >&2
+    exit 1
+  fi
+}
+
+reconcile_unit="$repo_root/deploy/systemd/knowledge-reconcile.service"
+backup_unit="$repo_root/deploy/systemd/knowledge-backup.service"
+for unit_path in "$reconcile_unit" "$backup_unit"; do
+  assert_unit_line "$unit_path" 'Environment=APP_ENV_FILE=/etc/knowledge-frontier/app.env'
+  assert_non_lossy_lock "$unit_path"
+done
+
+for required_command in sqlite3 realpath find touch cp ln; do
   if ! command -v "$required_command" >/dev/null 2>&1; then
     echo "NOT RUN: backup round-trip requires $required_command on Linux or WSL" >&2
     exit 77
@@ -51,6 +81,10 @@ backup_file="$(find "$backup_dir" -maxdepth 1 -type f -name '*.db' -print -quit)
 test -n "$backup_file"
 test ! -e "${backup_file}.tmp"
 
+apostrophe_backup_dir="$test_root/backups-with-'quote"
+SQLITE_PATH="$source_db" BACKUP_DIR="$apostrophe_backup_dir" "$backup_script"
+test -n "$(find "$apostrophe_backup_dir" -maxdepth 1 -type f -name '*.db' -print -quit)"
+
 expect_failure 'restore rejects the live database parent' \
   env SQLITE_PATH="$source_db" "$restore_script" "$backup_file" "$test_root"
 
@@ -61,6 +95,23 @@ expect_failure 'restore rejects the production data directory' \
 
 SQLITE_PATH="$source_db" "$restore_script" "$backup_file" "$restore_dir"
 test "$(sqlite3 "$restore_dir/restored.db" 'select value from probe;')" = 'ok'
+
+sqlite3 "$source_db" "update probe set value = 'live';"
+race_target="$test_root/race-restore"
+mkdir "$race_target"
+fake_bin="$test_root/fake-bin"
+mkdir "$fake_bin"
+real_cp="$(command -v cp)"
+printf '%s\n' \
+  '#!/usr/bin/env bash' \
+  'set -euo pipefail' \
+  'ln -s -- "$RACE_LIVE_DB" "$RACE_TARGET/restored.db"' \
+  'exec "$REAL_CP" "$@"' > "$fake_bin/cp"
+chmod +x "$fake_bin/cp"
+expect_failure 'restore does not overwrite a live database when restored.db appears during copy' \
+  env PATH="$fake_bin:$PATH" REAL_CP="$real_cp" RACE_LIVE_DB="$source_db" RACE_TARGET="$race_target" SQLITE_PATH="$source_db" \
+  "$restore_script" "$backup_file" "$race_target"
+test "$(sqlite3 "$source_db" 'select value from probe;')" = 'live'
 
 expect_failure 'restore rejects a non-empty target directory' \
   env SQLITE_PATH="$source_db" "$restore_script" "$backup_file" "$restore_dir"
