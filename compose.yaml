@@ -9,6 +9,7 @@ services:
     expose: ["3000"]
     networks:
       - app_internal
+      - egress
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "node", "healthcheck.mjs"]
@@ -43,7 +44,12 @@ services:
       - /srv/knowledge-frontier/data:/data
       - /srv/knowledge-frontier/backups:/backups
       - ./deploy/scripts:/opt/knowledge-frontier/scripts:ro
+    networks:
+      - app_internal
+      - egress
 
 networks:
   app_internal:
     internal: true
+  egress:
+    internal: false
