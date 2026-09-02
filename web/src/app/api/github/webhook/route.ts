@@ -3,6 +3,11 @@ import { revalidatePath } from "next/cache";
 import { getServerConfig } from "@/server/config";
 import { createSqliteContentStores } from "@/server/content/sqlite-repository";
 import { initializeDatabase } from "@/server/db/migrate";
+import {
+  log,
+  requestIdFromHeaders,
+  type StructuredLogger,
+} from "@/server/logging";
 import { GitHubSubmissionQueue } from "@/server/github/submission-queue";
 import {
   syncIssue,
@@ -22,6 +27,7 @@ export type WebhookRouteDependencies = {
     issue: GitHubIssueSnapshot,
     deliveryId: string,
   ): Promise<SyncResult>;
+  log?: StructuredLogger;
 };
 
 class BodyTooLargeError extends Error {}
@@ -194,6 +200,8 @@ export function createWebhookHandler(
   dependencies: WebhookRouteDependencies,
 ): (request: Request) => Promise<Response> {
   return async (request) => {
+    const requestId = requestIdFromHeaders(request.headers);
+    const logger = dependencies.log ?? log;
     const declaredLength = Number(request.headers.get("content-length"));
     if (Number.isFinite(declaredLength) && declaredLength > MAX_BODY_BYTES) {
       return json(
@@ -222,6 +230,10 @@ export function createWebhookHandler(
         dependencies.webhookSecret,
       )
     ) {
+      logger("warn", "webhook.rejected", {
+        requestId,
+        errorCategory: "signature",
+      });
       return json(
         { ok: false, code: "SIGNATURE", message: "Webhook request rejected." },
         401,
@@ -243,8 +255,17 @@ export function createWebhookHandler(
 
     try {
       const result = await dependencies.synchronize(issue, deliveryId);
+      logger("info", "webhook.synchronized", {
+        requestId,
+        issueNumber: issue.number,
+      });
       return json({ ok: true, result }, 200);
     } catch {
+      logger("error", "webhook.sync_failed", {
+        requestId,
+        issueNumber: issue.number,
+        errorCategory: "synchronization",
+      });
       return json(
         { ok: false, code: "SYNC", message: "Webhook synchronization failed." },
         503,
@@ -279,11 +300,13 @@ async function createProductionHandler(): Promise<WebhookHandler> {
 
 export function createWebhookRoute(
   loadHandler: () => Promise<WebhookHandler>,
+  logger: StructuredLogger = log,
 ): (request: Request) => Promise<Response> {
   let handler: WebhookHandler | undefined;
   let loading: Promise<WebhookHandler> | undefined;
 
   return async (request) => {
+    const requestId = requestIdFromHeaders(request.headers);
     try {
       if (!handler) {
         loading ??= loadHandler();
@@ -295,6 +318,10 @@ export function createWebhookRoute(
       }
       return handler(request);
     } catch {
+      logger("error", "webhook.initialization_failed", {
+        requestId,
+        errorCategory: "initialization",
+      });
       return json(
         { ok: false, code: "SYNC", message: "Webhook synchronization failed." },
         503,

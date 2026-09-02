@@ -210,12 +210,19 @@ describe("GitHub webhook route", () => {
 
   it("returns a safe retryable category when synchronization fails", async () => {
     const raw = new TextEncoder().encode(JSON.stringify(VALID_PAYLOAD));
-    const { handler, synchronize } = setup();
-    synchronize.mockRejectedValue(
-      new Error("token ghp_private, signature, and encoded issue body"),
-    );
+    const synchronize = vi
+      .fn<(issue: GitHubIssueSnapshot, deliveryId: string) => Promise<SyncResult>>()
+      .mockRejectedValue(
+        new Error("token ghp_private, signature, and encoded issue body"),
+      );
+    const log = vi.fn();
+    const handler = createWebhookHandler({
+      webhookSecret: SECRET,
+      synchronize,
+      log,
+    });
 
-    const response = await handler(request(raw));
+    const response = await handler(request(raw, { "x-request-id": "request_42" }));
     const body = await response.text();
 
     expect(response.status).toBe(503);
@@ -223,5 +230,10 @@ describe("GitHub webhook route", () => {
     expect(body).toContain('"code":"SYNC"');
     expect(body).not.toContain("ghp_private");
     expect(body).not.toContain("encoded issue body");
+    expect(log).toHaveBeenCalledWith("error", "webhook.sync_failed", {
+      requestId: "request_42",
+      issueNumber: 101,
+      errorCategory: "synchronization",
+    });
   });
 });

@@ -6,6 +6,11 @@ import type {
 import { getServerConfig } from "@/server/config";
 import { initializeDatabaseAsync } from "@/server/db/migrate";
 import {
+  log,
+  requestIdFromHeaders,
+  type StructuredLogger,
+} from "@/server/logging";
+import {
   AbuseStoreError,
   createSqliteAbuseStore,
   type AbuseStore,
@@ -31,6 +36,7 @@ export type SubmissionRouteDependencies = {
   queue: SubmissionQueue;
   hashSource(ip: string): string;
   now(): Date;
+  log?: StructuredLogger;
 };
 
 const json = (
@@ -95,6 +101,8 @@ export function createSubmissionHandler(
   dependencies: SubmissionRouteDependencies,
 ): (request: Request) => Promise<Response> {
   return async (request) => {
+    const requestId = requestIdFromHeaders(request.headers);
+    const logger = dependencies.log ?? log;
     const declaredLength = Number(request.headers.get("content-length"));
     if (Number.isFinite(declaredLength) && declaredLength > MAX_BODY_BYTES) {
       return invalidResponse();
@@ -123,6 +131,10 @@ export function createSubmissionHandler(
     try {
       verified = await dependencies.challenge.verify(input.altcha);
     } catch {
+      logger("error", "submission.challenge_unavailable", {
+        requestId,
+        errorCategory: "challenge",
+      });
       return upstreamResponse();
     }
 
@@ -138,7 +150,13 @@ export function createSubmissionHandler(
     }
 
     const source = request.headers.get("x-real-ip");
-    if (!source) return invalidResponse();
+    if (!source) {
+      logger("warn", "submission.rejected", {
+        requestId,
+        errorCategory: "source",
+      });
+      return invalidResponse();
+    }
 
     const now = dependencies.now();
     let reservation: { reservationId: string };
@@ -150,6 +168,10 @@ export function createSubmissionHandler(
       });
     } catch (error) {
       if (error instanceof AbuseStoreError && error.code === "DUPLICATE") {
+        logger("warn", "submission.rejected", {
+          requestId,
+          errorCategory: "duplicate",
+        });
         return json(
           {
             ok: false,
@@ -160,6 +182,10 @@ export function createSubmissionHandler(
         );
       }
       if (error instanceof AbuseStoreError && error.code === "RATE_LIMIT") {
+        logger("warn", "submission.rejected", {
+          requestId,
+          errorCategory: "rate_limit",
+        });
         return json(
           {
             ok: false,
@@ -170,6 +196,10 @@ export function createSubmissionHandler(
           { "retry-after": "3600" },
         );
       }
+      logger("error", "submission.reservation_failed", {
+        requestId,
+        errorCategory: "abuse_store",
+      });
       return upstreamResponse();
     }
 
@@ -182,6 +212,10 @@ export function createSubmissionHandler(
       } catch {
         // The short reservation lease is the final recovery boundary.
       }
+      logger("error", "submission.enqueue_failed", {
+        requestId,
+        errorCategory: "github",
+      });
       return upstreamResponse();
     }
 
@@ -191,8 +225,13 @@ export function createSubmissionHandler(
         dependencies.now(),
       );
     } catch {
+      logger("error", "submission.success_record_failed", {
+        requestId,
+        errorCategory: "abuse_store",
+      });
       return upstreamResponse("提交状态暂时无法确认，请稍后重试。");
     }
+    logger("info", "submission.created", { requestId, issueNumber });
     return json({ ok: true, issueNumber }, 201);
   };
 }
@@ -221,11 +260,13 @@ async function createProductionHandler(): Promise<SubmissionHandler> {
 
 export function createSubmissionRoute(
   loadHandler: () => Promise<SubmissionHandler>,
+  logger: StructuredLogger = log,
 ): (request: Request) => Promise<Response> {
   let handler: SubmissionHandler | undefined;
   let loading: Promise<SubmissionHandler> | undefined;
 
   return async (request) => {
+    const requestId = requestIdFromHeaders(request.headers);
     try {
       if (!handler) {
         loading ??= loadHandler();
@@ -237,6 +278,10 @@ export function createSubmissionRoute(
       }
       return handler(request);
     } catch {
+      logger("error", "submission.initialization_failed", {
+        requestId,
+        errorCategory: "initialization",
+      });
       return upstreamResponse();
     }
   };

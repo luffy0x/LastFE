@@ -24,12 +24,13 @@ const VALID_INTERVIEW_INPUT = {
   },
 };
 
-const makeRequest = (body: unknown) =>
+const makeRequest = (body: unknown, headers: Record<string, string> = {}) =>
   new Request("http://localhost/api/submissions", {
     method: "POST",
     headers: {
       "content-type": "application/json",
       "x-real-ip": "203.0.113.10",
+      ...headers,
     },
     body: JSON.stringify(body),
   });
@@ -363,6 +364,31 @@ describe("createSubmissionHandler", () => {
     expect(body).not.toContain("面试记录");
     expect(abuse.release).toHaveBeenCalledWith("reservation-1");
     expect(abuse.recordSuccess).not.toHaveBeenCalled();
+  });
+
+  it("logs a safe enqueue failure with the accepted request ID", async () => {
+    const log = vi.fn();
+    vi.mocked(queue.enqueue).mockRejectedValue(
+      new Error("private markdown and IP address are not log fields"),
+    );
+    const handler = createSubmissionHandler({
+      challenge: { create: vi.fn(), verify: vi.fn().mockResolvedValue(true) },
+      abuse,
+      queue,
+      hashSource: () => "hashed-test-source",
+      now: () => new Date("2026-09-01T08:00:00.000Z"),
+      log,
+    });
+
+    const response = await handler(
+      makeRequest(VALID_INTERVIEW_INPUT, { "x-request-id": "request_42" }),
+    );
+
+    expect(response.status).toBe(503);
+    expect(log).toHaveBeenCalledWith("error", "submission.enqueue_failed", {
+      requestId: "request_42",
+      errorCategory: "github",
+    });
   });
 
   it("keeps production configuration lazy and fails closed when secrets are absent", async () => {

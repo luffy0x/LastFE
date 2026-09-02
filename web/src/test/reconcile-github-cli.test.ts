@@ -32,9 +32,18 @@ it(
       },
     });
     const output = `${result.stdout ?? ""}${result.stderr ?? ""}`;
+    const logLine = output
+      .split(/\r?\n/)
+      .find((line) => line.startsWith('{"requestId":'));
 
     expect(result.status).toBe(1);
-    expect(output).toContain("GitHub reconciliation failed.");
+    expect(logLine).toBeDefined();
+    expect(JSON.parse(logLine!)).toMatchObject({
+      level: "error",
+      event: "github.reconciliation.failed",
+      errorCategory: "reconciliation",
+      requestId: expect.any(String),
+    });
     expect(output).not.toContain("server-only");
     expect(output).not.toContain("test-token");
   },
