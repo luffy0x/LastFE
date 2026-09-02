@@ -4,8 +4,9 @@ set -euo pipefail
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 backup_script="$repo_root/deploy/scripts/backup-sqlite.sh"
 restore_script="$repo_root/deploy/scripts/verify-restore.sh"
+maintenance_runner="$repo_root/deploy/scripts/run-maintenance.sh"
 
-for required_script in "$backup_script" "$restore_script"; do
+for required_script in "$backup_script" "$restore_script" "$maintenance_runner"; do
   if [[ ! -x "$required_script" ]]; then
     echo "FAIL: required executable is missing: $required_script" >&2
     exit 1
@@ -18,31 +19,6 @@ assert_unit_line() {
 
   if ! grep -Fqx "$expected_line" "$unit_path"; then
     echo "FAIL: expected $unit_path to contain: $expected_line" >&2
-    exit 1
-  fi
-}
-
-assert_non_lossy_lock() {
-  local unit_path="$1"
-
-  if grep -Fq 'flock -n' "$unit_path"; then
-    echo "FAIL: $unit_path must wait for the maintenance lock" >&2
-    exit 1
-  fi
-  if ! grep -Fqx 'TimeoutStartSec=34min' "$unit_path"; then
-    echo "FAIL: $unit_path must exceed the complete lock, command, and kill budget" >&2
-    exit 1
-  fi
-  if ! grep -Fq 'flock -w 1020 -E 75' "$unit_path"; then
-    echo "FAIL: $unit_path must wait long enough for a bounded peer" >&2
-    exit 1
-  fi
-  if grep -Fq '/usr/bin/timeout --foreground' "$unit_path"; then
-    echo "FAIL: $unit_path must time out the complete command process group" >&2
-    exit 1
-  fi
-  if ! grep -Fq '/usr/bin/timeout --kill-after=30s 15m /usr/bin/docker compose' "$unit_path"; then
-    echo "FAIL: $unit_path must forcibly bound command-group execution independently of lock wait" >&2
     exit 1
   fi
 }
@@ -60,8 +36,10 @@ reconcile_unit="$repo_root/deploy/systemd/knowledge-reconcile.service"
 backup_unit="$repo_root/deploy/systemd/knowledge-backup.service"
 for unit_path in "$reconcile_unit" "$backup_unit"; do
   assert_unit_line "$unit_path" 'Environment=APP_ENV_FILE=/etc/knowledge-frontier/app.env'
-  assert_non_lossy_lock "$unit_path"
+  assert_unit_line "$unit_path" 'TimeoutStartSec=34min'
 done
+assert_unit_line "$reconcile_unit" 'ExecStart=/srv/knowledge-frontier/current/deploy/scripts/run-maintenance.sh pnpm reconcile:github'
+assert_unit_line "$backup_unit" 'ExecStart=/srv/knowledge-frontier/current/deploy/scripts/run-maintenance.sh /opt/knowledge-frontier/scripts/backup-sqlite.sh'
 assert_no_follow_publication "$backup_script"
 assert_no_follow_publication "$restore_script"
 
@@ -99,6 +77,16 @@ expect_failure 'backup rejects the production data directory as BACKUP_DIR' \
 expect_failure 'backup rejects the live database parent as BACKUP_DIR' \
   env SQLITE_PATH="$source_db" BACKUP_DIR="$test_root" "$backup_script"
 
+backup_symlink_target="$test_root/backup-symlink-target"
+backup_symlink="$test_root/backup-symlink"
+mkdir "$backup_symlink_target"
+ln -s -- "$backup_symlink_target" "$backup_symlink"
+expect_failure 'backup rejects a destination directory symlink' \
+  env SQLITE_PATH="$source_db" BACKUP_DIR="$backup_symlink" "$backup_script"
+expect_failure 'backup rejects a destination directory symlink with a trailing slash' \
+  env SQLITE_PATH="$source_db" BACKUP_DIR="$backup_symlink/" "$backup_script"
+test -z "$(find "$backup_symlink_target" -maxdepth 1 -type f -print -quit)"
+
 SQLITE_PATH="$source_db" BACKUP_DIR="$backup_dir" "$backup_script"
 backup_file="$(find "$backup_dir" -maxdepth 1 -type f -name '*.db' -print -quit)"
 test -n "$backup_file"
@@ -133,9 +121,37 @@ expect_failure 'restore requires SQLITE_PATH to protect the live database parent
   env -u SQLITE_PATH "$restore_script" "$backup_file" "$test_root/missing-live-path"
 expect_failure 'restore rejects the production data directory' \
   env SQLITE_PATH="$source_db" "$restore_script" "$backup_file" '/srv/knowledge-frontier/data'
+expect_failure 'restore rejects the filesystem root' \
+  env SQLITE_PATH="$source_db" "$restore_script" "$backup_file" '/'
+
+non_db_backup="$test_root/backup.sqlite"
+cp -- "$backup_file" "$non_db_backup"
+expect_failure 'restore rejects a backup without a .db extension' \
+  env SQLITE_PATH="$source_db" "$restore_script" "$non_db_backup" "$test_root/non-db-restore"
+
+non_regular_backup="$test_root/non-regular.db"
+mkdir "$non_regular_backup"
+expect_failure 'restore rejects a non-regular backup' \
+  env SQLITE_PATH="$source_db" "$restore_script" "$non_regular_backup" "$test_root/non-regular-restore"
+
+restore_symlink_target="$test_root/restore-symlink-target"
+restore_symlink="$test_root/restore-symlink"
+mkdir "$restore_symlink_target"
+ln -s -- "$restore_symlink_target" "$restore_symlink"
+expect_failure 'restore rejects a destination directory symlink' \
+  env SQLITE_PATH="$source_db" "$restore_script" "$backup_file" "$restore_symlink"
+expect_failure 'restore rejects a destination directory symlink with a trailing slash' \
+  env SQLITE_PATH="$source_db" "$restore_script" "$backup_file" "$restore_symlink/"
+test -z "$(find "$restore_symlink_target" -mindepth 1 -maxdepth 1 -print -quit)"
 
 SQLITE_PATH="$source_db" "$restore_script" "$backup_file" "$restore_dir"
 test "$(sqlite3 "$restore_dir/restored.db" 'select value from probe;')" = 'ok'
+
+rollback_data_dir="$test_root/rollback-data"
+mkdir "$rollback_data_dir"
+rollback_restore_dir="$(mktemp -d "$rollback_data_dir/knowledge-frontier-rollback.XXXXXXXX")"
+SQLITE_PATH="$source_db" "$restore_script" "$backup_file" "$rollback_restore_dir"
+test "$(sqlite3 "$rollback_restore_dir/restored.db" 'select value from probe;')" = 'ok'
 
 sqlite3 "$source_db" "update probe set value = 'live';"
 restore_directory_race="$test_root/restore-directory-race"

@@ -23,7 +23,9 @@ source_db="$(realpath -e -- "$sqlite_path")" || fail 'SQLITE_PATH must resolve t
 [[ -f "$source_db" && ! -L "$source_db" ]] || fail 'SQLITE_PATH must resolve to a regular file'
 source_db_parent="$(dirname "$source_db")"
 
+literal_backup_dir="$(realpath -ms -- "$backup_dir")" || fail 'BACKUP_DIR could not be normalized'
 backup_dir="$(realpath -m -- "$backup_dir")" || fail 'BACKUP_DIR could not be resolved'
+[[ "$backup_dir" == "$literal_backup_dir" ]] || fail 'BACKUP_DIR must not contain symbolic links'
 [[ "$backup_dir" != '/' ]] || fail 'BACKUP_DIR must not be /'
 [[ "$backup_dir" != '/srv/knowledge-frontier/data' ]] || fail 'BACKUP_DIR must not be the production data directory'
 [[ "$backup_dir" != "$source_db_parent" ]] || fail 'BACKUP_DIR must not be the live database directory'

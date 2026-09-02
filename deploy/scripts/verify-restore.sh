@@ -24,7 +24,9 @@ command -v mktemp >/dev/null 2>&1 || fail 'mktemp is required'
 command -v ln >/dev/null 2>&1 || fail 'ln is required'
 
 backup_db="$(realpath -e -- "$backup_arg")" || fail 'BACKUP_DB must resolve to an existing file'
+literal_target_dir="$(realpath -ms -- "$target_arg")" || fail 'RESTORE_DIRECTORY could not be normalized'
 target_dir="$(realpath -m -- "$target_arg")" || fail 'RESTORE_DIRECTORY could not be resolved'
+[[ "$target_dir" == "$literal_target_dir" ]] || fail 'RESTORE_DIRECTORY must not contain symbolic links'
 live_db="$(realpath -m -- "$sqlite_path")" || fail 'SQLITE_PATH could not be resolved'
 live_db_parent="$(dirname "$live_db")"
 
