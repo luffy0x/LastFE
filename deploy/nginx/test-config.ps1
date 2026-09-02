@@ -20,11 +20,13 @@ function Get-ServiceBlock([string]$Name) {
 $appService = Get-ServiceBlock 'app'
 $nginxService = Get-ServiceBlock 'nginx'
 $maintenanceService = Get-ServiceBlock 'maintenance'
+$expectedNginxImage = 'nginx:alpine@sha256:1f25fedd50aec27413031afb3a4f8ee4effcc9d843f6a76e81bfa92245ac5c06'
 
 if ($appService -notmatch '(?m)^    image: \$\{APP_IMAGE:-knowledge-frontier-app:local\}$') { throw 'app image is not selectable by immutable deployment tag' }
 if ($appService -notmatch '(?ms)^    build:\r?\n      context: \./web\r?\n      target: app$') { throw 'app image selection must preserve the app build target' }
 if ($maintenanceService -notmatch '(?m)^    image: \$\{MAINTENANCE_IMAGE:-knowledge-frontier-maintenance:local\}$') { throw 'maintenance image is not selectable by immutable deployment tag' }
 if ($maintenanceService -notmatch '(?ms)^    build:\r?\n      context: \./web\r?\n      target: maintenance$') { throw 'maintenance image selection must preserve the maintenance build target' }
+if ($nginxService -notmatch "(?m)^    image: $([regex]::Escape($expectedNginxImage))$") { throw 'nginx image must use the reviewed linux/amd64 digest' }
 if ($main -notmatch 'limit_req_zone\s+\$binary_remote_addr\s+zone=submissions:10m\s+rate=12r/m') { throw 'missing burst limit zone' }
 if ($site -notmatch 'location = /api/submissions') { throw 'missing submission route' }
 if ($site -notmatch 'limit_req\s+zone=submissions\s+burst=5\s+nodelay') { throw 'missing submission burst limit' }
@@ -64,7 +66,7 @@ if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
 }
 
 $nginxRoot = (Resolve-Path -LiteralPath 'deploy/nginx').Path
-docker run --rm --entrypoint sh --mount "type=bind,src=$nginxRoot,dst=/work,readonly" nginx:alpine -ec @'
+docker run --rm --entrypoint sh --mount "type=bind,src=$nginxRoot,dst=/work,readonly" $expectedNginxImage -ec @'
 apk add --no-cache openssl >/dev/null
 mkdir -p /tmp/tls
 openssl req -x509 -newkey rsa:2048 -nodes -days 1 -subj /CN=localhost -keyout /tmp/tls/privkey.pem -out /tmp/tls/fullchain.pem >/dev/null 2>&1

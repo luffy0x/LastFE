@@ -19,7 +19,7 @@ services:
       retries: 3
 
   nginx:
-    image: nginx:alpine
+    image: nginx:alpine@sha256:1f25fedd50aec27413031afb3a4f8ee4effcc9d843f6a76e81bfa92245ac5c06
     depends_on:
       app:
         condition: service_healthy

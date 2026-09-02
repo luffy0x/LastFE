@@ -159,6 +159,8 @@ sudo install -m 0600 "/etc/letsencrypt/live/$DOMAIN/privkey.pem" /etc/knowledge-
 
 ### 2.4 构建并推送不可变 Linux 镜像
 
+仓库同时把 Node 与 Nginx 基础镜像固定到已核对的 `linux/amd64` manifest digest。每月第一个工作日以及上游安全公告发布后，分别从 Docker Official Images Registry 重新解析标签的 OCI index、`linux/amd64` manifest 和 image config；只有 config 仍为 `linux/amd64`，且两个应用 target、Nginx 解析与健康检查在 CI 全部通过时，才用独立 Conventional Commit 更新 digest。不要只改标签、猜测 digest，或复用其他架构的 manifest。
+
 进入已验证的 detached worktree，重新确认提交和所有未跟踪内容，再执行结构检查与构建。构建不会读取生产环境文件，也不能使用 secret build args：
 
 ```bash
