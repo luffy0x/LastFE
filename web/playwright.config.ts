@@ -36,12 +36,16 @@ export default defineConfig({
       command: "pnpm exec tsx e2e/support/fake-github-server.ts",
       url: "http://127.0.0.1:4010/__test/health",
       reuseExistingServer: false,
+      stdout: "pipe",
+      stderr: "pipe",
     },
     {
       name: "Next.js",
       command: "pnpm dev --hostname 127.0.0.1",
       url: "http://127.0.0.1:3000",
       reuseExistingServer: false,
+      stdout: "pipe",
+      stderr: "pipe",
       env: {
         CONTENT_REPOSITORY: "fixture",
         GITHUB_API_BASE_URL: "http://127.0.0.1:4010",

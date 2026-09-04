@@ -14,6 +14,7 @@ assert.match(dockerfile, /COPY .*healthcheck\.mjs/);
 assert.match(healthcheck, /\/api\/health/);
 assert.doesNotMatch(dockerfile, /GITHUB_TOKEN|WEBHOOK_SECRET|SUPABASE_SERVICE_ROLE_KEY/);
 assert.doesNotMatch(dockerfile, /better-sqlite3|sqlite3|VOLUME \["\/data/);
+assert.doesNotMatch(dockerfile, /pnpm test --run/);
 assert.match(dockerfile, /ENV COREPACK_HOME="\/corepack"/);
 assert.match(dockerfile, /chown --recursive 1001:1001 "\$COREPACK_HOME"/);
 

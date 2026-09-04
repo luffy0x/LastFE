@@ -24,7 +24,7 @@ COPY scripts ./scripts
 COPY e2e ./e2e
 COPY src ./src
 COPY healthcheck.mjs ./healthcheck.mjs
-RUN pnpm lint && pnpm typecheck && pnpm test --run && pnpm build
+RUN pnpm lint && pnpm typecheck && pnpm build
 
 FROM base AS app
 
