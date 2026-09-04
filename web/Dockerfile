@@ -14,7 +14,10 @@ WORKDIR /app
 FROM base AS dependencies
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-RUN pnpm install --frozen-lockfile
+RUN apt-get update \
+    && apt-get install --yes --no-install-recommends python3 make g++ \
+    && rm --recursive --force /var/lib/apt/lists/* \
+    && pnpm install --frozen-lockfile
 
 FROM dependencies AS build
 
