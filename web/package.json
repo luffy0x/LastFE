@@ -14,7 +14,7 @@
     "import:feishu": "node scripts/import-feishu.mjs",
     "reconcile:github": "node scripts/reconcile-github.mjs",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest",
     "test:e2e": "playwright test"
   },
