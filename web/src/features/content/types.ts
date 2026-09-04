@@ -23,6 +23,7 @@ export type ContentQuery = {
   regionSlug?: string;
   search?: string;
   tags?: readonly string[];
+  filters?: Readonly<Record<string, string>>;
   page: number;
   pageSize: 20;
 };

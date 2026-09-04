@@ -20,8 +20,10 @@ describe("StrategicMap", () => {
       screen.getByRole("application", { name: "战略地图画布" }),
     ).toBeVisible();
     expect(screen.getAllByRole("button", { name: /^进入.+区$/ })).toHaveLength(5);
-    expect(screen.getByRole("navigation", { name: "领地列表" })).toBeVisible();
-    expect(screen.getAllByRole("link", { name: /区$/ })).toHaveLength(5);
+    expect(
+      screen.getAllByRole("navigation", { name: "领地列表" }),
+    ).toHaveLength(2);
+    expect(screen.getAllByRole("link", { name: /区$/ })).toHaveLength(10);
   });
 
   it("selects a territory with the keyboard and reports its status", async () => {
@@ -52,18 +54,28 @@ describe("StrategicMap", () => {
     ).toBeVisible();
   });
 
-  it("explains why global search is unavailable", async () => {
+  it("opens the global search dialog", async () => {
     const user = userEvent.setup();
     render(
       <StrategicMap regions={REGIONS} stats={stats} onSelectRegion={vi.fn()} />,
     );
 
-    await user.click(screen.getByRole("button", { name: "打开全局搜索" }));
+    const trigger = screen.getByRole("button", { name: "打开全局搜索" });
+    await user.click(trigger);
 
     expect(
-      screen.getByText("内容索引将在数据层接入后启用", {
-        selector: '[role="status"]',
-      }),
+      screen.getByRole("dialog", { name: "全局情报检索" }),
+    ).toBeVisible();
+    expect(
+      screen.getByRole("searchbox", { name: "搜索全部公开情报" }),
+    ).toHaveFocus();
+
+    await user.keyboard("{Escape}");
+    expect(trigger).toHaveFocus();
+
+    await user.keyboard("{Control>}k{/Control}");
+    expect(
+      screen.getByRole("dialog", { name: "全局情报检索" }),
     ).toBeVisible();
   });
 

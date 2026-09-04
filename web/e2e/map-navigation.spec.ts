@@ -1,5 +1,85 @@
 import { expect, test } from "@playwright/test";
 
+test("direct territory links focus the camera and explorer on the requested region", async ({
+  page,
+}) => {
+  await page.goto("/regions/projects");
+
+  await expect(page.getByTestId("territory-camera-layer")).toHaveAttribute(
+    "transform",
+    "translate(163.6 -240) scale(1.45)",
+  );
+  await expect(
+    page.getByRole("img", { name: "探索者当前位置：项目区" }),
+  ).toHaveAttribute("transform", "translate(232 357)");
+  await expect(page.getByRole("heading", { name: "项目区" })).toBeVisible();
+});
+
+test("server rendering uses the settled tablet composition", async ({
+  browser,
+}) => {
+  const tabletContext = await browser.newContext({
+    javaScriptEnabled: false,
+    viewport: { width: 768, height: 900 },
+  });
+  const tabletPage = await tabletContext.newPage();
+  await tabletPage.goto("/");
+  await expect(
+    tabletPage.getByRole("application", { name: "战略地图画布" }),
+  ).toHaveAttribute("preserveAspectRatio", "xMidYMid meet");
+  await tabletContext.close();
+});
+
+test("server rendering starts with the mobile territory list collapsed", async ({
+  browser,
+}) => {
+  const mobileContext = await browser.newContext({
+    javaScriptEnabled: false,
+    viewport: { width: 375, height: 812 },
+  });
+  const mobilePage = await mobileContext.newPage();
+  await mobilePage.goto("/");
+  await expect(mobilePage.locator("details.region-list")).not.toHaveAttribute(
+    "open",
+    "",
+  );
+  await mobileContext.close();
+});
+
+test("hydration keeps the tablet composition stable with acceptable CLS", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 768, height: 900 });
+  await page.addInitScript(() => {
+    const state = window as typeof window & { __layoutShiftScore?: number };
+    state.__layoutShiftScore = 0;
+    new PerformanceObserver((list) => {
+      for (const entry of list.getEntries()) {
+        const shift = entry as PerformanceEntry & {
+          hadRecentInput: boolean;
+          value: number;
+        };
+        if (!shift.hadRecentInput) {
+          state.__layoutShiftScore =
+            (state.__layoutShiftScore ?? 0) + shift.value;
+        }
+      }
+    }).observe({ type: "layout-shift", buffered: true });
+  });
+
+  await page.goto("/");
+  await expect(
+    page.getByRole("application", { name: "战略地图画布" }),
+  ).toHaveAttribute("preserveAspectRatio", "xMidYMid meet");
+  await page.waitForLoadState("networkidle");
+  const layoutShiftScore = await page.evaluate(
+    () =>
+      (window as typeof window & { __layoutShiftScore?: number })
+        .__layoutShiftScore ?? 0,
+  );
+  expect(layoutShiftScore).toBeLessThanOrEqual(0.1);
+});
+
 test("moves the explorer and enters the selected territory", async ({ page }) => {
   await page.goto("/");
 
@@ -12,13 +92,21 @@ test("moves the explorer and enters the selected territory", async ({ page }) =>
 test("replaces an in-flight destination without opening the old territory", async ({
   page,
 }) => {
+  const navigatedUrls: string[] = [];
+  page.on("framenavigated", (frame) => {
+    if (frame === page.mainFrame()) navigatedUrls.push(frame.url());
+  });
   await page.goto("/");
 
   await page.getByRole("button", { name: "进入学习资料区" }).click();
-  await page.getByRole("button", { name: "进入项目区" }).click();
+  const replacement = page.getByRole("button", { name: "进入项目区" });
+  await replacement.focus();
+  await page.keyboard.press("Enter");
 
   await expect(page).toHaveURL(/\/regions\/projects$/);
-  await expect(page).not.toHaveURL(/\/regions\/resources$/);
+  expect(navigatedUrls).not.toContain(
+    "http://127.0.0.1:3000/regions/resources",
+  );
 });
 
 test("reduced motion enters without a travel delay", async ({ page }) => {
@@ -31,6 +119,7 @@ test("reduced motion enters without a travel delay", async ({ page }) => {
 });
 
 test("keyboard Enter selects and enters a territory", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
   const territory = page.getByRole("button", { name: "进入面经区" });
   await territory.focus();
@@ -52,26 +141,26 @@ test("territory list provides equivalent mobile navigation", async ({ page }) =>
 
 test("pinch changes the camera and reset returns to global view", async ({ page }) => {
   await page.goto("/");
-  const surface = page.getByRole("application", { name: "战略地图画布" });
   const camera = page.getByTestId("camera-layer");
+  const client = await page.context().newCDPSession(page);
 
-  await surface.dispatchEvent("pointerdown", {
-    pointerId: 1,
-    pointerType: "touch",
-    clientX: 400,
-    clientY: 300,
+  await client.send("Input.dispatchTouchEvent", {
+    type: "touchStart",
+    touchPoints: [
+      { x: 400, y: 300, id: 1 },
+      { x: 600, y: 300, id: 2 },
+    ],
   });
-  await surface.dispatchEvent("pointerdown", {
-    pointerId: 2,
-    pointerType: "touch",
-    clientX: 600,
-    clientY: 300,
+  await client.send("Input.dispatchTouchEvent", {
+    type: "touchMove",
+    touchPoints: [
+      { x: 350, y: 300, id: 1 },
+      { x: 650, y: 300, id: 2 },
+    ],
   });
-  await surface.dispatchEvent("pointermove", {
-    pointerId: 2,
-    pointerType: "touch",
-    clientX: 700,
-    clientY: 300,
+  await client.send("Input.dispatchTouchEvent", {
+    type: "touchEnd",
+    touchPoints: [],
   });
 
   await expect(camera).not.toHaveAttribute("transform", "translate(0 0) scale(1)");
@@ -106,7 +195,11 @@ test("failed destination preparation can be retried", async ({ page }) => {
   await expect(page).toHaveURL(/\/$/);
 
   await page.unroute(availability);
-  await page.getByRole("button", { name: "重试同步" }).click();
+  const retry = page.getByRole("button", { name: "重试同步" });
+  const retryBounds = await retry.boundingBox();
+  expect(retryBounds?.width).toBeGreaterThanOrEqual(44);
+  expect(retryBounds?.height).toBeGreaterThanOrEqual(44);
+  await retry.click();
 
   await expect(page).toHaveURL(/\/regions\/interview$/);
 });
@@ -122,6 +215,37 @@ test("return link restores the territory and focus on the map", async ({ page })
   await expect(territory).toBeFocused();
 });
 
+test("keeps every territory label inside the tablet viewport", async ({ page }) => {
+  await page.setViewportSize({ width: 768, height: 900 });
+  await page.goto("/");
+
+  const labels = page.locator(".region-label");
+  await expect(labels).toHaveCount(5);
+  for (let index = 0; index < 5; index += 1) {
+    await expect(labels.nth(index)).toBeVisible();
+  }
+
+  const labelBounds = await labels.evaluateAll((elements) =>
+    elements.map((element) => {
+      const bounds = element.getBoundingClientRect();
+      return {
+        label: element.textContent,
+        left: bounds.left,
+        top: bounds.top,
+        right: bounds.right,
+        bottom: bounds.bottom,
+      };
+    }),
+  );
+
+  for (const bounds of labelBounds) {
+    expect.soft(bounds.left, `${bounds.label} left edge`).toBeGreaterThanOrEqual(0);
+    expect.soft(bounds.top, `${bounds.label} top edge`).toBeGreaterThanOrEqual(0);
+    expect.soft(bounds.right, `${bounds.label} right edge`).toBeLessThanOrEqual(768);
+    expect.soft(bounds.bottom, `${bounds.label} bottom edge`).toBeLessThanOrEqual(900);
+  }
+});
+
 const viewports = [
   { width: 375, height: 812 },
   { width: 768, height: 900 },
@@ -135,6 +259,13 @@ for (const viewport of viewports) {
     await page.goto("/");
     await expect(page.getByRole("main", { name: "求职战略地图" })).toBeVisible();
 
+    const camera = page.getByTestId("camera-layer");
+    await page.getByRole("button", { name: "放大地图" }).click();
+    await expect(camera).not.toHaveAttribute("transform", "translate(0 0) scale(1)");
+    await page.getByRole("button", { name: "复位地图" }).click();
+    await expect(camera).toHaveAttribute("transform", "translate(0 0) scale(1)");
+    await page.mouse.move(1, 1);
+
     const hasHorizontalOverflow = await page.evaluate(
       () => document.documentElement.scrollWidth > window.innerWidth,
     );
@@ -143,5 +274,25 @@ for (const viewport of viewports) {
       animations: "disabled",
       fullPage: true,
     });
+
+    const searchTrigger = page.getByRole("button", { name: "打开全局搜索" });
+    await searchTrigger.click();
+    const dialog = page.getByRole("dialog", { name: "全局情报检索" });
+    await expect(dialog).toBeVisible();
+    await expect(
+      page.getByRole("searchbox", { name: "搜索全部公开情报" }),
+    ).toBeFocused();
+    const dialogFitsViewport = await dialog.evaluate((element) => {
+      const bounds = element.getBoundingClientRect();
+      return (
+        bounds.left >= 0 &&
+        bounds.top >= 0 &&
+        bounds.right <= window.innerWidth &&
+        bounds.bottom <= window.innerHeight
+      );
+    });
+    expect(dialogFitsViewport).toBe(true);
+    await page.keyboard.press("Escape");
+    await expect(searchTrigger).toBeFocused();
   });
 }

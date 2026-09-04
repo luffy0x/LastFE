@@ -9,6 +9,16 @@ vi.mock("next/navigation", () => ({
   }),
 }));
 
+vi.mock("next/server", () => ({
+  connection: vi.fn().mockResolvedValue(undefined),
+}));
+
+vi.mock("@/features/content/repository", () => ({
+  getContentRepository: () => ({
+    stats: () => Promise.resolve({ totalPublished: 18, recentPublished: 4 }),
+  }),
+}));
+
 it("renders the strategic map landmark", async () => {
   render(await HomePage({ searchParams: Promise.resolve({}) }));
 

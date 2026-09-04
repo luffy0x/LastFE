@@ -1,3 +1,5 @@
+import type { SubmissionFieldDefinition } from "../submissions/types";
+
 export type Point = { x: number; y: number };
 
 export type CameraTarget = Point & { scale: number };
@@ -26,6 +28,7 @@ export type RegionDefinition = {
     | "fundamental"
     | "project"
     | "algorithm";
+  submissionFields: readonly SubmissionFieldDefinition[];
   filterKeys: readonly string[];
   summaryFields: readonly string[];
   enabled: boolean;

@@ -48,6 +48,57 @@ describe("map camera", () => {
     expect(result.current.state).toEqual({ x: 420, y: -240, scale: 1.4 });
   });
 
+  it("does not capture a pointer until it becomes a drag", () => {
+    render(
+      <StrategicMap
+        regions={REGIONS}
+        stats={{ totalPublished: 0, recentPublished: 0 }}
+        onSelectRegion={vi.fn()}
+      />,
+    );
+    const surface = screen.getByRole("application", { name: "战略地图画布" });
+    const setPointerCapture = vi.fn();
+    Object.defineProperty(surface, "setPointerCapture", {
+      configurable: true,
+      value: setPointerCapture,
+    });
+
+    fireEvent.pointerDown(surface, { pointerId: 7, clientX: 100, clientY: 100 });
+    expect(setPointerCapture).not.toHaveBeenCalled();
+
+    fireEvent.pointerMove(surface, { pointerId: 7, clientX: 120, clientY: 100 });
+    expect(setPointerCapture).toHaveBeenCalledWith(7);
+  });
+
+  it("captures both pinch pointers and releases them when they finish", () => {
+    render(
+      <StrategicMap
+        regions={REGIONS}
+        stats={{ totalPublished: 0, recentPublished: 0 }}
+        onSelectRegion={vi.fn()}
+      />,
+    );
+    const surface = screen.getByRole("application", { name: "战略地图画布" });
+    const setPointerCapture = vi.fn();
+    const releasePointerCapture = vi.fn();
+    Object.defineProperties(surface, {
+      setPointerCapture: { configurable: true, value: setPointerCapture },
+      hasPointerCapture: { configurable: true, value: vi.fn(() => true) },
+      releasePointerCapture: {
+        configurable: true,
+        value: releasePointerCapture,
+      },
+    });
+
+    fireEvent.pointerDown(surface, { pointerId: 1, clientX: 100, clientY: 100 });
+    fireEvent.pointerDown(surface, { pointerId: 2, clientX: 200, clientY: 100 });
+    expect(setPointerCapture.mock.calls).toEqual([[1], [2]]);
+
+    fireEvent.pointerUp(surface, { pointerId: 2 });
+    fireEvent.pointerCancel(surface, { pointerId: 1 });
+    expect(releasePointerCapture.mock.calls).toEqual([[2], [1]]);
+  });
+
   it("resets pointer pan and wheel zoom from the HUD", async () => {
     const user = userEvent.setup();
     render(

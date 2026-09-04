@@ -1,5 +1,11 @@
 import type { RegionDefinition } from "./types";
 
+const DIFFICULTY_OPTIONS = [
+  { value: "easy", label: "简单" },
+  { value: "medium", label: "中等" },
+  { value: "hard", label: "困难" },
+] as const;
+
 export const REGION_ANCHORS = {
   interview: { x: 228, y: 166 },
   resources: { x: 683, y: 153 },
@@ -48,6 +54,13 @@ export const REGIONS = [
     ],
     theme: "amber",
     schemaKey: "interview",
+    submissionFields: [
+      { name: "companyDepartment", label: "公司 / 部门", kind: "text", required: true, maxLength: 80 },
+      { name: "position", label: "岗位", kind: "text", required: true, maxLength: 80 },
+      { name: "tags", label: "标签", kind: "tags", required: true, maxLength: 24 },
+      { name: "nickname", label: "昵称", kind: "text", required: false, maxLength: 40 },
+      { name: "markdown", label: "面经内容", kind: "markdown", required: true, maxLength: 50 * 1024 },
+    ],
     filterKeys: ["companyDepartment", "position", "tags"],
     summaryFields: ["companyDepartment", "position", "tags"],
     enabled: true,
@@ -74,6 +87,13 @@ export const REGIONS = [
     ],
     theme: "teal",
     schemaKey: "resource",
+    submissionFields: [
+      { name: "title", label: "标题", kind: "text", required: true, maxLength: 120 },
+      { name: "url", label: "URL", kind: "url", required: true, maxLength: 2048 },
+      { name: "summary", label: "摘要", kind: "text", required: false, maxLength: 2000 },
+      { name: "tags", label: "标签", kind: "tags", required: true, maxLength: 24 },
+      { name: "nickname", label: "昵称", kind: "text", required: false, maxLength: 40 },
+    ],
     filterKeys: ["tags"],
     summaryFields: ["tags"],
     enabled: true,
@@ -110,6 +130,13 @@ export const REGIONS = [
     ],
     theme: "magenta",
     schemaKey: "fundamental",
+    submissionFields: [
+      { name: "title", label: "标题", kind: "text", required: true, maxLength: 120 },
+      { name: "category", label: "分类", kind: "text", required: true, maxLength: 60 },
+      { name: "tags", label: "标签", kind: "tags", required: true, maxLength: 24 },
+      { name: "nickname", label: "昵称", kind: "text", required: false, maxLength: 40 },
+      { name: "markdown", label: "内容", kind: "markdown", required: true, maxLength: 50 * 1024 },
+    ],
     filterKeys: ["category", "tags"],
     summaryFields: ["category", "tags"],
     enabled: true,
@@ -136,6 +163,15 @@ export const REGIONS = [
     ],
     theme: "indigo",
     schemaKey: "project",
+    submissionFields: [
+      { name: "title", label: "标题", kind: "text", required: true, maxLength: 120 },
+      { name: "techStack", label: "技术栈", kind: "tags", required: true, maxLength: 24 },
+      { name: "repositoryUrl", label: "仓库 URL", kind: "url", required: false, maxLength: 2048 },
+      { name: "demoUrl", label: "演示 URL", kind: "url", required: false, maxLength: 2048 },
+      { name: "tags", label: "标签", kind: "tags", required: true, maxLength: 24 },
+      { name: "nickname", label: "昵称", kind: "text", required: false, maxLength: 40 },
+      { name: "markdown", label: "项目说明", kind: "markdown", required: true, maxLength: 50 * 1024 },
+    ],
     filterKeys: ["techStack", "tags"],
     summaryFields: ["techStack", "tags"],
     enabled: true,
@@ -162,6 +198,21 @@ export const REGIONS = [
     ],
     theme: "cyan",
     schemaKey: "algorithm",
+    submissionFields: [
+      { name: "title", label: "标题", kind: "text", required: true, maxLength: 120 },
+      { name: "source", label: "来源", kind: "text", required: true, maxLength: 60 },
+      {
+        name: "difficulty",
+        label: "难度",
+        kind: "select",
+        required: true,
+        options: DIFFICULTY_OPTIONS,
+      },
+      { name: "problemUrl", label: "题目 URL", kind: "url", required: false, maxLength: 2048 },
+      { name: "tags", label: "标签", kind: "tags", required: true, maxLength: 24 },
+      { name: "nickname", label: "昵称", kind: "text", required: false, maxLength: 40 },
+      { name: "markdown", label: "题解", kind: "markdown", required: true, maxLength: 50 * 1024 },
+    ],
     filterKeys: ["source", "difficulty", "tags"],
     summaryFields: ["source", "difficulty", "tags"],
     enabled: true,

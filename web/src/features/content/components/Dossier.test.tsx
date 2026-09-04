@@ -20,3 +20,29 @@ it("renders a readable dossier with a route back to its territory", async () => 
     "/regions/interview",
   );
 });
+
+it("labels and hardens a safe external dossier link", async () => {
+  const record = await fixtureContentRepository.get("resource-react-typescript");
+  if (!record) throw new Error("fixture missing");
+
+  render(<Dossier record={record} />);
+
+  const externalLink = screen.getByRole("link", {
+    name: "站外链接（本站不托管或检查文件）",
+  });
+  expect(externalLink).toHaveAttribute(
+    "href",
+    "https://react.dev/learn/typescript",
+  );
+  expect(externalLink).toHaveAttribute("target", "_blank");
+  expect(externalLink).toHaveAttribute("rel", "nofollow noopener noreferrer");
+});
+
+it("withholds an unsafe external dossier URL", async () => {
+  const record = await fixtureContentRepository.get("resource-react-typescript");
+  if (!record) throw new Error("fixture missing");
+
+  render(<Dossier record={{ ...record, externalUrl: "javascript:alert(1)" }} />);
+
+  expect(document.querySelector('a[href^="javascript:"]')).toBeNull();
+});

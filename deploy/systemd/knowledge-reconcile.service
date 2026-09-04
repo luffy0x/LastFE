@@ -1,0 +1,12 @@
+[Unit]
+Description=Reconcile Knowledge Frontier GitHub submissions
+Wants=network-online.target
+After=network-online.target docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/srv/knowledge-frontier/current
+UMask=0077
+Environment=APP_ENV_FILE=/etc/knowledge-frontier/app.env
+TimeoutStartSec=34min
+ExecStart=/srv/knowledge-frontier/current/deploy/scripts/run-maintenance.sh pnpm reconcile:github

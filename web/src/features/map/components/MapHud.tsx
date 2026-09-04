@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { GlobalSearch } from "@/features/search/components/GlobalSearch";
 
 type PublishedStats = {
   totalPublished: number;
@@ -15,15 +15,6 @@ type MapHudProps = {
   onRetry(): void;
 };
 
-function SearchIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-      <circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" strokeWidth="1.5" />
-      <path d="m15.5 15.5 5 5" fill="none" stroke="currentColor" strokeWidth="1.5" />
-    </svg>
-  );
-}
-
 export function MapHud({
   stats,
   status,
@@ -33,8 +24,6 @@ export function MapHud({
   failed,
   onRetry,
 }: MapHudProps) {
-  const [searchMessage, setSearchMessage] = useState("");
-
   return (
     <>
       <header className="map-brand" aria-label="Knowledge Frontier">
@@ -55,18 +44,7 @@ export function MapHud({
       </section>
 
       <div className="map-search">
-        <button
-          type="button"
-          aria-label="打开全局搜索"
-          onClick={() => setSearchMessage("内容索引将在数据层接入后启用")}
-        >
-          <SearchIcon />
-          <span>检索全部情报</span>
-          <kbd>⌘ K</kbd>
-        </button>
-        <p role="status" aria-live="polite">
-          {searchMessage}
-        </p>
+        <GlobalSearch />
       </div>
 
       <div className="map-controls" aria-label="地图镜头控制">
@@ -104,7 +82,11 @@ export function MapHud({
           <span>OPERATOR 01</span>
           <strong>{status}</strong>
           {failed ? (
-            <button type="button" onClick={onRetry}>
+            <button
+              type="button"
+              className="min-h-11 min-w-11"
+              onClick={onRetry}
+            >
               重试同步
             </button>
           ) : null}

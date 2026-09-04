@@ -1,0 +1,11 @@
+[Unit]
+Description=Create a consistent Knowledge Frontier SQLite backup
+After=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/srv/knowledge-frontier/current
+UMask=0077
+Environment=APP_ENV_FILE=/etc/knowledge-frontier/app.env
+TimeoutStartSec=34min
+ExecStart=/srv/knowledge-frontier/current/deploy/scripts/run-maintenance.sh /opt/knowledge-frontier/scripts/backup-sqlite.sh

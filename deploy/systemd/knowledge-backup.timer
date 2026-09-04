@@ -1,0 +1,10 @@
+[Unit]
+Description=Create a daily Knowledge Frontier SQLite backup
+
+[Timer]
+OnCalendar=*-*-* 03:30:00
+Persistent=true
+Unit=knowledge-backup.service
+
+[Install]
+WantedBy=timers.target

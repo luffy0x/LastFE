@@ -1,0 +1,103 @@
+server {
+  listen 80;
+  listen [::]:80;
+  server_name _;
+
+  return 301 https://$host$request_uri;
+}
+
+server {
+  listen 443 ssl;
+  listen [::]:443 ssl;
+  server_name _;
+
+  ssl_certificate ${TLS_CERT_PATH};
+  ssl_certificate_key ${TLS_KEY_PATH};
+  ssl_protocols TLSv1.2 TLSv1.3;
+  ssl_session_cache shared:SSL:10m;
+  ssl_session_timeout 1d;
+
+  client_max_body_size 64k;
+
+  add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+  add_header X-Content-Type-Options "nosniff" always;
+  add_header X-Frame-Options "DENY" always;
+  add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+  add_header Permissions-Policy "camera=(), geolocation=(), microphone=()" always;
+
+  proxy_http_version 1.1;
+  proxy_set_header Host $host;
+  proxy_set_header X-Real-IP $remote_addr;
+  proxy_set_header X-Forwarded-For $remote_addr;
+  proxy_set_header X-Forwarded-Proto $scheme;
+
+  location ^~ /_next/static/ {
+    proxy_pass http://app:3000;
+    proxy_hide_header Cache-Control;
+    proxy_hide_header Expires;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "DENY" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Permissions-Policy "camera=(), geolocation=(), microphone=()" always;
+    add_header Cache-Control "public, max-age=31536000, immutable" always;
+  }
+
+  location ^~ /map/ {
+    proxy_pass http://app:3000;
+    proxy_hide_header Cache-Control;
+    proxy_hide_header Expires;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "DENY" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Permissions-Policy "camera=(), geolocation=(), microphone=()" always;
+    add_header Cache-Control "public, max-age=3600" always;
+  }
+
+  location = /api/submissions {
+    limit_req zone=submissions burst=5 nodelay;
+    limit_req_status 429;
+    proxy_cache off;
+    proxy_hide_header Cache-Control;
+    proxy_hide_header Expires;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "DENY" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Permissions-Policy "camera=(), geolocation=(), microphone=()" always;
+    add_header Cache-Control "no-store" always;
+    proxy_pass http://app:3000;
+  }
+
+  location = /api/github/webhook {
+    client_max_body_size 256k;
+    proxy_cache off;
+    proxy_hide_header Cache-Control;
+    proxy_hide_header Expires;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "DENY" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Permissions-Policy "camera=(), geolocation=(), microphone=()" always;
+    add_header Cache-Control "no-store" always;
+    proxy_pass http://app:3000;
+  }
+
+  location ^~ /api/ {
+    proxy_cache off;
+    proxy_hide_header Cache-Control;
+    proxy_hide_header Expires;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "DENY" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Permissions-Policy "camera=(), geolocation=(), microphone=()" always;
+    add_header Cache-Control "no-store" always;
+    proxy_pass http://app:3000;
+  }
+
+  location / {
+    proxy_pass http://app:3000;
+  }
+}
