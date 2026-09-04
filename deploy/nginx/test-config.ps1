@@ -66,7 +66,7 @@ if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
 }
 
 $nginxRoot = (Resolve-Path -LiteralPath 'deploy/nginx').Path
-docker run --rm --entrypoint sh --mount "type=bind,src=$nginxRoot,dst=/work,readonly" $expectedNginxImage -ec @'
+docker run --rm --add-host app:127.0.0.1 --entrypoint sh --mount "type=bind,src=$nginxRoot,dst=/work,readonly" $expectedNginxImage -ec @'
 apk add --no-cache openssl >/dev/null
 mkdir -p /tmp/tls
 openssl req -x509 -newkey rsa:2048 -nodes -days 1 -subj /CN=localhost -keyout /tmp/tls/privkey.pem -out /tmp/tls/fullchain.pem >/dev/null 2>&1
