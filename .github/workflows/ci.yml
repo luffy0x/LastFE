@@ -31,6 +31,14 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test --run
       - run: pnpm exec playwright test
+      - name: Upload Playwright test results
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-test-results
+          path: web/test-results
+          if-no-files-found: ignore
+          retention-days: 7
       - name: Remove the disposable Playwright Next.js output
         run: rm -rf .next-e2e
       - run: pnpm build

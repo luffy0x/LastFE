@@ -6,7 +6,7 @@ const healthcheck = fs.readFileSync(new URL("./healthcheck.mjs", import.meta.url
 
 assert.match(
   dockerfile,
-  /^FROM node:24-bookworm-slim@sha256:6642ef280aebc09c4541bee0b15c9f89f0f3f3c247ddee79ae1d37eddfdcbbaa AS base$/m,
+  /^FROM node:22-bookworm-slim@sha256:83f487e0a63425e5b4d146fb5e5be574bcbe1b7b843d3ebafdd95eaf7767a7e5 AS base$/m,
 );
 assert.match(dockerfile, /FROM .* AS app/);
 assert.match(dockerfile, /FROM .* AS maintenance/);
