@@ -1,12 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
-import { join } from "node:path";
 
 import { initializeRunDirectory } from "./e2e/support/run-directory-ownership";
 
 const { e2eRunDirectory, ownershipToken } = initializeRunDirectory();
-const e2eDatabasePath = join(e2eRunDirectory, "content.sqlite");
-
-process.env.SQLITE_PATH = e2eDatabasePath;
 
 export default defineConfig({
   testDir: "./e2e",
@@ -47,17 +43,12 @@ export default defineConfig({
       url: "http://127.0.0.1:3000",
       reuseExistingServer: false,
       env: {
-        ALTCHA_HMAC_KEY: "local-e2e-altcha-key",
-        ALTCHA_MAX_NUMBER: "1",
+        CONTENT_REPOSITORY: "fixture",
         GITHUB_API_BASE_URL: "http://127.0.0.1:4010",
-        GITHUB_OWNER: "local-e2e-owner",
-        GITHUB_REPO: "local-e2e-private-repository",
+        GITHUB_REPOSITORY: "local-e2e-owner/local-e2e-private-repository",
         GITHUB_TOKEN: "local-e2e-only-token",
         GITHUB_WEBHOOK_SECRET: "local-e2e-only-key",
-        INTERNAL_APP_ORIGIN: "http://127.0.0.1:3000",
         NEXT_DIST_DIR: ".next-e2e",
-        RATE_LIMIT_HMAC_KEY: "local-e2e-rate-limit-key",
-        SQLITE_PATH: e2eDatabasePath,
       },
     },
   ],

@@ -1,6 +1,6 @@
 # Knowledge Frontier
 
-Knowledge Frontier 是一个以科幻战略地图呈现求职知识的 Next.js 应用。公开内容存储在 SQLite，匿名投稿进入私有 GitHub Issues 审核流程。
+Knowledge Frontier 是一个以科幻战略地图呈现求职知识的 Next.js 应用。公开内容存储在 Supabase PostgreSQL，匿名投稿进入私有 GitHub Issues 审核流程。
 
 ## 文档入口
 
@@ -12,13 +12,12 @@ Knowledge Frontier 是一个以科幻战略地图呈现求职知识的 Next.js �
 
 ## 本地开发
 
-需要 Node.js 22 或更高版本，并使用仓库声明的 `pnpm@11.19.0`。
+需要 Node.js 24.14.1 或兼容的 24.x 版本，并使用仓库声明的 `pnpm@11.19.0`。
 
 ```powershell
 Set-Location web
 pnpm install --frozen-lockfile
 Copy-Item .env.example .env.local
-New-Item -ItemType Directory -Force data
 pnpm dev
 ```
 
@@ -36,6 +35,6 @@ pnpm build
 
 ## 配置变量
 
-运行时变量名为 `SQLITE_PATH`、`GITHUB_TOKEN`、`GITHUB_OWNER`、`GITHUB_REPO`、`GITHUB_WEBHOOK_SECRET`、`ALTCHA_HMAC_KEY`、`ALTCHA_MAX_NUMBER`、`RATE_LIMIT_HMAC_KEY`、`PUBLIC_BASE_URL`、`BACKUP_DIR` 和 `INTERNAL_APP_ORIGIN`。`GITHUB_API_BASE_URL` 仅用于非生产环境。
+线上使用 `CONTENT_REPOSITORY=supabase`，并配置 `SUPABASE_URL`、`SUPABASE_SERVICE_ROLE_KEY`、`GITHUB_TOKEN`、`GITHUB_REPOSITORY`、`GITHUB_WEBHOOK_SECRET` 和 `RATE_LIMIT_HMAC_KEY`。`GITHUB_API_BASE_URL` 仅用于非生产环境的 fake GitHub API。Render + Supabase 的部署步骤见 [Render + Supabase 部署说明](docs/deployment/render-supabase.md)。
 
 Compose 部署选择器为 `APP_IMAGE`、`MAINTENANCE_IMAGE`、`APP_ENV_FILE` 和 `TLS_CERT_DIR`。不要提交 `.env.local`、生产环境文件或任何凭据；生产配置与逐步审批流程见[生产运维手册](docs/operations.md)。

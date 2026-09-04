@@ -11,5 +11,6 @@ describe("Render deployment manifest", () => {
     expect(manifest).toMatch(/type:\s*cron/);
     expect(manifest).toMatch(/pnpm reconcile:github/);
     expect(manifest).toMatch(/SUPABASE_SERVICE_ROLE_KEY/);
+    expect(manifest).toMatch(/RATE_LIMIT_HMAC_KEY/);
   });
 });

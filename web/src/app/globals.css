@@ -624,6 +624,22 @@ a {
   background: oklch(0.19 0.014 232 / 94%);
 }
 
+.region-list--mobile {
+  display: none;
+}
+
+.region-list__open-label {
+  display: none;
+}
+
+.region-list--mobile[open] .region-list__closed-label {
+  display: none;
+}
+
+.region-list--mobile[open] .region-list__open-label {
+  display: inline;
+}
+
 .region-list summary {
   display: none;
   min-height: 44px;
@@ -770,6 +786,14 @@ a {
     left: 20px;
     max-height: 124px;
     overflow: auto;
+  }
+
+  .region-list--desktop {
+    display: none;
+  }
+
+  .region-list--mobile {
+    display: block;
   }
 
   .region-list summary {

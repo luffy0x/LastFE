@@ -1,83 +1,149 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
 import Link from "next/link";
-import { request, RequestError } from "@/utils/request";
-import type { ContentSummary, Page } from "@/features/content/types";
 
-type SearchResponse = {
-  ok: true;
-  page: Page<ContentSummary>;
-};
+import { REGIONS } from "@/features/map/regions";
+import { useGlobalSearch } from "./useGlobalSearch";
+
+function SearchIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+      <circle
+        cx="10.5"
+        cy="10.5"
+        r="6.5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
+      <path
+        d="m15.5 15.5 5 5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
+    </svg>
+  );
+}
 
 export function GlobalSearch() {
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState<readonly ContentSummary[]>([]);
-  const [message, setMessage] = useState("");
-  const [pending, setPending] = useState(false);
-
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const term = query.trim();
-    if (!term) {
-      setMessage("输入关键词后开始检索");
-      setResults([]);
-      return;
-    }
-
-    setPending(true);
-    setMessage("正在扫描公开情报…");
-    try {
-      const response = await request<SearchResponse>(
-        `/api/search?q=${encodeURIComponent(term)}`,
-      );
-      setResults(response.page.items);
-      setMessage(
-        response.page.total === 0
-          ? "没有匹配的公开情报"
-          : `找到 ${response.page.total} 份公开情报`,
-      );
-    } catch (error) {
-      setResults([]);
-      setMessage(
-        error instanceof RequestError
-          ? error.message
-          : "搜索暂时不可用，请稍后重试",
-      );
-    } finally {
-      setPending(false);
-    }
-  }
+  const {
+    close,
+    dialogRef,
+    groups,
+    isOpen,
+    open,
+    query,
+    restoreTrigger,
+    state,
+    triggerRef,
+    updateQuery,
+  } = useGlobalSearch();
 
   return (
-    <section className="global-search" aria-label="全局搜索">
-      <form onSubmit={handleSubmit}>
-        <label className="sr-only" htmlFor="global-search-query">
-          全局搜索关键词
-        </label>
-        <input
-          id="global-search-query"
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder="搜索公司、标签、项目、题解…"
-        />
-        <button type="submit" disabled={pending}>
-          {pending ? "搜索中" : "搜索情报"}
-        </button>
-      </form>
-      <p role="status" aria-live="polite">
-        {message}
-      </p>
-      {results.length ? (
-        <ul className="global-search__results" aria-label="搜索结果">
-          {results.map((item) => (
-            <li key={item.id}>
-              <Link href={`/content/${item.id}`}>{item.title}</Link>
-              <span>{item.regionSlug}</span>
-            </li>
-          ))}
-        </ul>
-      ) : null}
-    </section>
+    <>
+      <button
+        ref={triggerRef}
+        type="button"
+        aria-label="打开全局搜索"
+        aria-controls="global-search-dialog"
+        aria-expanded={isOpen}
+        onClick={open}
+      >
+        <SearchIcon />
+        <span>检索全部情报</span>
+        <kbd>Ctrl K</kbd>
+      </button>
+
+      <dialog
+        ref={dialogRef}
+        id="global-search-dialog"
+        className="global-search-dialog"
+        aria-labelledby="global-search-title"
+        onClose={restoreTrigger}
+        onCancel={(event) => {
+          event.preventDefault();
+          close();
+        }}
+        onKeyDown={(event) => {
+          if (event.key !== "Escape") return;
+          event.preventDefault();
+          close();
+        }}
+      >
+        <header className="global-search-dialog__header">
+          <div>
+            <span>INDEX / PUBLIC</span>
+            <h2 id="global-search-title">全局情报检索</h2>
+          </div>
+          <button type="button" aria-label="关闭全局搜索" onClick={close}>
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+              <path
+                d="M5 5l14 14M19 5 5 19"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+              />
+            </svg>
+          </button>
+        </header>
+
+        <form
+          className="global-search-dialog__form"
+          role="search"
+          onSubmit={(event) => event.preventDefault()}
+        >
+          <label htmlFor="global-search-query">搜索全部公开情报</label>
+          <input
+            id="global-search-query"
+            type="search"
+            value={query}
+            onChange={(event) => updateQuery(event.currentTarget.value)}
+            autoComplete="off"
+            placeholder="标题、标签、正文或领地字段"
+          />
+        </form>
+
+        <div className="global-search-dialog__status" aria-live="polite">
+          {state === "loading" ? "正在扫描公开索引…" : null}
+          {state === "error" ? (
+            <p role="alert">搜索暂时不可用，请稍后重试。</p>
+          ) : null}
+          {state === "ready" && groups.length === 0 ? (
+            <p>没有找到公开情报，请调整关键词。</p>
+          ) : null}
+        </div>
+
+        <div className="global-search-dialog__results">
+          {state === "ready"
+            ? groups.map((group) => {
+                const region = REGIONS.find(
+                  ({ slug }) => slug === group.regionSlug,
+                );
+                return (
+                  <section
+                    key={group.regionSlug}
+                    aria-labelledby={`search-group-${group.regionSlug}`}
+                  >
+                    <h3 id={`search-group-${group.regionSlug}`}>
+                      {region?.label ?? group.regionSlug}
+                    </h3>
+                    <ul>
+                      {group.items.map((item) => (
+                        <li key={item.id}>
+                          <Link href={`/content/${item.id}`} onClick={close}>
+                            <span>{item.title}</span>
+                            <small>{item.tags.join(" / ")}</small>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                );
+              })
+            : null}
+        </div>
+      </dialog>
+    </>
   );
 }

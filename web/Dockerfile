@@ -1,4 +1,4 @@
-FROM node:22-bookworm-slim@sha256:83f487e0a63425e5b4d146fb5e5be574bcbe1b7b843d3ebafdd95eaf7767a7e5 AS base
+FROM node:24.14.1-bookworm-slim@sha256:b506e7321f176aae77317f99d67a24b272c1f09f1d10f1761f2773447d8da26c AS base
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
@@ -14,10 +14,7 @@ WORKDIR /app
 FROM base AS dependencies
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-RUN apt-get update \
-    && apt-get install --yes --no-install-recommends python3 make g++ \
-    && rm --recursive --force /var/lib/apt/lists/* \
-    && pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile
 
 FROM dependencies AS build
 
@@ -32,8 +29,7 @@ RUN pnpm lint && pnpm typecheck && pnpm test --run && pnpm build
 FROM base AS app
 
 RUN groupadd --system --gid 1001 nextjs \
-    && useradd --system --uid 1001 --gid nextjs nextjs \
-    && install --directory --owner=nextjs --group=nextjs /data
+    && useradd --system --uid 1001 --gid nextjs nextjs
 
 WORKDIR /app
 ENV NODE_ENV=production
@@ -43,10 +39,8 @@ ENV PORT=3000
 COPY --from=build --chown=nextjs:nextjs /app/.next/standalone ./
 COPY --from=build --chown=nextjs:nextjs /app/.next/static ./.next/static
 COPY --from=build --chown=nextjs:nextjs /app/public ./public
-COPY --from=build --chown=nextjs:nextjs /app/node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/prebuilds/linux-x64.node ./node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/prebuilds/linux-x64.node
 COPY --from=build --chown=nextjs:nextjs /app/healthcheck.mjs ./healthcheck.mjs
 
-VOLUME ["/data"]
 USER nextjs
 EXPOSE 3000
 
@@ -54,12 +48,8 @@ CMD ["node", "server.js"]
 
 FROM base AS maintenance
 
-RUN apt-get update \
-    && apt-get install --yes --no-install-recommends sqlite3 \
-    && rm --recursive --force /var/lib/apt/lists/* \
-    && groupadd --system --gid 1001 nextjs \
-    && useradd --system --uid 1001 --gid nextjs nextjs \
-    && install --directory --owner=nextjs --group=nextjs /data /backups
+RUN groupadd --system --gid 1001 nextjs \
+    && useradd --system --uid 1001 --gid nextjs nextjs
 
 WORKDIR /app
 ENV NODE_ENV=production
@@ -69,7 +59,6 @@ COPY --chown=nextjs:nextjs next.config.ts tsconfig.json ./
 COPY --chown=nextjs:nextjs scripts ./scripts
 COPY --chown=nextjs:nextjs src ./src
 
-VOLUME ["/data", "/backups"]
 USER nextjs
 
 CMD ["pnpm", "reconcile:github"]

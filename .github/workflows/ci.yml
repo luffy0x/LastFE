@@ -22,7 +22,7 @@ jobs:
           version: 11.19.0
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24.14.1
           cache: pnpm
           cache-dependency-path: web/pnpm-lock.yaml
       - run: pnpm install --frozen-lockfile
@@ -51,7 +51,7 @@ jobs:
       - uses: docker/setup-buildx-action@v3
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24.14.1
       - name: Run the structural Dockerfile guard
         run: node web/Dockerfile.test.mjs
       - name: Build the Linux application image target
@@ -83,7 +83,7 @@ jobs:
               docker image inspect "$image" --format '{{json .Config}}'
               docker history "$image" --no-trunc --format '{{.CreatedBy}}'
             })"
-            if printf '%s\n' "$metadata" | grep -Eiq 'GITHUB_TOKEN|GITHUB_WEBHOOK_SECRET|ALTCHA_HMAC_KEY|RATE_LIMIT_HMAC_KEY'; then
+            if printf '%s\n' "$metadata" | grep -Eiq 'GITHUB_TOKEN|GITHUB_WEBHOOK_SECRET|SUPABASE_SERVICE_ROLE_KEY'; then
               echo "secret-bearing configuration found in $image metadata or history" >&2
               exit 1
             fi
@@ -96,14 +96,13 @@ jobs:
           docker run --rm --entrypoint sh "$MAINTENANCE_IMAGE" -ec '
             test "$(id -u)" -eq 1001
             test "$(pnpm --version)" = 11.19.0
-            sqlite3 --version >/dev/null
-            test -r scripts/reconcile-github.ts
+            test -r scripts/reconcile-github.mjs
           '
           status=0
           output="$(docker run --rm "$MAINTENANCE_IMAGE" 2>&1)" || status="$?"
           test "$status" -eq 1
-          printf '%s\n' "$output" | grep -Eq '"event":"github\.reconciliation\.failed"'
-          printf '%s\n' "$output" | grep -Eq '"errorCategory":"reconciliation"'
+          printf '%s\n' "$output" | grep -Eq '"event":"github-reconcile-crashed"'
+          printf '%s\n' "$output" | grep -Eq '"errorCategory":"Error"'
       - name: Start the application image and run its healthcheck
         env:
           APP_IMAGE: knowledge-frontier-app:ci-${{ github.sha }}
@@ -115,7 +114,7 @@ jobs:
           }
           trap cleanup EXIT
           docker run --detach --name "$container_name" \
-            --env SQLITE_PATH=/data/ci-smoke.db \
+            --env CONTENT_REPOSITORY=fixture \
             "$APP_IMAGE" >/dev/null
           healthy=0
           for attempt in $(seq 1 30); do
@@ -146,10 +145,6 @@ jobs:
       - name: Parse the Nginx configuration
         shell: pwsh
         run: ./deploy/nginx/test-config.ps1
-      - name: Install the ephemeral SQLite test dependency
-        run: sudo apt-get update && sudo apt-get install --yes sqlite3
-      - name: Verify SQLite backup and restore round trip
-        run: bash deploy/scripts/test-backup.sh
       - name: Verify maintenance runner behavior
         run: bash deploy/scripts/test-maintenance-runner.sh
       - name: Verify Compose image selection behavior

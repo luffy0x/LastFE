@@ -96,7 +96,11 @@ export function MapHud({
           <span>OPERATOR 01</span>
           <strong>{status}</strong>
           {failed ? (
-            <button type="button" onClick={onRetry}>
+            <button
+              type="button"
+              className="min-h-11 min-w-11"
+              onClick={onRetry}
+            >
               重试同步
             </button>
           ) : null}

@@ -24,8 +24,8 @@ describe("StrategicMap", () => {
       screen.getByRole("application", { name: "战略地图画布" }),
     ).toBeVisible();
     expect(screen.getAllByRole("button", { name: /^进入.+区$/ })).toHaveLength(5);
-    expect(screen.getByRole("navigation", { name: "领地列表" })).toBeVisible();
-    expect(screen.getAllByRole("link", { name: /区$/ })).toHaveLength(5);
+    expect(screen.getAllByRole("navigation", { name: "领地列表" })).toHaveLength(2);
+    expect(screen.getAllByRole("link", { name: /区$/ })).toHaveLength(10);
   });
 
   it("selects a territory with the keyboard and reports its status", async () => {
@@ -74,19 +74,23 @@ describe("StrategicMap", () => {
       vi.fn(() =>
         Promise.resolve(
           Response.json({
-            ok: true,
-            page: {
-              items: [
-                {
-                  id: "resource-react-typescript",
-                  title: "React TypeScript 学习路线",
-                  regionSlug: "resources",
-                },
-              ],
-              page: 1,
-              pageSize: 20,
-              total: 1,
-            },
+            groups: [
+              {
+                regionSlug: "resources",
+                items: [
+                  {
+                    id: "resource-react-typescript",
+                    title: "React TypeScript 学习路线",
+                    regionSlug: "resources",
+                    summary: null,
+                    nickname: null,
+                    tags: ["React", "TypeScript"],
+                    publishedAt: "2026-09-02T00:00:00.000Z",
+                    metadata: {},
+                  },
+                ],
+              },
+            ],
           }),
         ),
       ),
@@ -95,11 +99,16 @@ describe("StrategicMap", () => {
       <StrategicMap regions={REGIONS} stats={stats} onSelectRegion={vi.fn()} />,
     );
 
-    await user.type(screen.getByLabelText("全局搜索关键词"), "React");
-    await user.click(screen.getByRole("button", { name: "搜索情报" }));
+    await user.click(screen.getByRole("button", { name: "打开全局搜索" }));
+    await user.type(
+      screen.getByRole("searchbox", { name: "搜索全部公开情报" }),
+      "React",
+    );
 
     expect(
-      await screen.findByRole("link", { name: "React TypeScript 学习路线" }),
+      await screen.findByRole("link", {
+        name: /React TypeScript 学习路线/,
+      }),
     ).toBeVisible();
   });
 

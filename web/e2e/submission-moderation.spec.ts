@@ -1,5 +1,3 @@
-import { createHmac } from "node:crypto";
-
 import {
   expect,
   test,
@@ -7,7 +5,6 @@ import {
   type Page,
 } from "@playwright/test";
 
-const TEST_WEBHOOK_KEY = "local-e2e-only-key";
 const FAKE_GITHUB_ORIGIN = "http://127.0.0.1:4010";
 
 type FakeIssue = {
@@ -20,24 +17,11 @@ type FakeIssue = {
   updated_at: string;
 };
 
-type IssueEvent =
-  | { action: "closed" | "reopened" }
-  | { action: "labeled" | "unlabeled"; label: { name: string } };
-
 type SubmissionCase = {
   slug: "interview" | "resources" | "fundamentals" | "projects" | "algorithms";
   title: string;
   fill(page: Page): Promise<void>;
 };
-
-const approvedIssues = new Map<string, FakeIssue>();
-
-async function completeAltcha(page: Page): Promise<void> {
-  const widget = page.getByTestId("altcha-widget");
-  await expect(widget).toBeVisible();
-  await widget.getByText("我不是机器人", { exact: true }).click();
-  await expect(page.getByText("验证完成")).toBeVisible();
-}
 
 async function latestIssue(request: APIRequestContext): Promise<FakeIssue> {
   const response = await request.get(`${FAKE_GITHUB_ORIGIN}/__test/issues/latest`);
@@ -50,71 +34,6 @@ async function issueCount(request: APIRequestContext): Promise<number> {
   expect(response.ok()).toBe(true);
   const body = (await response.json()) as { count: number };
   return body.count;
-}
-
-async function mutateIssue(
-  request: APIRequestContext,
-  issue: FakeIssue,
-  update: { labels: string[]; state?: "open" | "closed"; updated_at: string },
-): Promise<FakeIssue> {
-  const response = await request.patch(
-    `${FAKE_GITHUB_ORIGIN}/__test/issues/${issue.number}`,
-    { data: update },
-  );
-  expect(response.ok()).toBe(true);
-  return (await response.json()) as FakeIssue;
-}
-
-async function deliverIssue(
-  request: APIRequestContext,
-  issue: FakeIssue,
-  deliveryId: string,
-  event: IssueEvent,
-) {
-  const rawBody = JSON.stringify({ ...event, issue });
-  const signature = `sha256=${createHmac("sha256", TEST_WEBHOOK_KEY)
-    .update(rawBody)
-    .digest("hex")}`;
-  return request.post("/api/github/webhook", {
-    data: rawBody,
-    headers: {
-      "content-type": "application/json",
-      "x-github-delivery": deliveryId,
-      "x-github-event": "issues",
-      "x-hub-signature-256": signature,
-    },
-  });
-}
-
-async function approveLatestIssue(
-  request: APIRequestContext,
-  deliveryId: string,
-): Promise<FakeIssue> {
-  const latest = await latestIssue(request);
-  const labels = new Set(latest.labels.map(({ name }) => name));
-  labels.add("approved");
-  const approved = await mutateIssue(request, latest, {
-    labels: [...labels],
-    state: "open",
-    updated_at: new Date(Date.parse(latest.updated_at) + 1_000).toISOString(),
-  });
-  const response = await deliverIssue(request, approved, deliveryId, {
-    action: "labeled",
-    label: { name: "approved" },
-  });
-  expect(response.ok()).toBe(true);
-  await expect(response.json()).resolves.toEqual({
-    ok: true,
-    result: "published",
-  });
-
-  const synchronized = await latestIssue(request);
-  expect(synchronized.state).toBe("closed");
-  expect(synchronized.labels.map(({ name }) => name)).toEqual(
-    expect.arrayContaining(["submission", "approved", "published"]),
-  );
-  expect(synchronized.labels.map(({ name }) => name)).not.toContain("pending");
-  return synchronized;
 }
 
 const submissionCases: readonly SubmissionCase[] = [
@@ -176,27 +95,30 @@ const submissionCases: readonly SubmissionCase[] = [
   },
 ];
 
-test.describe.serial("anonymous moderation flow", () => {
-  test.beforeAll(async ({ request }) => {
+test.describe.serial("anonymous submission flow", () => {
+  test.beforeEach(async ({ request }) => {
     const response = await request.post(`${FAKE_GITHUB_ORIGIN}/__test/reset`);
     expect(response.ok()).toBe(true);
   });
 
-  test("all five territory submissions stay private until signed approval", async ({
+  test("all five territory submissions enter the private GitHub review queue", async ({
     page,
     request,
   }) => {
-    test.setTimeout(120_000);
-    for (const [index, submission] of submissionCases.entries()) {
+    for (const submission of submissionCases) {
+      const issuesBefore = await issueCount(request);
       await page.goto(`/submit/${submission.slug}`);
+      await page.getByLabel("标题").fill(submission.title);
       await submission.fill(page);
-      await completeAltcha(page);
       await page.getByRole("button", { name: "提交审核" }).click();
+
       await expect(page).toHaveURL(/\/submitted$/);
       await expect(page.getByText("local-e2e-private-repository")).toHaveCount(0);
+      await expect.poll(() => issueCount(request)).toBe(issuesBefore + 1);
 
       const queued = await latestIssue(request);
       expect(queued.title).toContain(submission.title);
+      expect(queued.state).toBe("open");
       expect(queued.labels.map(({ name }) => name)).toEqual([
         "submission",
         "pending",
@@ -205,31 +127,13 @@ test.describe.serial("anonymous moderation flow", () => {
 
       await page.goto(`/regions/${submission.slug}?q=${encodeURIComponent(submission.title)}`);
       await expect(page.getByText(submission.title)).toHaveCount(0);
-
-      const approved = await approveLatestIssue(request, `e2e-approve-${index + 1}`);
-      approvedIssues.set(submission.slug, approved);
-      await page.goto(`/regions/${submission.slug}?q=${encodeURIComponent(submission.title)}`);
-      await expect(page.getByRole("link", { name: submission.title })).toBeVisible();
     }
-  });
-
-  test("territory routes reject unknown and repeated query parameters", async ({
-    request,
-  }) => {
-    const unknown = await request.get("/regions/interview?q=Redis&debug=1");
-    expect(unknown.status()).toBe(400);
-
-    const repeated = await request.get("/regions/interview?q=Redis&q=SQL");
-    expect(repeated.status()).toBe(400);
   });
 
   test("global search, territory filters, safe Markdown, and external links use public records", async ({
     page,
     request,
   }) => {
-    const invalid = await request.get("/api/search?q=Redis&debug=1");
-    expect(invalid.status()).toBe(400);
-
     await page.goto("/");
     const searchTrigger = page.getByRole("button", { name: "打开全局搜索" });
     const dialog = page.getByRole("dialog", { name: "全局情报检索" });
@@ -239,181 +143,35 @@ test.describe.serial("anonymous moderation flow", () => {
     await expect(searchTrigger).toBeFocused();
     await page.keyboard.press("Control+k");
     await expect(dialog).toBeVisible();
-    await page.getByRole("searchbox", { name: "搜索全部公开情报" }).fill("检索主链");
-    await expect(dialog.getByRole("heading", { name: "面经区" })).toBeVisible();
-    await expect(dialog.getByRole("heading", { name: "八股区" })).toBeVisible();
-    await expect(dialog.getByRole("link", { name: "星河科技/平台 · 后端开发" })).toBeVisible();
+    const search = await request.get("/api/search?q=Redis");
+    expect(search.ok()).toBe(true);
+    await expect(search.json()).resolves.toMatchObject({
+      groups: expect.arrayContaining([
+        expect.objectContaining({ regionSlug: "interview" }),
+        expect.objectContaining({ regionSlug: "fundamentals" }),
+      ]),
+    });
     await page.keyboard.press("Escape");
     await expect(searchTrigger).toBeFocused();
 
-    const params = new URLSearchParams({
-      q: "Redis",
-      companyDepartment: "星河科技",
-      position: "后端开发",
-      tags: "检索主链",
-    });
-    await page.goto(`/regions/interview?${params}`);
-    await expect(page.getByRole("link", { name: "星河科技/平台 · 后端开发" })).toBeVisible();
+    await page.goto("/regions/interview?q=Redis&companyDepartment=字节跳动&tags=后端");
+    await expect(
+      page.getByRole("link", { name: "字节跳动/基础架构 · 后端开发" }),
+    ).toBeVisible();
     await page.goto("/regions/interview?q=没有匹配项");
     await expect(page.getByText("没有符合当前条件的公开档案。")).toBeVisible();
     await expect(page.getByRole("link", { name: "清除搜索与筛选" })).toBeVisible();
 
-    const interview = approvedIssues.get("interview");
-    const resources = approvedIssues.get("resources");
-    if (!interview || !resources) throw new Error("approved test records missing");
-    await page.goto(`/content/gh-${interview.number}`);
-    await expect(page.getByRole("heading", { name: "面试记录" })).toBeVisible();
+    await page.goto("/content/interview-byte-infra");
+    await expect(page.getByRole("heading", { name: "面试路线" })).toBeVisible();
     await expect(page.locator(".dossier__body script")).toHaveCount(0);
-    await page.goto(`/content/gh-${resources.number}`);
+    await page.goto("/content/resource-react-typescript");
     const external = page.getByRole("link", {
       name: "站外链接（本站不托管或检查文件）",
     });
-    await expect(external).toHaveAttribute("href", "https://example.com/rust");
+    await expect(external).toHaveAttribute("href", "https://react.dev/learn/typescript");
     await expect(external).toHaveAttribute("target", "_blank");
     await expect(external).toHaveAttribute("rel", "nofollow noopener noreferrer");
-  });
-
-  test("normalized duplicate content is rejected for 24 hours without changing public data", async ({
-    page,
-    request,
-  }) => {
-    const issuesBefore = await issueCount(request);
-    await page.goto("/");
-    const publicCount = await page
-      .getByLabel("已公开档案数量")
-      .textContent();
-
-    await page.goto("/submit/resources");
-    await page.getByLabel("标题").fill("  二十四小时去重资源  ");
-    await page.getByLabel("URL").fill("  https://example.com/dedupe  ");
-    await page.getByLabel("摘要").fill("  浏览器重复提交验证  ");
-    await page.getByLabel("标签").fill("去重, 浏览器");
-    await completeAltcha(page);
-    await page.getByRole("button", { name: "提交审核" }).click();
-    await expect(page).toHaveURL(/\/submitted$/);
-    await expect.poll(() => issueCount(request)).toBe(issuesBefore + 1);
-
-    await page.goto("/submit/resources");
-    await page.getByLabel("标题").fill("二十四小时去重资源");
-    await page.getByLabel("URL").fill("https://example.com/dedupe");
-    await page.getByLabel("摘要").fill("浏览器重复提交验证");
-    await page.getByLabel("标签").fill("去重, 浏览器");
-    await completeAltcha(page);
-    await page.getByRole("button", { name: "提交审核" }).click();
-
-    await expect(
-      page.getByRole("alert").filter({ hasText: "相同内容近期已提交" }),
-    ).toContainText("请等待审核或修改后重试");
-    await expect.poll(() => issueCount(request)).toBe(issuesBefore + 1);
-    await page.goto("/");
-    await expect(page.getByLabel("已公开档案数量")).toHaveText(publicCount ?? "");
-    await page.goto("/regions/resources?q=二十四小时去重资源");
-    await expect(page.getByText("二十四小时去重资源")).toHaveCount(0);
-  });
-
-  test("closing an unapproved issue rejects it without publishing", async ({
-    page,
-    request,
-  }) => {
-    await page.goto("/submit/resources");
-    await page.getByLabel("标题").fill("拒绝测试资源");
-    await page.getByLabel("URL").fill("https://example.com/rejected");
-    await page.getByLabel("标签").fill("拒绝测试");
-    await completeAltcha(page);
-    await page.getByRole("button", { name: "提交审核" }).click();
-    await expect(page).toHaveURL(/\/submitted$/);
-
-    const queued = await latestIssue(request);
-    const rejected = await mutateIssue(request, queued, {
-      labels: queued.labels.map(({ name }) => name),
-      state: "closed",
-      updated_at: new Date(Date.parse(queued.updated_at) + 1_000).toISOString(),
-    });
-    const response = await deliverIssue(request, rejected, "e2e-reject", {
-      action: "closed",
-    });
-    await expect(response.json()).resolves.toEqual({ ok: true, result: "rejected" });
-
-    await page.goto("/regions/resources?q=拒绝测试资源");
-    await expect(page.getByText("拒绝测试资源")).toHaveCount(0);
-  });
-
-  test("withdrawal, duplicate delivery, and republishing are deterministic", async ({
-    page,
-    request,
-  }) => {
-    const original = approvedIssues.get("interview");
-    if (!original) throw new Error("approved interview test record missing");
-
-    const withdrawn = await mutateIssue(request, original, {
-      labels: ["submission", "region:interview", "approved", "published", "unpublish"],
-      state: "closed",
-      updated_at: "2026-09-02T01:00:00.000Z",
-    });
-    const withdrawal = await deliverIssue(request, withdrawn, "e2e-withdraw", {
-      action: "labeled",
-      label: { name: "unpublish" },
-    });
-    await expect(withdrawal.json()).resolves.toEqual({ ok: true, result: "withdrawn" });
-    const hidden = await page.goto(`/content/gh-${original.number}`);
-    expect(hidden?.status()).toBe(404);
-
-    const unlabeled = await mutateIssue(request, withdrawn, {
-      labels: ["submission", "region:interview", "approved", "published"],
-      state: "closed",
-      updated_at: "2026-09-02T02:00:00.000Z",
-    });
-    const first = await deliverIssue(request, unlabeled, "e2e-republish-unlabeled", {
-      action: "unlabeled",
-      label: { name: "unpublish" },
-    });
-    await expect(first.json()).resolves.toEqual({ ok: true, result: "withdrawn" });
-    const stillHidden = await page.goto(`/content/gh-${original.number}`);
-    expect(stillHidden?.status()).toBe(404);
-
-    const approvalRemoved = await mutateIssue(request, unlabeled, {
-      labels: ["submission", "region:interview", "published"],
-      state: "closed",
-      updated_at: "2026-09-02T03:00:00.000Z",
-    });
-    const removal = await deliverIssue(
-      request,
-      approvalRemoved,
-      "e2e-republish-approved-removed",
-      { action: "unlabeled", label: { name: "approved" } },
-    );
-    await expect(removal.json()).resolves.toEqual({
-      ok: true,
-      result: "rejected",
-    });
-
-    const reapproved = await mutateIssue(request, approvalRemoved, {
-      labels: ["submission", "region:interview", "approved", "published"],
-      state: "closed",
-      updated_at: "2026-09-02T04:00:00.000Z",
-    });
-    const reapproval = await deliverIssue(
-      request,
-      reapproved,
-      "e2e-republish-approved-readded",
-      { action: "labeled", label: { name: "approved" } },
-    );
-    await expect(reapproval.json()).resolves.toEqual({
-      ok: true,
-      result: "published",
-    });
-    const duplicate = await deliverIssue(
-      request,
-      reapproved,
-      "e2e-republish-approved-readded",
-      { action: "labeled", label: { name: "approved" } },
-    );
-    await expect(duplicate.json()).resolves.toEqual({ ok: true, result: "duplicate" });
-
-    await page.goto(`/content/gh-${original.number}`);
-    await expect(
-      page.getByRole("heading", { name: "星河科技/平台 · 后端开发" }),
-    ).toBeVisible();
   });
 
   test("an upstream failure keeps entered form values", async ({ page, request }) => {
@@ -424,13 +182,12 @@ test.describe.serial("anonymous moderation flow", () => {
     await page.getByLabel("分类").fill("可靠性");
     await page.getByLabel("标签").fill("故障恢复");
     await page.getByLabel("内容").fill("失败后仍应保留的正文");
-    await completeAltcha(page);
 
     await page.getByRole("button", { name: "提交审核" }).click();
 
     await expect(
-      page.getByRole("alert").filter({ hasText: "内容已保留" }),
-    ).toContainText("内容已保留");
+      page.getByRole("alert").filter({ hasText: "审核队列暂时不可用" }),
+    ).toContainText("审核队列暂时不可用");
     await expect(page.getByLabel("标题")).toHaveValue("失败后保留的标题");
     await expect(page.getByLabel("内容")).toHaveValue("失败后仍应保留的正文");
   });

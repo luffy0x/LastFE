@@ -25,6 +25,7 @@ export type ExplorerNavigationOptions = {
   initialRegion: string;
   initialSelectedSlug?: string | null;
   prepare(region: RegionDefinition): Promise<void>;
+  focus?(region: RegionDefinition): void;
   navigate(href: string): void;
   motion: ExplorerMotionAdapter;
   reducedMotion: boolean;
@@ -60,6 +61,7 @@ export function useExplorerNavigation({
   initialRegion,
   initialSelectedSlug = null,
   prepare,
+  focus,
   navigate,
   motion,
   reducedMotion,
@@ -93,6 +95,7 @@ export function useExplorerNavigation({
 
       const selectionToken = ++tokenRef.current;
       setTargetSlug(slug);
+      focus?.(target);
 
       let preparation: Promise<void>;
       try {
@@ -163,7 +166,7 @@ export function useExplorerNavigation({
         },
       );
     },
-    [motion, navigate, prepare, reducedMotion, regions],
+    [focus, motion, navigate, prepare, reducedMotion, regions],
   );
 
   const retry = useCallback(() => {

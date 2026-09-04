@@ -9,31 +9,15 @@ type SubmissionFormProps = {
   region: RegionDefinition;
 };
 
-const FIELD_LABELS: Record<string, string> = {
-  companyDepartment: "公司/部门",
-  position: "岗位",
-  category: "知识分类",
-  techStack: "技术栈",
-  source: "来源",
-  difficulty: "难度",
-};
-
 function metadataKeysFor(region: RegionDefinition): readonly string[] {
   return region.summaryFields.filter((key) => key !== "tags");
-}
-
-function needsMarkdown(region: RegionDefinition): boolean {
-  return region.schemaKey !== "resource";
-}
-
-function acceptsExternalUrl(region: RegionDefinition): boolean {
-  return ["resource", "project", "algorithm"].includes(region.schemaKey);
 }
 
 export function SubmissionForm({ region }: SubmissionFormProps) {
   const router = useRouter();
   const metadataKeys = useMemo(() => metadataKeysFor(region), [region]);
   const [message, setMessage] = useState("");
+  const [messageKind, setMessageKind] = useState<"status" | "alert">("status");
   const [pending, setPending] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -48,6 +32,7 @@ export function SubmissionForm({ region }: SubmissionFormProps) {
       .filter(Boolean);
 
     setPending(true);
+    setMessageKind("status");
     setMessage("正在递交审核队列…");
     try {
       await request<{ ok: true }>("/api/submissions", {
@@ -67,6 +52,7 @@ export function SubmissionForm({ region }: SubmissionFormProps) {
       });
       router.push("/submitted");
     } catch (error) {
+      setMessageKind("alert");
       setMessage(
         error instanceof RequestError
           ? error.message
@@ -107,43 +93,91 @@ export function SubmissionForm({ region }: SubmissionFormProps) {
         <input name="nickname" maxLength={40} placeholder="可留空，公开显示匿名" />
       </label>
 
-      {metadataKeys.map((key) => (
-        <label key={key}>
-          {FIELD_LABELS[key] ?? key}
-          <input name={key} maxLength={120} required />
-        </label>
-      ))}
+      {region.submissionFields
+        .filter(({ name }) => !["title", "tags", "nickname"].includes(name))
+        .map((field) => {
+          if (field.kind === "select") {
+            return (
+              <label key={field.name}>
+                {field.label}
+                <select name={field.name} required={field.required}>
+                  <option value="">请选择</option>
+                  {field.options.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            );
+          }
 
-      {acceptsExternalUrl(region) ? (
-        <label>
-          外部链接
-          <input
-            name="externalUrl"
-            type="url"
-            placeholder="https://example.com"
-            required={region.schemaKey === "resource"}
-          />
-        </label>
-      ) : null}
+          if (field.kind === "markdown") {
+            return (
+              <label key={field.name} className="submission-form__wide">
+                {field.label}
+                <textarea
+                  name="markdown"
+                  maxLength={field.maxLength}
+                  rows={10}
+                  required={field.required}
+                />
+              </label>
+            );
+          }
 
-      <label className="submission-form__wide">
-        简介
-        <textarea name="summary" maxLength={2000} rows={4} />
-      </label>
+          if (field.name === "summary") {
+            return (
+              <label key={field.name} className="submission-form__wide">
+                {field.label}
+                <textarea
+                  name="summary"
+                  maxLength={field.maxLength}
+                  rows={4}
+                  required={field.required}
+                />
+              </label>
+            );
+          }
 
-      {needsMarkdown(region) ? (
-        <label className="submission-form__wide">
-          Markdown 正文
-          <textarea name="markdown" maxLength={50 * 1024} rows={10} required />
-        </label>
-      ) : null}
+          if (field.kind === "url") {
+            return (
+              <label key={field.name}>
+                {field.label}
+                <input
+                  name={
+                    field.name === "url"
+                      ? "externalUrl"
+                      : field.name === "demoUrl"
+                        ? "externalUrl"
+                        : field.name
+                  }
+                  type="url"
+                  maxLength={field.maxLength}
+                  placeholder="https://example.com"
+                  required={field.required}
+                />
+              </label>
+            );
+          }
+
+          return (
+            <label key={field.name}>
+              {field.label}
+              <input name={field.name} maxLength={field.maxLength} required={field.required} />
+            </label>
+          );
+        })}
 
       <div className="submission-form__actions">
-        <p role="status" aria-live="polite">
+        <p
+          role={messageKind}
+          aria-live={messageKind === "alert" ? "assertive" : "polite"}
+        >
           {message}
         </p>
         <button type="submit" disabled={pending}>
-          {pending ? "递交中" : "递交待审核情报"}
+          {pending ? "提交中" : "提交审核"}
         </button>
       </div>
     </form>

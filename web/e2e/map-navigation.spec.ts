@@ -47,7 +47,10 @@ test("territory list provides equivalent mobile navigation", async ({ page }) =>
   await page.goto("/");
 
   await page.getByText("打开领地列表").click();
-  await page.getByRole("link", { name: /项目区$/ }).click();
+  await page
+    .locator(".region-list--mobile")
+    .getByRole("link", { name: /项目区$/ })
+    .click();
 
   await expect(page).toHaveURL(/\/regions\/projects$/);
 });

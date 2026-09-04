@@ -13,8 +13,12 @@ const safeUrl = z
   });
 
 export function isSafeHttpUrl(value: string): boolean {
+  const trimmed = value.trim();
+  if (!trimmed || trimmed.length > 2048) return false;
+
   try {
-    return ["http:", "https:"].includes(new URL(value.trim()).protocol);
+    const url = new URL(trimmed);
+    return ["http:", "https:"].includes(url.protocol) && url.href === trimmed;
   } catch {
     return false;
   }

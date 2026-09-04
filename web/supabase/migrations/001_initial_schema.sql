@@ -64,6 +64,112 @@ create table if not exists public.successful_submission_events (
 create index if not exists successful_submission_events_source_idx
   on public.successful_submission_events (source_hash, created_at desc);
 
+create or replace function public.reserve_submission(
+  p_source_hash text,
+  p_fingerprint text,
+  p_now timestamptz default now()
+)
+returns text
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  active_reservations integer;
+  recent_successes integer;
+begin
+  delete from public.submission_fingerprints
+  where reserved_until <= p_now;
+
+  delete from public.successful_submission_events
+  where created_at <= p_now - interval '1 hour';
+
+  select count(*) into recent_successes
+  from public.successful_submission_events
+  where source_hash = p_source_hash
+    and created_at > p_now - interval '1 hour';
+
+  select count(*) into active_reservations
+  from public.submission_fingerprints
+  where source_hash = p_source_hash
+    and state = 'reserved'
+    and reserved_until > p_now;
+
+  if recent_successes + active_reservations >= 10 then
+    return 'rate_limit';
+  end if;
+
+  insert into public.submission_fingerprints (
+    fingerprint,
+    source_hash,
+    state,
+    reserved_until,
+    created_at
+  )
+  values (
+    p_fingerprint,
+    p_source_hash,
+    'reserved',
+    p_now + interval '5 minutes',
+    p_now
+  );
+
+  return 'reserved';
+exception
+  when unique_violation then
+    return 'duplicate';
+end;
+$$;
+
+create or replace function public.record_submission_success(
+  p_fingerprint text,
+  p_now timestamptz default now()
+)
+returns text
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  reservation_source_hash text;
+begin
+  update public.submission_fingerprints
+  set state = 'submitted',
+      reserved_until = p_now + interval '24 hours'
+  where fingerprint = p_fingerprint
+    and state = 'reserved'
+    and reserved_until > p_now
+  returning source_hash into reservation_source_hash;
+
+  if reservation_source_hash is null then
+    return 'invalid_reservation';
+  end if;
+
+  insert into public.successful_submission_events (
+    source_hash,
+    fingerprint,
+    created_at
+  )
+  values (
+    reservation_source_hash,
+    p_fingerprint,
+    p_now
+  );
+
+  return 'submitted';
+end;
+$$;
+
+revoke execute on function public.reserve_submission(text, text, timestamptz)
+  from public, anon, authenticated;
+revoke execute on function public.record_submission_success(text, timestamptz)
+  from public, anon, authenticated;
+
+grant execute on function public.reserve_submission(text, text, timestamptz)
+  to service_role;
+grant execute on function public.record_submission_success(text, timestamptz)
+  to service_role;
+
 alter table public.content enable row level security;
 alter table public.tags enable row level security;
 alter table public.content_tags enable row level security;

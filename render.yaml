@@ -25,6 +25,8 @@ services:
         sync: false
       - key: GITHUB_WEBHOOK_SECRET
         sync: false
+      - key: RATE_LIMIT_HMAC_KEY
+        sync: false
 
   - type: cron
     name: lastfe-github-reconcile
@@ -47,4 +49,6 @@ services:
       - key: GITHUB_TOKEN
         sync: false
       - key: GITHUB_REPOSITORY
+        sync: false
+      - key: RATE_LIMIT_HMAC_KEY
         sync: false
