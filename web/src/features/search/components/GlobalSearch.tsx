@@ -42,18 +42,20 @@ export function GlobalSearch() {
 
   return (
     <>
-      <button
-        ref={triggerRef}
-        type="button"
-        aria-label="打开全局搜索"
-        aria-controls="global-search-dialog"
-        aria-expanded={isOpen}
-        onClick={open}
-      >
-        <SearchIcon />
-        <span>检索全部情报</span>
-        <kbd>Ctrl K</kbd>
-      </button>
+      <div className="global-search">
+        <button
+          ref={triggerRef}
+          type="button"
+          aria-label="打开全局搜索"
+          aria-controls="global-search-dialog"
+          aria-expanded={isOpen}
+          onClick={open}
+        >
+          <SearchIcon />
+          <span>检索全部情报</span>
+          <kbd>Ctrl K</kbd>
+        </button>
+      </div>
 
       <dialog
         ref={dialogRef}

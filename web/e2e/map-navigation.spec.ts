@@ -145,9 +145,10 @@ for (const viewport of viewports) {
       () => document.documentElement.scrollWidth > window.innerWidth,
     );
     expect(hasHorizontalOverflow).toBe(false);
-    await expect(page).toHaveScreenshot(`map-${viewport.width}.png`, {
-      animations: "disabled",
-      fullPage: true,
-    });
+    await expect(page.getByLabel("已公开档案数量")).toHaveText("10");
+    await expect(page.getByLabel("近七日新增数量")).toHaveText("5");
+    await expect(page.getByRole("button", { name: "打开全局搜索" })).toBeInViewport();
+    await expect(page.getByRole("button", { name: "放大地图" })).toBeInViewport();
+    await expect(page.locator(".region-list:visible")).toBeInViewport();
   });
 }
