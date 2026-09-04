@@ -1,0 +1,50 @@
+services:
+  - type: web
+    name: lastfe-web
+    runtime: node
+    rootDir: web
+    plan: starter
+    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm build
+    startCommand: pnpm start
+    healthCheckPath: /api/health
+    autoDeploy: false
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 24.14.1
+      - key: CONTENT_REPOSITORY
+        value: supabase
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: GITHUB_TOKEN
+        sync: false
+      - key: GITHUB_REPOSITORY
+        sync: false
+      - key: GITHUB_WEBHOOK_SECRET
+        sync: false
+
+  - type: cron
+    name: lastfe-github-reconcile
+    runtime: node
+    rootDir: web
+    schedule: "*/10 * * * *"
+    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm build
+    startCommand: pnpm reconcile:github
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 24.14.1
+      - key: CONTENT_REPOSITORY
+        value: supabase
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: GITHUB_TOKEN
+        sync: false
+      - key: GITHUB_REPOSITORY
+        sync: false

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { GlobalSearch } from "@/features/search/components/GlobalSearch";
 
 type PublishedStats = {
@@ -27,9 +28,22 @@ export function MapHud({
   return (
     <>
       <header className="map-brand" aria-label="Knowledge Frontier">
-        <span className="map-brand__eyebrow">KNOWLEDGE // FRONTIER</span>
-        <h1>知识边境</h1>
-        <p>求职战略情报图</p>
+        <div className="map-brand__identity">
+          <Image
+            className="map-brand__logo"
+            src="/lastfe-logo.svg"
+            alt="LastFE 项目 Logo"
+            width={48}
+            height={48}
+            priority
+            unoptimized
+          />
+          <div className="map-brand__copy">
+            <span className="map-brand__eyebrow">KNOWLEDGE // FRONTIER</span>
+            <h1>知识边境</h1>
+            <p>求职战略情报图</p>
+          </div>
+        </div>
       </header>
 
       <section className="map-telemetry" aria-label="地图情报统计">
@@ -82,11 +96,7 @@ export function MapHud({
           <span>OPERATOR 01</span>
           <strong>{status}</strong>
           {failed ? (
-            <button
-              type="button"
-              className="min-h-11 min-w-11"
-              onClick={onRetry}
-            >
+            <button type="button" onClick={onRetry}>
               重试同步
             </button>
           ) : null}

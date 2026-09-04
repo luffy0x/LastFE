@@ -1,0 +1,25 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="blue" x1="295" y1="140" x2="410" y2="360" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2563FF"/>
+      <stop offset="1" stop-color="#0F5BFF"/>
+    </linearGradient>
+    <linearGradient id="cyan" x1="250" y1="170" x2="280" y2="390" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#00D4FF"/>
+      <stop offset="1" stop-color="#00F0FF"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <path d="M122 166L74 215C69 220 69 228 74 233L122 282" stroke="#0B1B4D" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M390 166L438 215C443 220 443 228 438 233L390 282" stroke="url(#blue)" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M197 84H252L225 311H286L274 366H163L197 84Z" fill="#0B1B4D"/>
+  <path d="M264 150H379L365 205H304L299 243H354L341 295H288L270 366H215L264 150Z" fill="url(#blue)"/>
+  <path d="M264 154L238 268H274L258 356" stroke="white" stroke-width="13" stroke-linecap="square" stroke-linejoin="miter"/>
+  <path d="M265 155L240 269H274L258 355" stroke="url(#cyan)" stroke-width="7" stroke-linecap="square" stroke-linejoin="miter" filter="url(#glow)"/>
+</svg>

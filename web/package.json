@@ -3,27 +3,28 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=24.14.1 <25"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "export:feishu": "node scripts/feishu-export.mjs",
+    "import:feishu": "node scripts/import-feishu.mjs",
+    "reconcile:github": "node scripts/reconcile-github.mjs",
     "lint": "eslint .",
-    "typecheck": "next typegen && tsc --noEmit",
+    "typecheck": "tsc --noEmit",
     "test": "vitest",
-    "reconcile:github": "tsx --conditions=react-server scripts/reconcile-github.ts",
     "test:e2e": "playwright test"
   },
   "dependencies": {
-    "@octokit/rest": "^22.0.1",
-    "altcha": "^3.2.2",
-    "altcha-lib": "^2.4.0",
-    "better-sqlite3": "^13.0.3",
+    "@supabase/supabase-js": "^2.113.0",
     "next": "16.3.3",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
-    "server-only": "^0.0.1",
     "zod": "^4.5.4"
   },
   "devDependencies": {
@@ -32,7 +33,6 @@
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
     "@testing-library/user-event": "^14.6.6",
-    "@types/better-sqlite3": "^9.6.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
@@ -40,7 +40,6 @@
     "eslint-config-next": "16.3.3",
     "jsdom": "^30.0.1",
     "tailwindcss": "^4",
-    "tsx": "^4.21.0",
     "typescript": "^5",
     "vitest": "^4.1.11"
   },

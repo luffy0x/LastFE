@@ -8,8 +8,6 @@ type ExplorerMarkerProps = {
   targetLocked: boolean;
 };
 
-const ANIMATION_SETTLE_BUFFER_MS = 100;
-
 function samePoint(first: Point, second: Point) {
   return Math.abs(first.x - second.x) < 0.01 && Math.abs(first.y - second.y) < 0.01;
 }
@@ -59,6 +57,9 @@ export function createExplorerMotionAdapter(): ExplorerMotionAdapter {
       );
 
       let renderedPoint = from;
+      let settled = false;
+      let resolveFinished: (point: Point) => void;
+      let timeoutId: ReturnType<typeof setTimeout> | null = null;
       const pointAtCurrentTime = () => {
         const currentTime =
           typeof animation.currentTime === "number" ? animation.currentTime : 0;
@@ -70,46 +71,31 @@ export function createExplorerMotionAdapter(): ExplorerMotionAdapter {
         return points[index];
       };
 
-      let settled = false;
-      let settleFinished!: (point: Point) => void;
-      const finished = new Promise<Point>((resolve) => {
-        settleFinished = (point) => {
-          if (settled) return;
-          settled = true;
-          window.clearTimeout(fallbackTimer);
-          resolve(point);
-        };
-      });
-      const finishAtDestination = () => {
+      const finishAt = (point: Point) => {
         if (settled) return;
-        renderedPoint = destination;
-        marker.setAttribute(
-          "transform",
-          `translate(${destination.x} ${destination.y - 28})`,
-        );
+        settled = true;
+        if (timeoutId) clearTimeout(timeoutId);
+        renderedPoint = point;
+        marker.setAttribute("transform", `translate(${point.x} ${point.y - 28})`);
         animation.cancel();
-        settleFinished(destination);
+        resolveFinished(point);
       };
 
-      const fallbackTimer = window.setTimeout(
-        finishAtDestination,
-        durationMs + ANIMATION_SETTLE_BUFFER_MS,
-      );
-      void animation.finished.then(finishAtDestination, () => {
-        settleFinished(renderedPoint);
+      const finished = new Promise<Point>((resolve) => {
+        resolveFinished = resolve;
+        timeoutId = setTimeout(() => finishAt(destination), durationMs + 100);
       });
+
+      void animation.finished.then(
+        () => finishAt(destination),
+        () => finishAt(renderedPoint),
+      );
 
       return {
         finished,
         cancel: () => {
-          if (settled) return renderedPoint;
           renderedPoint = pointAtCurrentTime();
-          animation.cancel();
-          marker.setAttribute(
-            "transform",
-            `translate(${renderedPoint.x} ${renderedPoint.y - 28})`,
-          );
-          settleFinished(renderedPoint);
+          finishAt(renderedPoint);
           return renderedPoint;
         },
       };

@@ -82,15 +82,13 @@ export function useMapSession({
   restoreStored = true,
 }: { restoreStored?: boolean } = {}): { restored: MapSessionSnapshot | null } {
   const [restored] = useState<MapSessionSnapshot | null>(() =>
-    restoreStored && typeof window !== "undefined"
+    restoreStored && typeof sessionStorage !== "undefined"
       ? parseSnapshot(sessionStorage.getItem(MAP_SESSION_KEY))
       : null,
   );
-  const [storageReady] = useState(() => typeof window !== "undefined");
   const skipFirstWrite = useRef(restored !== null);
 
   useEffect(() => {
-    if (!storageReady) return;
     if (skipFirstWrite.current) {
       skipFirstWrite.current = false;
       return;
@@ -100,7 +98,7 @@ export function useMapSession({
       MAP_SESSION_KEY,
       JSON.stringify({ camera, explorerPoint, selectedSlug }),
     );
-  }, [camera, explorerPoint, selectedSlug, storageReady]);
+  }, [camera, explorerPoint, selectedSlug]);
 
   return { restored };
 }

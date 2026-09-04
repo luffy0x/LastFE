@@ -1,1 +1,0 @@
-declare module "altcha/i18n/zh-cn";

@@ -1,290 +1,58 @@
-import { parseSubmission } from "@/features/submissions/schemas";
-import type {
-  Submission,
-  SubmissionResponse,
-} from "@/features/submissions/types";
-import { getServerConfig } from "@/server/config";
-import { initializeDatabaseAsync } from "@/server/db/migrate";
-import {
-  log,
-  requestIdFromHeaders,
-  type StructuredLogger,
-} from "@/server/logging";
-import {
-  AbuseStoreError,
-  createSqliteAbuseStore,
-  type AbuseStore,
-} from "@/server/security/abuse-store";
-import {
-  createAltchaChallengeService,
-  type ChallengeService,
-} from "@/server/security/challenge";
-import {
-  createSourceHasher,
-  fingerprintSubmission,
-} from "@/server/security/rate-limit";
-import type { SubmissionQueue } from "@/server/submissions/queue";
+import { buildSubmissionIssue } from "@/server/github/issue-codec";
+import { parseSubmissionInput } from "@/features/content/submission-schemas";
+import { requireServerEnv } from "@/server/supabase/env";
 
-export type { AbuseStore } from "@/server/security/abuse-store";
-export type { ChallengeService } from "@/server/security/challenge";
-export type { SubmissionQueue } from "@/server/submissions/queue";
-export type { SubmissionResponse } from "@/features/submissions/types";
+export const runtime = "nodejs";
 
-export type SubmissionRouteDependencies = {
-  challenge: ChallengeService;
-  abuse: AbuseStore;
-  queue: SubmissionQueue;
-  hashSource(ip: string): string;
-  now(): Date;
-  log?: StructuredLogger;
-};
+function githubApiBaseUrl(): string {
+  return process.env.GITHUB_API_BASE_URL?.replace(/\/$/, "") ?? "https://api.github.com";
+}
 
-const json = (
-  body: SubmissionResponse,
-  status: number,
-  headers?: HeadersInit,
-) => Response.json(body, { status, headers });
+function jsonError(message: string, status: number, code: string): Response {
+  return Response.json({ ok: false, code, message }, { status });
+}
 
-const MAX_BODY_BYTES = 64 * 1024;
-
-const invalidResponse = () =>
-  json(
-    {
-      ok: false,
-      code: "INVALID",
-      message: "投稿内容无效，请检查后重试。",
-    },
-    400,
-  );
-
-const upstreamResponse = (message = "提交服务暂时不可用，请稍后重试。") =>
-  json(
-    { ok: false, code: "UPSTREAM", message },
-    503,
-    { "retry-after": "60" },
-  );
-
-async function readJsonBody(request: Request): Promise<unknown> {
-  if (!request.body) throw new Error("Missing request body");
-
-  const reader = request.body.getReader();
-  const chunks: Uint8Array[] = [];
-  let total = 0;
-
+export async function POST(request: Request) {
+  let payload: unknown;
   try {
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      if (!value) continue;
-      if (total + value.byteLength > MAX_BODY_BYTES) {
-        await reader.cancel();
-        throw new Error("Request body too large");
-      }
-      chunks.push(value);
-      total += value.byteLength;
-    }
-  } finally {
-    reader.releaseLock();
+    payload = await request.json();
+  } catch {
+    return jsonError("请求体必须是 JSON", 400, "INVALID_JSON");
   }
 
-  const bytes = new Uint8Array(total);
-  let offset = 0;
-  for (const chunk of chunks) {
-    bytes.set(chunk, offset);
-    offset += chunk.byteLength;
+  if (
+    payload &&
+    typeof payload === "object" &&
+    "website" in payload &&
+    typeof (payload as { website?: unknown }).website === "string" &&
+    (payload as { website: string }).website.trim()
+  ) {
+    return jsonError("投稿内容不符合要求", 400, "INVALID_SUBMISSION");
   }
 
-  return JSON.parse(new TextDecoder().decode(bytes)) as unknown;
-}
+  let issue;
+  try {
+    issue = buildSubmissionIssue(parseSubmissionInput(payload));
+  } catch {
+    return jsonError("投稿内容不符合要求", 400, "INVALID_SUBMISSION");
+  }
 
-export function createSubmissionHandler(
-  dependencies: SubmissionRouteDependencies,
-): (request: Request) => Promise<Response> {
-  return async (request) => {
-    const requestId = requestIdFromHeaders(request.headers);
-    const logger = dependencies.log ?? log;
-    const declaredLength = Number(request.headers.get("content-length"));
-    if (Number.isFinite(declaredLength) && declaredLength > MAX_BODY_BYTES) {
-      return invalidResponse();
-    }
-
-    let input: Record<string, unknown>;
-    try {
-      const parsed = await readJsonBody(request);
-      if (!parsed || Array.isArray(parsed) || typeof parsed !== "object") {
-        return invalidResponse();
-      }
-      input = parsed as Record<string, unknown>;
-    } catch {
-      return invalidResponse();
-    }
-    if (input.website !== undefined && input.website !== "") {
-      return invalidResponse();
-    }
-    let submission: Submission;
-    try {
-      submission = parseSubmission(String(input.regionSlug ?? ""), input);
-    } catch {
-      return invalidResponse();
-    }
-    let verified: boolean;
-    try {
-      verified = await dependencies.challenge.verify(input.altcha);
-    } catch {
-      logger("error", "submission.challenge_unavailable", {
-        requestId,
-        errorCategory: "challenge",
-      });
-      return upstreamResponse();
-    }
-
-    if (!verified) {
-      return json(
-        {
-          ok: false,
-          code: "CHALLENGE",
-          message: "验证未通过，请刷新验证后重试。",
-        },
-        422,
-      );
-    }
-
-    const source = request.headers.get("x-real-ip");
-    if (!source) {
-      logger("warn", "submission.rejected", {
-        requestId,
-        errorCategory: "source",
-      });
-      return invalidResponse();
-    }
-
-    const now = dependencies.now();
-    let reservation: { reservationId: string };
-    try {
-      reservation = await dependencies.abuse.reserve({
-        sourceHash: dependencies.hashSource(source),
-        fingerprint: fingerprintSubmission(submission),
-        now,
-      });
-    } catch (error) {
-      if (error instanceof AbuseStoreError && error.code === "DUPLICATE") {
-        logger("warn", "submission.rejected", {
-          requestId,
-          errorCategory: "duplicate",
-        });
-        return json(
-          {
-            ok: false,
-            code: "DUPLICATE",
-            message: "该内容近期已提交，请等待审核或修改内容后再试。",
-          },
-          409,
-        );
-      }
-      if (error instanceof AbuseStoreError && error.code === "RATE_LIMIT") {
-        logger("warn", "submission.rejected", {
-          requestId,
-          errorCategory: "rate_limit",
-        });
-        return json(
-          {
-            ok: false,
-            code: "RATE_LIMIT",
-            message: "提交过于频繁，请稍后再试。",
-          },
-          429,
-          { "retry-after": "3600" },
-        );
-      }
-      logger("error", "submission.reservation_failed", {
-        requestId,
-        errorCategory: "abuse_store",
-      });
-      return upstreamResponse();
-    }
-
-    let issueNumber: number;
-    try {
-      ({ issueNumber } = await dependencies.queue.enqueue(submission));
-    } catch {
-      try {
-        await dependencies.abuse.release(reservation.reservationId);
-      } catch {
-        // The short reservation lease is the final recovery boundary.
-      }
-      logger("error", "submission.enqueue_failed", {
-        requestId,
-        errorCategory: "github",
-      });
-      return upstreamResponse();
-    }
-
-    try {
-      await dependencies.abuse.recordSuccess(
-        reservation.reservationId,
-        dependencies.now(),
-      );
-    } catch {
-      logger("error", "submission.success_record_failed", {
-        requestId,
-        errorCategory: "abuse_store",
-      });
-      return upstreamResponse("提交状态暂时无法确认，请稍后重试。");
-    }
-    logger("info", "submission.created", { requestId, issueNumber });
-    return json({ ok: true, issueNumber }, 201);
-  };
-}
-
-type SubmissionHandler = ReturnType<typeof createSubmissionHandler>;
-
-async function createProductionHandler(): Promise<SubmissionHandler> {
-  const config = getServerConfig();
-  return initializeDatabaseAsync(config.sqlitePath, async (database) => {
-    const { GitHubSubmissionQueue } = await import(
-      "@/server/github/submission-queue"
-    );
-
-    return createSubmissionHandler({
-      challenge: createAltchaChallengeService(
-        config.altchaHmacKey,
-        config.altchaMaxNumber,
-      ),
-      abuse: createSqliteAbuseStore(database),
-      queue: new GitHubSubmissionQueue(),
-      hashSource: createSourceHasher(config.rateLimitHmacKey),
-      now: () => new Date(),
-    });
+  const repository = requireServerEnv("GITHUB_REPOSITORY");
+  const token = requireServerEnv("GITHUB_TOKEN");
+  const response = await fetch(`${githubApiBaseUrl()}/repos/${repository}/issues`, {
+    method: "POST",
+    headers: {
+      accept: "application/vnd.github+json",
+      authorization: `Bearer ${token}`,
+      "content-type": "application/json",
+      "x-github-api-version": "2022-11-28",
+    },
+    body: JSON.stringify(issue),
   });
+
+  if (!response.ok) {
+    return jsonError("审核队列暂时不可用，请稍后重试", 502, "GITHUB_UNAVAILABLE");
+  }
+
+  return Response.json({ ok: true }, { status: 201 });
 }
-
-export function createSubmissionRoute(
-  loadHandler: () => Promise<SubmissionHandler>,
-  logger: StructuredLogger = log,
-): (request: Request) => Promise<Response> {
-  let handler: SubmissionHandler | undefined;
-  let loading: Promise<SubmissionHandler> | undefined;
-
-  return async (request) => {
-    const requestId = requestIdFromHeaders(request.headers);
-    try {
-      if (!handler) {
-        loading ??= loadHandler();
-        try {
-          handler = await loading;
-        } finally {
-          loading = undefined;
-        }
-      }
-      return handler(request);
-    } catch {
-      logger("error", "submission.initialization_failed", {
-        requestId,
-        errorCategory: "initialization",
-      });
-      return upstreamResponse();
-    }
-  };
-}
-
-export const POST = createSubmissionRoute(createProductionHandler);

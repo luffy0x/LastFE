@@ -1,60 +1,58 @@
-import "server-only";
+import { parseSubmissionInput } from "@/features/content/submission-schemas";
 
-import { parseSubmission } from "@/features/submissions/schemas";
-import type { Submission } from "@/features/submissions/types";
+const PAYLOAD_START = "<!-- lastfe-submission:v1";
+const PAYLOAD_END = "-->";
 
-export type SubmissionIssue = {
+type SubmissionIssue = {
   title: string;
   body: string;
-  labels: string[];
+  labels: readonly string[];
 };
 
-const ISSUE_ENVELOPE =
-  /^<!-- submission:v1:([A-Za-z0-9_-]+) -->\n<!-- submission-content -->\n([\s\S]*)$/;
+function encodePayload(input: ReturnType<typeof parseSubmissionInput>): string {
+  return Buffer.from(JSON.stringify(input), "utf8").toString("base64url");
+}
 
-const splitSubmission = (submission: Submission) => {
-  if (submission.regionSlug === "resources") {
-    const { summary, ...metadata } = submission;
-    return { metadata, prose: summary ?? "" };
-  }
+function decodePayload(value: string): unknown {
+  return JSON.parse(Buffer.from(value, "base64url").toString("utf8"));
+}
 
-  const { markdown, ...metadata } = submission;
-  return { metadata, prose: markdown };
-};
-
-export function encodeIssue(submission: Submission): SubmissionIssue {
-  const { metadata, prose } = splitSubmission(submission);
-  const marker = `<!-- submission:v1:${Buffer.from(JSON.stringify(metadata)).toString("base64url")} -->`;
+export function buildSubmissionIssue(input: unknown): SubmissionIssue {
+  const submission = parseSubmissionInput(input);
+  const markdown = submission.markdown ?? submission.summary ?? "";
+  const nickname = submission.nickname ?? "匿名";
 
   return {
     title: `[${submission.regionSlug}] ${submission.title}`,
-    body: `${marker}\n<!-- submission-content -->\n${prose}`,
     labels: ["submission", "pending", `region:${submission.regionSlug}`],
+    body: [
+      `${PAYLOAD_START}`,
+      encodePayload(submission),
+      PAYLOAD_END,
+      "",
+      `# ${submission.title}`,
+      "",
+      `投稿者：${nickname}`,
+      "",
+      markdown,
+    ].join("\n"),
   };
 }
 
-export function decodeIssue(issue: SubmissionIssue): Submission {
-  const match = ISSUE_ENVELOPE.exec(issue.body);
-  if (!match) throw new Error("Malformed submission issue envelope");
-
-  let metadata: unknown;
-  try {
-    metadata = JSON.parse(Buffer.from(match[1], "base64url").toString("utf8"));
-  } catch {
-    throw new Error("Malformed submission issue metadata");
-  }
-  if (!metadata || Array.isArray(metadata) || typeof metadata !== "object") {
-    throw new Error("Submission issue metadata must be an object");
+export function parseSubmissionIssueBody(
+  body: string,
+): ReturnType<typeof parseSubmissionInput> {
+  const start = body.indexOf(PAYLOAD_START);
+  if (start === -1) {
+    throw new Error("Issue body does not contain a LastFE submission payload");
   }
 
-  const regionSlug = (metadata as Record<string, unknown>).regionSlug;
-  if (typeof regionSlug !== "string") {
-    throw new Error("Submission issue metadata has no region");
+  const payloadStart = start + PAYLOAD_START.length;
+  const end = body.indexOf(PAYLOAD_END, payloadStart);
+  if (end === -1) {
+    throw new Error("Issue body does not contain a LastFE submission payload");
   }
 
-  const prose = match[2];
-  return parseSubmission(regionSlug, {
-    ...metadata,
-    ...(regionSlug === "resources" ? { summary: prose } : { markdown: prose }),
-  });
+  const encoded = body.slice(payloadStart, end).trim();
+  return parseSubmissionInput(decodePayload(encoded));
 }

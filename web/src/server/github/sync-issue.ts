@@ -1,327 +1,196 @@
-import "server-only";
-
-import { createHash } from "node:crypto";
-
-import type { Submission } from "@/features/submissions/types";
-import type {
-  ContentModerationStore,
-  ContentSyncCommand,
-} from "@/server/content/sqlite-repository";
-
-import { decodeIssue } from "./issue-codec";
-
-export type ReviewRelevantEvent = {
-  id: string;
-  action: "labeled" | "unlabeled";
-  label: "approved" | "unpublish";
-  createdAt: string;
-};
-
-export type GitHubReviewEvidence =
-  | {
-      source: "webhook";
-      action: string;
-      changedLabel: string | null;
-    }
-  | {
-      source: "reconciliation";
-      latestRelevantEvent: ReviewRelevantEvent | null;
-    };
+import { normalizeTag } from "@/features/content/submission-schemas";
+import type { SupabaseContentClient } from "@/server/content/supabase-repository";
+import { parseSubmissionIssueBody } from "./issue-codec";
 
 export type GitHubIssueSnapshot = {
   number: number;
   title: string;
-  body: string;
+  body: string | null;
+  state: string;
   labels: readonly string[];
-  state: "open" | "closed";
-  createdAt: string;
-  updatedAt: string;
-  review: GitHubReviewEvidence;
 };
 
-export type ModerationDecision =
-  | "published"
-  | "withdrawn"
-  | "rejected"
-  | "ignored";
-
-export type ModerationState = {
-  isClosed: boolean;
-  labels: ReadonlySet<string>;
+type SyncGitHubIssueOptions = {
+  client: SupabaseContentClient;
+  deliveryId: string;
+  eventName: string;
+  issue: GitHubIssueSnapshot;
+  now?: Date;
 };
 
-export type SyncResult = ModerationDecision | "duplicate" | "stale";
+export type SyncGitHubIssueResult =
+  | { status: "duplicate" }
+  | { status: "ignored" }
+  | { status: "rejected" }
+  | { status: "published"; contentId: string }
+  | { status: "withdrawn"; contentId: string };
 
-export type SyncIssueDependencies = {
-  moderation: ContentModerationStore;
-  ensureReviewState(
-    issueNumber: number,
-    decision: ModerationDecision,
-  ): Promise<void>;
-  invalidate(paths: readonly string[]): Promise<void>;
+type SupabaseWriteClient = {
+  from(table: string): {
+    select(columns: string, options?: Record<string, unknown>): unknown;
+    insert(values: unknown): unknown;
+    upsert(values: unknown, options?: Record<string, unknown>): unknown;
+    update(values: unknown): { eq(column: string, value: unknown): unknown };
+    delete(): { eq(column: string, value: unknown): unknown };
+  };
 };
 
-export type SyncIssueErrorCode =
-  | "INVALID_ISSUE"
-  | "DATABASE"
-  | "CACHE"
-  | "GITHUB";
+function asWriter(client: SupabaseContentClient): SupabaseWriteClient {
+  return client as unknown as SupabaseWriteClient;
+}
 
-export class SyncIssueError extends Error {
-  constructor(readonly code: SyncIssueErrorCode) {
-    super(`Issue synchronization failed (${code})`);
-    this.name = "SyncIssueError";
+async function maybeSingle<T>(query: unknown): Promise<{ data: T | null; error: null | { message: string } }> {
+  const result = await (query as {
+    maybeSingle(): Promise<{ data: T | null; error: null | { message: string } }>;
+  }).maybeSingle();
+  return result;
+}
+
+async function recordDelivery(
+  client: SupabaseWriteClient,
+  options: SyncGitHubIssueOptions,
+  status: string,
+): Promise<void> {
+  const result = (await client.from("moderation_events").insert({
+    delivery_id: options.deliveryId,
+    github_issue_number: options.issue.number,
+    event_name: `${options.eventName}:${status}`,
+  })) as { error?: null | { message: string } };
+
+  if (result?.error) {
+    throw new Error(`Supabase moderation event write failed: ${result.error.message}`);
   }
 }
 
-export function decideModerationState(
-  state: ModerationState,
-): ModerationDecision {
-  if (state.labels.has("unpublish")) return "withdrawn";
-  if (state.labels.has("approved")) return "published";
-  if (state.isClosed) return "rejected";
-  return "ignored";
-}
+async function storeContentTags(
+  client: SupabaseWriteClient,
+  contentId: string,
+  tags: readonly string[],
+): Promise<void> {
+  await client.from("content_tags").delete().eq("content_id", contentId);
 
-export function moderationDecisionFor(
-  event: GitHubIssueSnapshot,
-): ModerationDecision {
-  const snapshotDecision = decideModerationState({
-    isClosed: event.state === "closed",
-    labels: new Set(event.labels),
-  });
-  if (snapshotDecision !== "published") return snapshotDecision;
+  for (const tag of tags) {
+    const label = tag.trim();
+    const normalized = normalizeTag(label);
+    const tagWrite = client
+      .from("tags")
+      .upsert({ label, normalized }, { onConflict: "normalized" }) as {
+      select(columns: string): unknown;
+    };
+    const tagResult = await maybeSingle<{ id: number }>(tagWrite.select("id"));
+    if (tagResult.error) {
+      throw new Error(`Supabase tag upsert failed: ${tagResult.error.message}`);
+    }
+    if (!tagResult.data?.id) {
+      throw new Error("Supabase tag upsert did not return an id");
+    }
 
-  const latestAction =
-    event.review.source === "webhook"
-      ? {
-          action: event.review.action,
-          label: event.review.changedLabel,
-        }
-      : event.review.latestRelevantEvent;
-  if (latestAction?.label === "unpublish") return "withdrawn";
-  if (
-    latestAction?.action === "labeled" &&
-    latestAction.label === "approved"
-  ) {
-    return "published";
-  }
-  return "ignored";
-}
-
-export function moderationSnapshotIdentity(
-  event: GitHubIssueSnapshot,
-  decision: ModerationDecision,
-): string {
-  const canonical = JSON.stringify({
-    issueNumber: event.number,
-    state: event.state,
-    labels: [...new Set(event.labels)].sort(),
-    createdAt: event.createdAt,
-    updatedAt: event.updatedAt,
-    title: event.title,
-    body: event.body,
-    review: event.review,
-    decision,
-  });
-  return createHash("sha256").update(canonical).digest("hex");
-}
-
-type PublishedRecord = Extract<
-  ContentSyncCommand,
-  { action: "publish" }
->["record"];
-
-function contentFields(submission: Submission): Pick<
-  PublishedRecord,
-  "summary" | "metadata" | "markdown" | "externalUrl"
-> {
-  switch (submission.regionSlug) {
-    case "interview":
-      return {
-        summary: null,
-        metadata: {
-          companyDepartment: submission.companyDepartment,
-          position: submission.position,
-        },
-        markdown: submission.markdown,
-        externalUrl: null,
-      };
-    case "resources":
-      return {
-        summary: submission.summary ?? null,
-        metadata: {},
-        markdown: null,
-        externalUrl: submission.url,
-      };
-    case "fundamentals":
-      return {
-        summary: null,
-        metadata: { category: submission.category },
-        markdown: submission.markdown,
-        externalUrl: null,
-      };
-    case "projects":
-      return {
-        summary: null,
-        metadata: { techStack: submission.techStack.join(" / ") },
-        markdown: submission.markdown,
-        externalUrl: submission.demoUrl ?? submission.repositoryUrl ?? null,
-      };
-    case "algorithms":
-      return {
-        summary: null,
-        metadata: {
-          source: submission.source,
-          difficulty: submission.difficulty,
-        },
-        markdown: submission.markdown,
-        externalUrl: submission.problemUrl ?? null,
-      };
+    const relationResult = (await client.from("content_tags").upsert(
+      { content_id: contentId, tag_id: tagResult.data.id },
+      { onConflict: "content_id,tag_id" },
+    )) as { error?: null | { message: string } };
+    if (relationResult?.error) {
+      throw new Error(
+        `Supabase content tag upsert failed: ${relationResult.error.message}`,
+      );
+    }
   }
 }
 
-function publishCommand(
-  event: GitHubIssueSnapshot,
+function hasLabel(issue: GitHubIssueSnapshot, label: string): boolean {
+  return issue.labels.some(
+    (candidate) => candidate.trim().toLocaleLowerCase() === label,
+  );
+}
+
+function summaryFrom(markdown: string | null, fallback: string | null): string | null {
+  if (fallback) return fallback;
+  if (!markdown) return null;
+
+  return markdown
+    .replace(/^#{1,6}\s+/gm, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 180);
+}
+
+async function assertNoPriorDelivery(
+  client: SupabaseWriteClient,
   deliveryId: string,
-  decision: ModerationDecision,
-  submission: Submission,
-): ContentSyncCommand {
-  return {
-    deliveryId,
-    action: "publish",
-    ordering: {
-      updatedAt: event.updatedAt,
-      snapshotIdentity: moderationSnapshotIdentity(event, decision),
-      authoritative: event.review.source === "reconciliation",
-      reviewSequence:
-        event.review.source === "reconciliation" &&
-        event.review.latestRelevantEvent !== null
-          ? {
-              createdAt: event.review.latestRelevantEvent.createdAt,
-              eventId: event.review.latestRelevantEvent.id,
-            }
-          : null,
-    },
-    record: {
-      id: `gh-${event.number}`,
-      githubIssueNumber: event.number,
-      regionSlug: submission.regionSlug,
-      title: submission.title,
-      nickname: submission.nickname ?? null,
-      tags: submission.tags,
-      publishedAt: event.updatedAt,
-      createdAt: event.createdAt,
-      updatedAt: event.updatedAt,
+): Promise<boolean> {
+  const query = (client.from("moderation_events").select("delivery_id") as {
+    eq(column: string, value: unknown): unknown;
+  }).eq("delivery_id", deliveryId);
+  const result = await maybeSingle<{ delivery_id: string }>(query);
+  if (result.error) {
+    throw new Error(`Supabase moderation event lookup failed: ${result.error.message}`);
+  }
+
+  return Boolean(result.data);
+}
+
+export async function syncGitHubIssue(
+  options: SyncGitHubIssueOptions,
+): Promise<SyncGitHubIssueResult> {
+  const client = asWriter(options.client);
+  const contentId = `github-issue-${options.issue.number}`;
+
+  if (await assertNoPriorDelivery(client, options.deliveryId)) {
+    return { status: "duplicate" };
+  }
+
+  if (!hasLabel(options.issue, "submission")) {
+    await recordDelivery(client, options, "ignored");
+    return { status: "ignored" };
+  }
+
+  if (hasLabel(options.issue, "unpublish")) {
+    const result = (await client
+      .from("content")
+      .update({ status: "withdrawn", updated_at: (options.now ?? new Date()).toISOString() })
+      .eq("github_issue_number", options.issue.number)) as {
+      error?: null | { message: string };
+    };
+    if (result?.error) {
+      throw new Error(`Supabase content withdrawal failed: ${result.error.message}`);
+    }
+    await recordDelivery(client, options, "withdrawn");
+    return { status: "withdrawn", contentId };
+  }
+
+  if (!hasLabel(options.issue, "approved")) {
+    if (options.issue.state === "closed") {
+      await recordDelivery(client, options, "rejected");
+      return { status: "rejected" };
+    }
+    await recordDelivery(client, options, "ignored");
+    return { status: "ignored" };
+  }
+
+  const submission = parseSubmissionIssueBody(options.issue.body ?? "");
+  const timestamp = (options.now ?? new Date()).toISOString();
+  const upsertResult = (await client.from("content").upsert(
+    {
+      id: contentId,
+      github_issue_number: options.issue.number,
+      region_slug: submission.regionSlug,
       status: "published",
-      ...contentFields(submission),
+      title: submission.title,
+      summary: summaryFrom(submission.markdown, submission.summary),
+      nickname: submission.nickname,
+      markdown: submission.markdown,
+      external_url: submission.externalUrl,
+      metadata_json: submission.metadata,
+      published_at: timestamp,
+      updated_at: timestamp,
     },
-  };
-}
-
-function commandFor(
-  event: GitHubIssueSnapshot,
-  deliveryId: string,
-  decision: ModerationDecision,
-  submission: Submission,
-): ContentSyncCommand {
-  if (decision === "published") {
-    return publishCommand(event, deliveryId, decision, submission);
-  }
-  return {
-    deliveryId,
-    action:
-      decision === "withdrawn"
-        ? "withdraw"
-        : decision === "rejected"
-          ? "reject"
-          : "ignore",
-    issueNumber: event.number,
-    ordering: {
-      updatedAt: event.updatedAt,
-      snapshotIdentity: moderationSnapshotIdentity(event, decision),
-      authoritative: event.review.source === "reconciliation",
-      reviewSequence:
-        event.review.source === "reconciliation" &&
-        event.review.latestRelevantEvent !== null
-          ? {
-              createdAt: event.review.latestRelevantEvent.createdAt,
-              eventId: event.review.latestRelevantEvent.id,
-            }
-          : null,
-    },
-  };
-}
-
-function validTimestamp(value: string): boolean {
-  return value.length > 0 && Number.isFinite(Date.parse(value));
-}
-
-function decodeSubmission(event: GitHubIssueSnapshot): Submission {
-  if (
-    !Number.isSafeInteger(event.number) ||
-    event.number < 1 ||
-    !validTimestamp(event.createdAt) ||
-    !validTimestamp(event.updatedAt) ||
-    !event.labels.includes("submission")
-  ) {
-    throw new SyncIssueError("INVALID_ISSUE");
+    { onConflict: "github_issue_number" },
+  )) as { error?: null | { message: string } };
+  if (upsertResult?.error) {
+    throw new Error(`Supabase content upsert failed: ${upsertResult.error.message}`);
   }
 
-  let submission: Submission;
-  try {
-    submission = decodeIssue({
-      title: event.title,
-      body: event.body,
-      labels: [...event.labels],
-    });
-  } catch {
-    throw new SyncIssueError("INVALID_ISSUE");
-  }
-
-  if (!event.labels.includes(`region:${submission.regionSlug}`)) {
-    throw new SyncIssueError("INVALID_ISSUE");
-  }
-  return submission;
-}
-
-export async function syncIssue(
-  event: GitHubIssueSnapshot,
-  deliveryId: string,
-  dependencies: SyncIssueDependencies,
-): Promise<SyncResult> {
-  if (!deliveryId.trim()) throw new SyncIssueError("INVALID_ISSUE");
-
-  const submission = decodeSubmission(event);
-  const decision = moderationDecisionFor(event);
-  let result: "applied" | "duplicate" | "stale";
-  try {
-    result = await dependencies.moderation.apply(
-      commandFor(event, deliveryId, decision, submission),
-    );
-  } catch {
-    throw new SyncIssueError("DATABASE");
-  }
-
-  if (result === "stale") return "stale";
-
-  const contentId = `gh-${event.number}`;
-  try {
-    await dependencies.invalidate([
-      "/",
-      `/regions/${submission.regionSlug}`,
-      `/content/${contentId}`,
-      "/api/search",
-    ]);
-  } catch {
-    throw new SyncIssueError("CACHE");
-  }
-
-  try {
-    await dependencies.ensureReviewState(event.number, decision);
-  } catch {
-    throw new SyncIssueError("GITHUB");
-  }
-
-  return result === "duplicate" ? "duplicate" : decision;
+  await storeContentTags(client, contentId, submission.tags);
+  await recordDelivery(client, options, "published");
+  return { status: "published", contentId };
 }

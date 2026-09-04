@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import type { PointerEvent, WheelEvent } from "react";
 import type { CameraTarget, Point } from "../types";
-import { cameraStateForTarget, cameraTransform } from "../camera-state";
 
 export type MapCameraState = Point & { scale: number };
 
@@ -54,17 +53,6 @@ function midpoint(first: Point, second: Point): Point {
   return { x: (first.x + second.x) / 2, y: (first.y + second.y) / 2 };
 }
 
-const DRAG_THRESHOLD_PX = 4;
-
-function capturePointer(target: SVGSVGElement, pointerId: number) {
-  try {
-    target.setPointerCapture?.(pointerId);
-  } catch (error) {
-    if (error instanceof DOMException && error.name === "NotFoundError") return;
-    throw error;
-  }
-}
-
 export function useMapCamera({
   bounds,
   initial,
@@ -72,13 +60,9 @@ export function useMapCamera({
   bounds: CameraBounds;
   initial: MapCameraState;
 }): MapCameraApi {
-  const initialX = initial.x;
-  const initialY = initial.y;
-  const initialScale = initial.scale;
   const [state, setState] = useState(() => clampCamera(initial, bounds));
   const pointers = useRef(new Map<number, Point>());
   const lastPanPoint = useRef<Point | null>(null);
-  const panPointer = useRef<number | null>(null);
   const pinch = useRef<{ distance: number; midpoint: Point } | null>(null);
 
   const panBy = useCallback(
@@ -117,7 +101,16 @@ export function useMapCamera({
 
   const focus = useCallback(
     (target: CameraTarget) => {
-      setState(cameraStateForTarget(target, bounds));
+      setState(
+        clampCamera(
+          {
+            x: 500 - target.x * target.scale,
+            y: 300 - target.y * target.scale,
+            scale: target.scale,
+          },
+          bounds,
+        ),
+      );
     },
     [bounds],
   );
@@ -128,29 +121,27 @@ export function useMapCamera({
   );
 
   const reset = useCallback(
-    () =>
-      setState(
-        clampCamera(
-          { x: initialX, y: initialY, scale: initialScale },
-          bounds,
-        ),
-      ),
-    [bounds, initialScale, initialX, initialY],
+    () => setState(clampCamera(initial, bounds)),
+    [bounds, initial],
   );
 
   const onPointerDown = useCallback((event: PointerEvent<SVGSVGElement>) => {
+    if ((event.target as Element | null)?.closest("[data-region]")) return;
+
     const point = pointFromEvent(event);
     pointers.current.set(event.pointerId, point);
+    try {
+      event.currentTarget.setPointerCapture?.(event.pointerId);
+    } catch {
+      // Synthetic pointer events in browser tests may not create an active
+      // pointer capture target. The in-memory pointer set still exercises the
+      // same pan/pinch path.
+    }
 
     const active = [...pointers.current.values()];
     if (active.length === 1) {
       lastPanPoint.current = point;
-      panPointer.current = null;
     } else if (active.length === 2) {
-      for (const pointerId of pointers.current.keys()) {
-        capturePointer(event.currentTarget, pointerId);
-      }
-      panPointer.current = null;
       pinch.current = {
         distance: distance(active[0], active[1]),
         midpoint: midpoint(active[0], active[1]),
@@ -162,30 +153,21 @@ export function useMapCamera({
     (event: PointerEvent<SVGSVGElement>) => {
       if (!pointers.current.has(event.pointerId)) return;
 
-      const nextPoint = pointFromEvent(event);
-      pointers.current.set(event.pointerId, nextPoint);
+      event.preventDefault();
+      pointers.current.set(event.pointerId, pointFromEvent(event));
       const active = [...pointers.current.values()];
 
       if (active.length === 1 && lastPanPoint.current) {
-        if (panPointer.current !== event.pointerId) {
-          if (distance(lastPanPoint.current, nextPoint) < DRAG_THRESHOLD_PX) {
-            return;
-          }
-          capturePointer(event.currentTarget, event.pointerId);
-          panPointer.current = event.pointerId;
-        }
-
-        event.preventDefault();
+        const next = active[0];
         panBy({
-          x: nextPoint.x - lastPanPoint.current.x,
-          y: nextPoint.y - lastPanPoint.current.y,
+          x: next.x - lastPanPoint.current.x,
+          y: next.y - lastPanPoint.current.y,
         });
-        lastPanPoint.current = nextPoint;
+        lastPanPoint.current = next;
         return;
       }
 
       if (active.length === 2 && pinch.current) {
-        event.preventDefault();
         const nextDistance = distance(active[0], active[1]);
         const nextMidpoint = midpoint(active[0], active[1]);
         const previousPinch = pinch.current;
@@ -222,9 +204,6 @@ export function useMapCamera({
 
   const finishPointer = useCallback((event: PointerEvent<SVGSVGElement>) => {
     pointers.current.delete(event.pointerId);
-    if (panPointer.current === event.pointerId) {
-      panPointer.current = null;
-    }
     if (event.currentTarget.hasPointerCapture?.(event.pointerId)) {
       event.currentTarget.releasePointerCapture(event.pointerId);
     }
@@ -256,7 +235,7 @@ export function useMapCamera({
 
   return {
     state,
-    transform: cameraTransform(state),
+    transform: `translate(${state.x} ${state.y}) scale(${state.scale})`,
     panBy,
     zoomAt,
     focus,

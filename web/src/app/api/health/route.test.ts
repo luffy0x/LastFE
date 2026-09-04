@@ -1,39 +1,37 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { createHealthHandler } from "./route";
-
-describe("health route", () => {
-  it("reports healthy without exposing paths or secrets", async () => {
-    const handler = createHealthHandler({
-      probeDatabase: vi.fn().mockResolvedValue(undefined),
-      probeDataDirectory: vi.fn().mockResolvedValue(undefined),
-      log: vi.fn(),
-    });
-
-    const response = await handler();
-
-    expect(response.status).toBe(200);
-    await expect(response.json()).resolves.toEqual({ status: "ok" });
+describe("GET /api/health", () => {
+  afterEach(() => {
+    vi.resetModules();
+    vi.unstubAllEnvs();
   });
 
-  it("reports an unhealthy category without exposing probe details", async () => {
-    const log = vi.fn();
-    const handler = createHealthHandler({
-      probeDatabase: vi.fn().mockRejectedValue(new Error("/srv/private/app.db")),
-      probeDataDirectory: vi.fn().mockResolvedValue(undefined),
-      log,
-    });
+  it("reports fixture mode as healthy without leaking configuration", async () => {
+    vi.stubEnv("CONTENT_REPOSITORY", "fixture");
+    const { GET } = await import("./route");
 
-    const response = await handler();
-    const body = await response.text();
+    const response = await GET();
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      status: "ok",
+      checks: { app: "ok", content: "fixture" },
+    });
+  });
+
+  it("reports missing Supabase configuration safely", async () => {
+    vi.stubEnv("CONTENT_REPOSITORY", "supabase");
+    vi.stubEnv("SUPABASE_URL", "");
+    const { GET } = await import("./route");
+
+    const response = await GET();
+    const body = await response.json();
 
     expect(response.status).toBe(503);
-    expect(body).toBe('{"status":"unhealthy"}');
-    expect(body).not.toContain("/srv/private/app.db");
-    expect(log).toHaveBeenCalledWith(
-      "error",
-      "health.check_failed",
-      expect.objectContaining({ errorCategory: "database", requestId: expect.any(String) }),
-    );
+    expect(body).toEqual({
+      status: "unhealthy",
+      checks: { app: "ok", content: "configuration" },
+    });
+    expect(JSON.stringify(body)).not.toContain("SUPABASE_SERVICE_ROLE_KEY");
   });
 });

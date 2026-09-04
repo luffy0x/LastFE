@@ -1,12 +1,10 @@
 "use client";
 
 import {
-  useCallback,
   useEffect,
   useRef,
   useSyncExternalStore,
 } from "react";
-import { cameraStateForTarget, MAP_CAMERA_BOUNDS } from "../camera-state";
 import { useExplorerNavigation } from "../hooks/use-explorer-navigation";
 import { useMapCamera } from "../hooks/use-map-camera";
 import { useMapSession } from "../hooks/use-map-session";
@@ -29,6 +27,14 @@ type StrategicMapProps = {
   initialRegionSlug?: string;
 };
 
+const CAMERA_BOUNDS = {
+  minX: -420,
+  maxX: 420,
+  minY: -240,
+  maxY: 240,
+  minScale: 0.8,
+  maxScale: 2.4,
+};
 const EXPLORER_MOTION = createExplorerMotionAdapter();
 
 const readyImmediately = async () => undefined;
@@ -67,10 +73,14 @@ export function StrategicMap({
     enabledRegions.find(({ slug }) => slug === "fundamentals") ??
     enabledRegions[0];
   const initialCamera = explicitRegion
-    ? cameraStateForTarget(explicitRegion.camera)
+    ? {
+        x: 500 - explicitRegion.camera.x * explicitRegion.camera.scale,
+        y: 300 - explicitRegion.camera.y * explicitRegion.camera.scale,
+        scale: explicitRegion.camera.scale,
+      }
     : { x: 0, y: 0, scale: 1 };
   const camera = useMapCamera({
-    bounds: MAP_CAMERA_BOUNDS,
+    bounds: CAMERA_BOUNDS,
     initial: initialCamera,
   });
   const prefersReducedMotion = useSyncExternalStore(
@@ -78,17 +88,11 @@ export function StrategicMap({
     getReducedMotionSnapshot,
     () => false,
   );
-  const focusCamera = camera.focus;
-  const focusRegion = useCallback(
-    (region: RegionDefinition) => focusCamera(region.camera),
-    [focusCamera],
-  );
   const explorer = useExplorerNavigation({
     regions,
     initialRegion: initialRegion?.slug ?? "fundamentals",
     initialSelectedSlug: explicitRegion?.slug ?? null,
     prepare: prepareDestination,
-    focus: focusRegion,
     navigate,
     motion: EXPLORER_MOTION,
     reducedMotion: reducedMotion ?? prefersReducedMotion,
@@ -101,9 +105,9 @@ export function StrategicMap({
     },
     { restoreStored: !explicitRegion },
   );
+
   const restoreCamera = camera.restore;
   const restoreExplorer = explorer.restore;
-
   useEffect(() => {
     if (!restored || explicitRegion) return;
     restoreCamera(restored.camera);
@@ -150,7 +154,7 @@ export function StrategicMap({
         role="application"
         aria-label="战略地图画布"
         viewBox="0 0 1000 600"
-        preserveAspectRatio="xMidYMid meet"
+        preserveAspectRatio="xMidYMid slice"
         className="strategic-map__canvas"
         {...camera.bind}
       >

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { REGIONS } from "@/features/map/regions";
 import { SafeMarkdown } from "@/features/markdown/SafeMarkdown";
-import { isSafeHttpUrl } from "@/features/submissions/schemas";
+import { isSafeHttpUrl } from "@/features/content/submission-schemas";
 import type { ContentRecord } from "../types";
 
 type DossierProps = { record: ContentRecord };

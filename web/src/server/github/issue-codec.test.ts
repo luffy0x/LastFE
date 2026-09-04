@@ -1,64 +1,34 @@
 import { describe, expect, it } from "vitest";
+import {
+  buildSubmissionIssue,
+  parseSubmissionIssueBody,
+} from "./issue-codec";
 
-import { parseSubmission } from "@/features/submissions/schemas";
-
-import { decodeIssue, encodeIssue } from "./issue-codec";
-
-const VALID_INTERVIEW = parseSubmission("interview", {
-  regionSlug: "interview",
-  companyDepartment: "字节跳动/基础架构",
-  position: "后端开发",
-  tags: ["一面"],
-  markdown: "面试记录",
-});
-
-describe("GitHub submission issue codec", () => {
-  it("round-trips user text without sentinel injection", () => {
-    const input = { ...VALID_INTERVIEW, markdown: "text --> more text" };
-    const encoded = encodeIssue(input);
-
-    expect(
-      decodeIssue({
-        title: encoded.title,
-        body: encoded.body,
-        labels: encoded.labels,
-      }),
-    ).toEqual(input);
-  });
-
-  it("uses the complete editable tail as a resource summary", () => {
-    const input = parseSubmission("resources", {
-      regionSlug: "resources",
-      title: "Node.js 文档",
-      url: "https://nodejs.org/docs/latest/api/",
-      summary: "第一行\n<!-- submission:v1:looks-like-content -->\n最后一行",
-      tags: ["文档"],
+describe("submission issue codec", () => {
+  it("round-trips a submission through the fixed private issue format", () => {
+    const issue = buildSubmissionIssue({
+      regionSlug: "projects",
+      title: "实时协作编辑器复盘",
+      tags: ["CRDT", "React"],
+      nickname: "",
+      markdown: "## 取舍\n\nCRDT 负责文档合并。",
+      externalUrl: "https://github.com/yjs/yjs",
+      metadata: { techStack: "React / TypeScript / Yjs" },
     });
-    const encoded = encodeIssue(input);
 
-    expect(decodeIssue(encoded)).toEqual(input);
+    expect(issue.title).toBe("[projects] 实时协作编辑器复盘");
+    expect(issue.labels).toEqual(["submission", "pending", "region:projects"]);
+    expect(parseSubmissionIssueBody(issue.body)).toMatchObject({
+      regionSlug: "projects",
+      title: "实时协作编辑器复盘",
+      nickname: null,
+    });
+    expect(issue.body).not.toContain("SUPABASE");
   });
 
-  it("rejects malformed or non-leading metadata envelopes", () => {
-    const encoded = encodeIssue(VALID_INTERVIEW);
-
-    expect(() =>
-      decodeIssue({ ...encoded, body: `prefix\n${encoded.body}` }),
-    ).toThrow();
-    expect(() =>
-      decodeIssue({
-        ...encoded,
-        body: "<!-- submission:v1:not-base64 -->\n<!-- submission-content -->\ntext",
-      }),
-    ).toThrow();
-    expect(() =>
-      decodeIssue({
-        ...encoded,
-        body: encoded.body.replace(
-          "<!-- submission-content -->",
-          "<!-- submission-content -->\n<!-- submission:v1:extra -->",
-        ),
-      }),
-    ).not.toThrow();
+  it("rejects bodies without the signed metadata envelope", () => {
+    expect(() => parseSubmissionIssueBody("普通 issue 内容")).toThrow(
+      "Issue body does not contain a LastFE submission payload",
+    );
   });
 });

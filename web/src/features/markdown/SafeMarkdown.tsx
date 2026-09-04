@@ -1,6 +1,6 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { isSafeHttpUrl } from "@/features/submissions/schemas";
+import { isSafeHttpUrl } from "@/features/content/submission-schemas";
 
 type SafeMarkdownProps = {
   source: string;
