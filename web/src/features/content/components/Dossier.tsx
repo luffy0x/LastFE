@@ -1,14 +1,22 @@
 import Link from "next/link";
-import { REGIONS } from "@/features/map/regions";
+
+import { CATEGORIES } from "@/features/content/categories";
 import { MarkdownRender } from "@/features/markdown/MarkdownRender";
 import { isSafeHttpUrl } from "@/utils/url";
+
 import type { ContentRecord } from "../types";
 
 type DossierProps = { record: ContentRecord };
 
+const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+
 export function Dossier({ record }: DossierProps) {
-  const region = REGIONS.find(({ slug }) => slug === record.regionSlug);
-  const regionLabel = region?.label ?? "领地";
+  const category = CATEGORIES.find(({ slug }) => slug === record.regionSlug);
+  const categoryLabel = category?.label ?? "分类";
   const externalUrl =
     record.externalUrl && isSafeHttpUrl(record.externalUrl)
       ? record.externalUrl
@@ -16,22 +24,31 @@ export function Dossier({ record }: DossierProps) {
 
   return (
     <article className="dossier">
-      <nav aria-label="档案路径" className="dossier__nav">
-        <Link href="/">战略地图</Link>
+      <nav aria-label="面包屑" className="breadcrumb">
+        <Link href="/">首页</Link>
         <span aria-hidden="true">/</span>
-        <Link href={`/regions/${record.regionSlug}`}>返回{regionLabel}</Link>
+        <Link href={`/regions/${record.regionSlug}`}>{categoryLabel}</Link>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">正文</span>
       </nav>
 
       <header className="dossier__header">
-        <span>DOSSIER / {record.id.toUpperCase()}</span>
         <h1>{record.title}</h1>
         {record.summary ? <p>{record.summary}</p> : null}
       </header>
 
       <dl className="dossier__metadata">
         <div>
-          <dt>记录者</dt>
+          <dt>作者</dt>
           <dd>{record.nickname ?? "匿名"}</dd>
+        </div>
+        <div>
+          <dt>发布时间</dt>
+          <dd>
+            <time dateTime={record.publishedAt}>
+              {dateFormatter.format(new Date(record.publishedAt))}
+            </time>
+          </dd>
         </div>
         {Object.entries(record.metadata).map(([key, value]) => (
           <div key={key}>
@@ -41,14 +58,16 @@ export function Dossier({ record }: DossierProps) {
         ))}
       </dl>
 
-      <ul className="dossier__tags" aria-label="标签">
-        {record.tags.map((tag) => (
-          <li key={tag}>{tag}</li>
-        ))}
-      </ul>
+      {record.tags.length > 0 ? (
+        <ul className="tag-list dossier__tags" aria-label="标签">
+          {record.tags.map((tag) => (
+            <li key={tag}>{tag}</li>
+          ))}
+        </ul>
+      ) : null}
 
       {record.markdown ? (
-        <section className="dossier__body" aria-label="档案正文">
+        <section className="dossier__body" aria-label="内容正文">
           <MarkdownRender content={record.markdown} />
         </section>
       ) : null}
@@ -60,9 +79,24 @@ export function Dossier({ record }: DossierProps) {
           target="_blank"
           rel="nofollow noopener noreferrer"
         >
-          站外链接（本站不托管或检查文件）
+          访问站外链接（本站不托管或检查文件）
         </a>
       ) : null}
+
+      <footer className="dossier__footer">
+        <Link
+          className="button-secondary"
+          href={`/regions/${record.regionSlug}`}
+        >
+          返回{categoryLabel}
+        </Link>
+        <Link
+          className="button-secondary"
+          href={`/submit/${record.regionSlug}`}
+        >
+          向{categoryLabel}投稿
+        </Link>
+      </footer>
     </article>
   );
 }

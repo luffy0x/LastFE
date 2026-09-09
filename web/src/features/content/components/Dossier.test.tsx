@@ -3,7 +3,7 @@ import { expect, it } from "vitest";
 import { fixtureContentRepository } from "../fixture-repository";
 import { Dossier } from "./Dossier";
 
-it("renders a readable dossier with a route back to its territory", async () => {
+it("renders a readable dossier with a route back to its category", async () => {
   const record = await fixtureContentRepository.get("interview-byte-infra");
   if (!record) throw new Error("fixture missing");
 
@@ -31,7 +31,7 @@ it("labels and hardens a safe external dossier link", async () => {
   render(<Dossier record={record} />);
 
   const externalLink = screen.getByRole("link", {
-    name: "站外链接（本站不托管或检查文件）",
+    name: "访问站外链接（本站不托管或检查文件）",
   });
   expect(externalLink).toHaveAttribute(
     "href",

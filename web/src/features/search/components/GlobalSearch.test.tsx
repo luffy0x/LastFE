@@ -22,13 +22,13 @@ it("keeps completed results visible when the open shortcut is repeated", async (
 
   await user.click(screen.getByRole("button", { name: "打开全局搜索" }));
   expect(
-    await screen.findByText("没有找到公开情报，请调整关键词。"),
+    await screen.findByText("没有找到相关内容，请调整关键词。"),
   ).toBeVisible();
 
   await user.keyboard("{Control>}k{/Control}");
 
-  expect(screen.getByText("没有找到公开情报，请调整关键词。")).toBeVisible();
-  expect(screen.queryByText("正在扫描公开索引…")).toBeNull();
+  expect(screen.getByText("没有找到相关内容，请调整关键词。")).toBeVisible();
+  expect(screen.queryByText("正在搜索…")).toBeNull();
 });
 
 it("keeps completed results when a deferred query is rapidly reverted", async () => {
@@ -50,10 +50,10 @@ it("keeps completed results when a deferred query is rapidly reverted", async ()
 
   await user.click(screen.getByRole("button", { name: "打开全局搜索" }));
   const searchbox = screen.getByRole("searchbox", {
-    name: "搜索全部公开情报",
+    name: "搜索关键词",
   });
   fireEvent.change(searchbox, { target: { value: "foo" } });
-  expect(await screen.findByText("正在扫描公开索引…")).toBeVisible();
+  expect(await screen.findByText("正在搜索…")).toBeVisible();
   resolveFoo?.(
     Response.json({
       groups: [
@@ -85,7 +85,7 @@ it("keeps completed results when a deferred query is rapidly reverted", async ()
   });
 
   expect(screen.getByRole("link", { name: /Foo 完成结果/ })).toBeVisible();
-  expect(screen.queryByText("正在扫描公开索引…")).toBeNull();
+  expect(screen.queryByText("正在搜索…")).toBeNull();
 });
 
 it("refetches the same query after a real close and reopen", async () => {
@@ -125,7 +125,7 @@ it("refetches the same query after a real close and reopen", async () => {
 
   await user.click(screen.getByRole("button", { name: "打开全局搜索" }));
   await user.type(
-    screen.getByRole("searchbox", { name: "搜索全部公开情报" }),
+    screen.getByRole("searchbox", { name: "搜索关键词" }),
     "fresh",
   );
   expect(
@@ -159,7 +159,7 @@ it("ignores a request from a closed dialog after the same query is reopened", as
 
   await user.click(screen.getByRole("button", { name: "打开全局搜索" }));
   await user.type(
-    screen.getByRole("searchbox", { name: "搜索全部公开情报" }),
+    screen.getByRole("searchbox", { name: "搜索关键词" }),
     "fresh",
   );
   await waitFor(() => expect(freshResolvers).toHaveLength(1));

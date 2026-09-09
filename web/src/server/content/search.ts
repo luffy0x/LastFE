@@ -1,6 +1,6 @@
+import { CATEGORIES } from "@/features/content/categories";
 import type { ContentRepository } from "@/features/content/repository";
 import type { ContentSummary } from "@/features/content/types";
-import { REGIONS } from "@/features/map/regions";
 
 export const PAGE_SIZE = 20;
 
@@ -21,7 +21,7 @@ export async function searchAll(
 ): Promise<readonly SearchGroup[]> {
   const search = query.trim();
   const pages = await Promise.all(
-    REGIONS.filter(({ enabled }) => enabled).map(async ({ slug }) => ({
+    CATEGORIES.filter(({ enabled }) => enabled).map(async ({ slug }) => ({
       regionSlug: slug,
       page: await repository.list({
         regionSlug: slug,

@@ -1,48 +1,47 @@
 import Link from "next/link";
 
-import { REGIONS } from "@/features/map/regions";
+import { CATEGORIES } from "@/features/content/categories";
 
 export default function SubmitPage() {
-  const regions = REGIONS.filter(({ enabled }) => enabled);
+  const categories = CATEGORIES.filter(({ enabled }) => enabled);
 
   return (
     <main
       id="main-content"
-      className="submission-page"
+      className="submission-page site-container"
       aria-labelledby="submission-directory-title"
-      aria-label="选择投稿领地"
     >
-      <nav className="submission-page__back" aria-label="返回导航">
-        <Link href="/">返回战略地图</Link>
+      <nav className="breadcrumb" aria-label="面包屑">
+        <Link href="/">首页</Link>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">投稿</span>
       </nav>
 
-      <header className="submission-page__header">
-        <span>INTAKE / TERRITORY INDEX</span>
-        <h1 id="submission-directory-title">选择投稿领地</h1>
-        <p>选择与你的内容最贴近的领域后提交。</p>
+      <header className="category-page__header">
+        <h1 id="submission-directory-title">选择投稿分类</h1>
+        <p>选择与你的内容最贴近的分类后提交。内容不会直接公开，审核通过后才会出现。</p>
       </header>
 
-      <nav className="submission-directory" aria-label="投稿领地目录">
-        <ol>
-          {regions.map((region, index) => (
-            <li key={region.slug}>
-              <span className="submission-directory__index">
-                {String(index + 1).padStart(2, "0")}
-              </span>
-              <div>
-                <span className="submission-directory__code">
-                  SECTOR / {region.slug.toUpperCase()}
-                </span>
-                <h2>{region.label}</h2>
-                <p>{region.description}</p>
-              </div>
-              <Link href={`/submit/${region.slug}`}>
-                进入{region.label}投稿表
-              </Link>
-            </li>
-          ))}
-        </ol>
-      </nav>
+      <div className="submission-directory" role="list">
+        {categories.map((category) => (
+          <section
+            key={category.slug}
+            className="submission-directory__item"
+            role="listitem"
+          >
+            <div>
+              <h2>{category.label}</h2>
+              <p>{category.description}</p>
+            </div>
+            <Link
+              className="button-primary"
+              href={`/submit/${category.slug}`}
+            >
+              投稿{category.label}
+            </Link>
+          </section>
+        ))}
+      </div>
 
       <aside className="submission-safety-note" aria-label="投稿安全说明">
         <strong>公开边界</strong>

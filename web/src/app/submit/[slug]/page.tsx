@@ -1,37 +1,41 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+
+import { CATEGORIES } from "@/features/content/categories";
 import { SubmissionForm } from "@/features/content/components/SubmissionForm";
-import { REGIONS } from "@/features/map/regions";
 
 export function generateStaticParams() {
-  return REGIONS.filter(({ enabled }) => enabled).map(({ slug }) => ({ slug }));
+  return CATEGORIES.filter(({ enabled }) => enabled).map(({ slug }) => ({
+    slug,
+  }));
 }
 
-export default async function SubmitRegionPage({
+export default async function SubmitCategoryPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const region = REGIONS.find(
+  const category = CATEGORIES.find(
     (candidate) => candidate.slug === slug && candidate.enabled,
   );
-  if (!region) notFound();
+  if (!category) notFound();
 
   return (
-    <main id="main-content" className="submission-page">
+    <main id="main-content" className="submission-page site-container">
+      <nav className="breadcrumb" aria-label="面包屑">
+        <Link href="/">首页</Link>
+        <span aria-hidden="true">/</span>
+        <Link href="/submit">投稿</Link>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">{category.label}</span>
+      </nav>
       <section className="submission-shell">
-        <nav className="dossier__nav" aria-label="投稿路径">
-          <Link href="/">战略地图</Link>
-          <span aria-hidden="true">/</span>
-          <Link href="/submit">选择领地</Link>
-        </nav>
-        <p className="submission-eyebrow">INTEL DROP / {region.slug.toUpperCase()}</p>
-        <h1>向{region.label}递交情报</h1>
+        <h1>向{category.label}投稿</h1>
         <p>
-          内容不会直接公开。我们会把它封装成审核 Issue，批准后同步到 Supabase。
+          内容不会直接公开。提交后会进入审核队列，由维护者批准后同步发布。
         </p>
-        <SubmissionForm region={region} />
+        <SubmissionForm category={category} />
       </section>
     </main>
   );

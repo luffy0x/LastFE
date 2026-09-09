@@ -8,25 +8,24 @@ describe("submission directory", () => {
     render(<SubmitPage />);
 
     expect(
-      screen.getByText("选择与你的内容最贴近的领域后提交。"),
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByText(
-        "每份情报只进入一个领地。选择最贴近内容主题的入口，提交后将由维护者人工审核。",
+      screen.getByText(
+        "选择与你的内容最贴近的分类后提交。内容不会直接公开，审核通过后才会出现。",
       ),
-    ).not.toBeInTheDocument();
+    ).toBeInTheDocument();
   });
 
-  it("renders one tactical directory entry for every enabled territory", () => {
+  it("renders one directory entry for every enabled category", () => {
     render(<SubmitPage />);
 
     expect(
-      screen.getByRole("main", { name: "选择投稿领地" }),
+      screen.getByRole("heading", { name: "选择投稿分类", level: 1 }),
     ).toBeInTheDocument();
-    expect(screen.getAllByRole("link", { name: /进入.*投稿表/ })).toHaveLength(5);
-    expect(screen.getByRole("link", { name: "进入面经记录投稿表" })).toHaveAttribute(
-      "href",
-      "/submit/interview",
-    );
+    expect(screen.getAllByRole("link", { name: /投稿.*/ })).toHaveLength(5);
+    expect(
+      screen.getByRole("link", { name: "投稿面经记录" }),
+    ).toHaveAttribute("href", "/submit/interview");
+    expect(
+      screen.getByRole("link", { name: "投稿算法手撕" }),
+    ).toHaveAttribute("href", "/submit/algorithms");
   });
 });

@@ -1,4 +1,39 @@
-import type { RegionDefinition } from "./types";
+export type CategoryTheme = "amber" | "teal" | "magenta" | "indigo" | "cyan";
+
+type SubmissionFieldBase = {
+  name: string;
+  label: string;
+  required: boolean;
+  maxLength?: number;
+};
+
+export type SubmissionFieldDefinition =
+  | (SubmissionFieldBase & { kind: "text" })
+  | (SubmissionFieldBase & { kind: "tags" })
+  | (SubmissionFieldBase & { kind: "url" })
+  | (SubmissionFieldBase & {
+      kind: "select";
+      options: readonly { value: string; label: string }[];
+    })
+  | (SubmissionFieldBase & { kind: "markdown" });
+
+export type CategoryDefinition = {
+  slug: string;
+  href: `/regions/${string}`;
+  label: string;
+  description: string;
+  theme: CategoryTheme;
+  schemaKey:
+    | "interview"
+    | "resource"
+    | "fundamental"
+    | "project"
+    | "algorithm";
+  submissionFields: readonly SubmissionFieldDefinition[];
+  filterKeys: readonly string[];
+  summaryFields: readonly string[];
+  enabled: boolean;
+};
 
 const DIFFICULTY_OPTIONS = [
   { value: "easy", label: "简单" },
@@ -6,52 +41,12 @@ const DIFFICULTY_OPTIONS = [
   { value: "hard", label: "困难" },
 ] as const;
 
-export const REGION_ANCHORS = {
-  interview: { x: 228, y: 166 },
-  resources: { x: 683, y: 153 },
-  fundamentals: { x: 500, y: 300 },
-  projects: { x: 232, y: 385 },
-  algorithms: { x: 759, y: 372 },
-} as const;
-
-export const REGION_PATHS = {
-  interview: "M61 73H383L414 194L329 278L49 245L35 152Z",
-  resources: "M383 73H943L957 198L650 250L414 194Z",
-  fundamentals: "M329 278L414 194L650 250L610 420L379 418Z",
-  projects: "M49 245L329 278L379 418L300 552L42 470Z",
-  algorithms: "M650 250L957 198L970 510L610 420Z",
-} as const;
-
-const ROUTE_PATHS = {
-  interviewFundamentals: "M228 166 Q360 220 500 300",
-  resourcesFundamentals: "M683 153 Q600 220 500 300",
-  projectsFundamentals: "M232 385 Q360 365 500 300",
-  algorithmsFundamentals: "M759 372 Q630 350 500 300",
-  interviewProjects: "M228 166 Q190 280 232 385",
-  resourcesAlgorithms: "M683 153 Q790 245 759 372",
-} as const;
-
-export const REGIONS = [
+export const CATEGORIES = [
   {
     slug: "interview",
     href: "/regions/interview",
     label: "面经记录",
     description: "公司与岗位实战记录，标记真实面试路径。",
-    svgPath: REGION_PATHS.interview,
-    anchor: REGION_ANCHORS.interview,
-    camera: { ...REGION_ANCHORS.interview, scale: 1.5 },
-    routes: [
-      {
-        to: "fundamentals",
-        path: ROUTE_PATHS.interviewFundamentals,
-        reverse: false,
-      },
-      {
-        to: "projects",
-        path: ROUTE_PATHS.interviewProjects,
-        reverse: false,
-      },
-    ],
     theme: "amber",
     schemaKey: "interview",
     submissionFields: [
@@ -70,21 +65,6 @@ export const REGIONS = [
     href: "/regions/resources",
     label: "学习资料",
     description: "经过整理的课程、路线与外部学习入口。",
-    svgPath: REGION_PATHS.resources,
-    anchor: REGION_ANCHORS.resources,
-    camera: { ...REGION_ANCHORS.resources, scale: 1.42 },
-    routes: [
-      {
-        to: "fundamentals",
-        path: ROUTE_PATHS.resourcesFundamentals,
-        reverse: false,
-      },
-      {
-        to: "algorithms",
-        path: ROUTE_PATHS.resourcesAlgorithms,
-        reverse: false,
-      },
-    ],
     theme: "teal",
     schemaKey: "resource",
     submissionFields: [
@@ -102,32 +82,7 @@ export const REGIONS = [
     slug: "fundamentals",
     href: "/regions/fundamentals",
     label: "八股盛宴",
-    description: "把零散知识组织成可检索的基础情报。",
-    svgPath: REGION_PATHS.fundamentals,
-    anchor: REGION_ANCHORS.fundamentals,
-    camera: { ...REGION_ANCHORS.fundamentals, scale: 1.58 },
-    routes: [
-      {
-        to: "interview",
-        path: ROUTE_PATHS.interviewFundamentals,
-        reverse: true,
-      },
-      {
-        to: "resources",
-        path: ROUTE_PATHS.resourcesFundamentals,
-        reverse: true,
-      },
-      {
-        to: "projects",
-        path: ROUTE_PATHS.projectsFundamentals,
-        reverse: true,
-      },
-      {
-        to: "algorithms",
-        path: ROUTE_PATHS.algorithmsFundamentals,
-        reverse: true,
-      },
-    ],
+    description: "把零散知识组织成可检索的基础内容。",
     theme: "magenta",
     schemaKey: "fundamental",
     submissionFields: [
@@ -146,21 +101,6 @@ export const REGIONS = [
     href: "/regions/projects",
     label: "项目推荐",
     description: "拆解能讲清取舍与结果的项目实践。",
-    svgPath: REGION_PATHS.projects,
-    anchor: REGION_ANCHORS.projects,
-    camera: { ...REGION_ANCHORS.projects, scale: 1.45 },
-    routes: [
-      {
-        to: "fundamentals",
-        path: ROUTE_PATHS.projectsFundamentals,
-        reverse: false,
-      },
-      {
-        to: "interview",
-        path: ROUTE_PATHS.interviewProjects,
-        reverse: true,
-      },
-    ],
     theme: "indigo",
     schemaKey: "project",
     submissionFields: [
@@ -181,21 +121,6 @@ export const REGIONS = [
     href: "/regions/algorithms",
     label: "算法手撕",
     description: "按来源和难度组织训练路线与题解。",
-    svgPath: REGION_PATHS.algorithms,
-    anchor: REGION_ANCHORS.algorithms,
-    camera: { ...REGION_ANCHORS.algorithms, scale: 1.4 },
-    routes: [
-      {
-        to: "fundamentals",
-        path: ROUTE_PATHS.algorithmsFundamentals,
-        reverse: false,
-      },
-      {
-        to: "resources",
-        path: ROUTE_PATHS.resourcesAlgorithms,
-        reverse: true,
-      },
-    ],
     theme: "cyan",
     schemaKey: "algorithm",
     submissionFields: [
@@ -217,4 +142,12 @@ export const REGIONS = [
     summaryFields: ["source", "difficulty", "tags"],
     enabled: true,
   },
-] as const satisfies readonly RegionDefinition[];
+] as const satisfies readonly CategoryDefinition[];
+
+export type CategorySlug = (typeof CATEGORIES)[number]["slug"];
+
+export function getCategory(slug: string): CategoryDefinition | undefined {
+  return CATEGORIES.find(
+    (category) => category.slug === slug && category.enabled,
+  );
+}

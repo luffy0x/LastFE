@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-import { REGIONS } from "@/features/map/regions";
+import { CATEGORIES } from "@/features/content/categories";
 
 const invalidQueryResponse = () =>
   new Response("Bad Request", {
@@ -10,12 +10,12 @@ const invalidQueryResponse = () =>
 
 export function proxy(request: NextRequest): Response {
   const regionSlug = request.nextUrl.pathname.split("/")[2];
-  const region = REGIONS.find(
+  const category = CATEGORIES.find(
     (candidate) => candidate.slug === regionSlug && candidate.enabled,
   );
-  if (!region) return NextResponse.next();
+  if (!category) return NextResponse.next();
 
-  const allowedKeys = new Set(["q", "page", ...region.filterKeys]);
+  const allowedKeys = new Set(["q", "page", ...category.filterKeys]);
   for (const key of request.nextUrl.searchParams.keys()) {
     if (
       !allowedKeys.has(key) ||

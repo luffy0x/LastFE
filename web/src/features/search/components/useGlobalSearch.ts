@@ -60,6 +60,11 @@ export function useGlobalSearch() {
     const handleShortcut = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
+        const trigger = triggerRef.current;
+        if (!trigger) return;
+        // Only the visible instance responds, so duplicate mounts (header + hero)
+        // don't both open their dialogs.
+        if (trigger.offsetParent === null) return;
         open();
       }
     };

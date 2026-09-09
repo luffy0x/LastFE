@@ -135,14 +135,20 @@ test.describe.serial("anonymous submission flow", () => {
     request,
   }) => {
     await page.goto("/");
-    const searchTrigger = page.getByRole("button", { name: "打开全局搜索" });
-    const dialog = page.getByRole("dialog", { name: "全局情报检索" });
+    // Two GlobalSearch instances are mounted (header + hero); only one is
+    // visible per breakpoint. The visible one owns focus and its dialog.
+    const searchTrigger = page
+      .getByRole("button", { name: "打开全局搜索" })
+      .filter({ visible: true });
+    const dialog = page.getByRole("dialog", { name: "全局搜索" }).first();
     await searchTrigger.click();
     await expect(dialog).toBeVisible();
     await page.keyboard.press("Escape");
     await expect(searchTrigger).toBeFocused();
     await page.keyboard.press("Control+k");
-    await expect(dialog).toBeVisible();
+    await expect(
+      page.getByRole("dialog", { name: "全局搜索" }).first(),
+    ).toBeVisible();
     const search = await request.get("/api/search?q=Redis");
     expect(search.ok()).toBe(true);
     await expect(search.json()).resolves.toMatchObject({
@@ -152,14 +158,15 @@ test.describe.serial("anonymous submission flow", () => {
       ]),
     });
     await page.keyboard.press("Escape");
-    await expect(searchTrigger).toBeFocused();
-
+    await expect(
+      page.getByRole("dialog", { name: "全局搜索" }),
+    ).not.toBeVisible();
     await page.goto("/regions/interview?q=Redis&companyDepartment=字节跳动&tags=后端");
     await expect(
       page.getByRole("link", { name: "字节跳动/基础架构 · 后端开发" }),
     ).toBeVisible();
     await page.goto("/regions/interview?q=没有匹配项");
-    await expect(page.getByText("没有符合当前条件的公开档案。")).toBeVisible();
+    await expect(page.getByText("没有符合当前条件的公开内容。")).toBeVisible();
     await expect(page.getByRole("link", { name: "清除搜索与筛选" })).toBeVisible();
 
     await page.goto("/content/interview-byte-infra");
@@ -167,7 +174,7 @@ test.describe.serial("anonymous submission flow", () => {
     await expect(page.locator(".dossier__body script")).toHaveCount(0);
     await page.goto("/content/resource-react-typescript");
     const external = page.getByRole("link", {
-      name: "站外链接（本站不托管或检查文件）",
+      name: "访问站外链接（本站不托管或检查文件）",
     });
     await expect(external).toHaveAttribute("href", "https://react.dev/learn/typescript");
     await expect(external).toHaveAttribute("target", "_blank");

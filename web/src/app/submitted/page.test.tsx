@@ -6,9 +6,11 @@ import SubmittedPage from "./page";
 it("explains moderation and offers clear return paths", () => {
   render(<SubmittedPage />);
 
-  expect(screen.getByRole("heading", { name: "投稿已进入审核队列" })).toBeVisible();
+  expect(
+    screen.getByRole("heading", { name: "投稿已进入审核队列" }),
+  ).toBeVisible();
   expect(screen.getByText(/不会立即公开/)).toBeVisible();
-  expect(screen.getByRole("link", { name: "返回战略地图" })).toHaveAttribute(
+  expect(screen.getByRole("link", { name: "返回首页" })).toHaveAttribute(
     "href",
     "/",
   );

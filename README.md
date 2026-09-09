@@ -1,10 +1,12 @@
 # Knowledge Frontier
 
-Knowledge Frontier 是一个以科幻战略地图呈现求职知识的 Next.js 应用。公开内容存储在 Supabase PostgreSQL，匿名投稿进入私有 GitHub Issues 审核流程。
+Knowledge Frontier 是一个公开、免注册的求职知识库 Next.js 应用，以搜索优先的 SaaS 界面组织面经、学习资料、八股、项目与算法内容。公开内容存储在 Supabase PostgreSQL，匿名投稿进入私有 GitHub Issues 审核流程。
 
 ## 文档入口
 
 - [产品与交互设计](docs/superpowers/specs/2026-09-01-interview-resource-sharing-design.md)
+- [Easy UI SaaS 全站重设计](docs/superpowers/specs/2026-09-09-easy-ui-saas-redesign-design.md)
+- [Easy UI SaaS 全站重设计实施计划](docs/superpowers/plans/2026-09-09-easy-ui-saas-redesign.md)
 - [计划 1：地图体验](docs/superpowers/plans/2026-09-01-career-map-experience.md)
 - [计划 2：内容与审核](docs/superpowers/plans/2026-09-01-content-moderation-platform.md)
 - [计划 3：生产部署](docs/superpowers/plans/2026-09-01-production-deployment.md)

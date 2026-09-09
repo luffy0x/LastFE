@@ -2,20 +2,20 @@
 
 import { useMemo, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import type { RegionDefinition } from "@/features/map/types";
+import type { CategoryDefinition } from "../categories";
 import { request, RequestError } from "@/utils/request";
 
 type SubmissionFormProps = {
-  region: RegionDefinition;
+  category: CategoryDefinition;
 };
 
-function metadataKeysFor(region: RegionDefinition): readonly string[] {
-  return region.summaryFields.filter((key) => key !== "tags");
+function metadataKeysFor(category: CategoryDefinition): readonly string[] {
+  return category.summaryFields.filter((key) => key !== "tags");
 }
 
-export function SubmissionForm({ region }: SubmissionFormProps) {
+export function SubmissionForm({ category }: SubmissionFormProps) {
   const router = useRouter();
-  const metadataKeys = useMemo(() => metadataKeysFor(region), [region]);
+  const metadataKeys = useMemo(() => metadataKeysFor(category), [category]);
   const [message, setMessage] = useState("");
   const [messageKind, setMessageKind] = useState<"status" | "alert">("status");
   const [pending, setPending] = useState(false);
@@ -33,13 +33,13 @@ export function SubmissionForm({ region }: SubmissionFormProps) {
 
     setPending(true);
     setMessageKind("status");
-    setMessage("正在递交审核队列…");
+    setMessage("正在提交审核…");
     try {
       await request<{ ok: true }>("/api/submissions", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          regionSlug: region.slug,
+          regionSlug: category.slug,
           title: String(form.get("title") ?? ""),
           summary: String(form.get("summary") ?? ""),
           nickname: String(form.get("nickname") ?? ""),
@@ -93,7 +93,7 @@ export function SubmissionForm({ region }: SubmissionFormProps) {
         <input name="nickname" maxLength={40} placeholder="可留空，公开显示匿名" />
       </label>
 
-      {region.submissionFields
+      {category.submissionFields
         .filter(({ name }) => !["title", "tags", "nickname"].includes(name))
         .map((field) => {
           if (field.kind === "select") {
@@ -176,7 +176,7 @@ export function SubmissionForm({ region }: SubmissionFormProps) {
         >
           {message}
         </p>
-        <button type="submit" disabled={pending}>
+        <button type="submit" className="button-primary" disabled={pending}>
           {pending ? "提交中" : "提交审核"}
         </button>
       </div>

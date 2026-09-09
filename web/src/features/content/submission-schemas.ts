@@ -1,7 +1,9 @@
 import { z } from "zod";
-import { REGIONS } from "@/features/map/regions";
+import { CATEGORIES } from "./categories";
 
-const regionSlugSet = new Set<string>(REGIONS.map((region) => region.slug));
+const regionSlugSet = new Set<string>(
+  CATEGORIES.map((category) => category.slug),
+);
 
 const safeUrl = z
   .string()
@@ -29,7 +31,7 @@ const tagList = z
 
 const baseSubmissionSchema = z.object({
   regionSlug: z.string().refine((value) => regionSlugSet.has(value), {
-    message: "未知投稿领地",
+    message: "未知投稿分类",
   }),
   title: z.string().trim().min(1).max(120),
   summary: optionalText(2000),

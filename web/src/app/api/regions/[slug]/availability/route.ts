@@ -1,16 +1,17 @@
-import { REGIONS } from "@/features/map/regions";
-import type { RegionAvailability } from "@/features/map/prepare-region";
+import { CATEGORIES } from "@/features/content/categories";
+
+export type RegionAvailability = { ok: true; slug: string };
 
 export async function GET(
   _request: Request,
   context: RouteContext<"/api/regions/[slug]/availability">,
 ) {
   const { slug } = await context.params;
-  const region = REGIONS.find(
+  const category = CATEGORIES.find(
     (candidate) => candidate.slug === slug && candidate.enabled,
   );
 
-  if (!region) {
+  if (!category) {
     return Response.json(
       { ok: false, code: "REGION_NOT_FOUND" },
       { status: 404 },
