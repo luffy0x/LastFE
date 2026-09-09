@@ -15,7 +15,7 @@ it("renders a collapsed mobile disclosure with equivalent territory links", asyn
 
   expect(details).toHaveAttribute("open");
   expect(screen.getAllByRole("link")).toHaveLength(10);
-  expect(screen.getAllByRole("link", { name: /项目区$/ })[1]).toHaveAttribute(
+  expect(screen.getAllByRole("link", { name: /项目推荐$/ })[1]).toHaveAttribute(
     "href",
     "/regions/projects",
   );

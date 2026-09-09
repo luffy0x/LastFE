@@ -15,10 +15,13 @@ it("renders a readable dossier with a route back to its territory", async () => 
       level: 1,
     }),
   ).toBeVisible();
-  expect(screen.getByRole("link", { name: "返回面经区" })).toHaveAttribute(
+  expect(screen.getByRole("link", { name: "返回面经记录" })).toHaveAttribute(
     "href",
     "/regions/interview",
   );
+  expect(
+    screen.getByRole("heading", { name: "面试路线", level: 3 }),
+  ).toHaveClass("markdown-render__heading--2");
 });
 
 it("labels and hardens a safe external dossier link", async () => {

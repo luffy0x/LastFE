@@ -31,10 +31,17 @@ export type ExplorerNavigationOptions = {
   reducedMotion: boolean;
 };
 
+export type ExplorerNavigationPhase =
+  | "idle"
+  | "pending"
+  | "loading"
+  | "fulfilled"
+  | "rejected";
+
 export type ExplorerNavigationState = {
   currentPoint: Point;
   targetSlug: string | null;
-  phase: "idle" | "moving" | "loading" | "failed";
+  phase: ExplorerNavigationPhase;
   selectRegion(slug: string): void;
   restore(point: Point, selectedSlug: string | null): void;
   retry(): void;
@@ -73,7 +80,9 @@ export function useExplorerNavigation({
   const [targetSlug, setTargetSlug] = useState<string | null>(
     initialSelectedSlug,
   );
-  const [phase, setPhase] = useState<ExplorerNavigationState["phase"]>("idle");
+  const [phase, setPhase] = useState<ExplorerNavigationPhase>(
+    initialSelectedSlug ? "fulfilled" : "idle",
+  );
   const pointRef = useRef<Point>(initial.anchor);
   const currentSlugRef = useRef(initial.slug);
   const tokenRef = useRef(0);
@@ -127,7 +136,7 @@ export function useExplorerNavigation({
         const duration = durationForDistance(routeDistance(legs, pointRef.current));
         const activeMotion = motion.start(legs, pointRef.current, duration);
         activeMotionRef.current = activeMotion;
-        setPhase("moving");
+        setPhase("pending");
         motionFinished = activeMotion.finished;
       }
 
@@ -157,11 +166,11 @@ export function useExplorerNavigation({
           setCurrentPoint(finalPoint);
 
           if (preparationResult.status === "rejected") {
-            setPhase("failed");
+            setPhase("rejected");
             return;
           }
 
-          setPhase("idle");
+          setPhase("fulfilled");
           navigate(target.href);
         },
       );
@@ -202,7 +211,7 @@ export function useExplorerNavigation({
       currentSlugRef.current = (selectedRegion ?? nearestRegion ?? initial).slug;
       setCurrentPoint(point);
       setTargetSlug(selectedRegion?.slug ?? null);
-      setPhase("idle");
+      setPhase(selectedRegion ? "fulfilled" : "idle");
     },
     [initial, regions],
   );

@@ -35,9 +35,9 @@ it("starts at the valid territory named by the region query", async () => {
   );
 
   expect(
-    screen.getByRole("img", { name: "探索者当前位置：项目区" }),
+    screen.getByRole("img", { name: "探索者当前位置：项目推荐" }),
   ).toHaveAttribute("transform", "translate(232 357)");
-  expect(screen.getByRole("button", { name: "进入项目区" })).toHaveAttribute(
+  expect(screen.getByRole("button", { name: "进入项目推荐" })).toHaveAttribute(
     "aria-pressed",
     "true",
   );

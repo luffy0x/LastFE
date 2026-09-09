@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { GlobalSearch } from "@/features/search/components/GlobalSearch";
 
 type PublishedStats = {
@@ -12,7 +11,7 @@ type MapHudProps = {
   onZoomIn(): void;
   onZoomOut(): void;
   onReset(): void;
-  failed: boolean;
+  rejected: boolean;
   onRetry(): void;
 };
 
@@ -22,28 +21,13 @@ export function MapHud({
   onZoomIn,
   onZoomOut,
   onReset,
-  failed,
+  rejected,
   onRetry,
 }: MapHudProps) {
   return (
     <>
-      <header className="map-brand" aria-label="Knowledge Frontier">
-        <div className="map-brand__identity">
-          <Image
-            className="map-brand__logo"
-            src="/lastfe-logo.svg"
-            alt="LastFE 项目 Logo"
-            width={48}
-            height={48}
-            priority
-            unoptimized
-          />
-          <div className="map-brand__copy">
-            <span className="map-brand__eyebrow">KNOWLEDGE // FRONTIER</span>
-            <h1>知识边境</h1>
-            <p>求职战略情报图</p>
-          </div>
-        </div>
+      <header className="map-brand" aria-label="Last Frontend Developer">
+        <h1>Last Frontend Developer</h1>
       </header>
 
       <section className="map-telemetry" aria-label="地图情报统计">
@@ -95,7 +79,7 @@ export function MapHud({
         <div>
           <span>OPERATOR 01</span>
           <strong>{status}</strong>
-          {failed ? (
+          {rejected ? (
             <button
               type="button"
               className="min-h-11 min-w-11"

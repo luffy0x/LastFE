@@ -23,9 +23,9 @@ describe("StrategicMap", () => {
     expect(
       screen.getByRole("application", { name: "战略地图画布" }),
     ).toBeVisible();
-    expect(screen.getAllByRole("button", { name: /^进入.+区$/ })).toHaveLength(5);
+    expect(screen.getAllByRole("button", { name: /^进入/ })).toHaveLength(5);
     expect(screen.getAllByRole("navigation", { name: "领地列表" })).toHaveLength(2);
-    expect(screen.getAllByRole("link", { name: /区$/ })).toHaveLength(10);
+    expect(screen.getAllByRole("link", { name: /^\d{2}/ })).toHaveLength(10);
   });
 
   it("selects a territory with the keyboard and reports its status", async () => {
@@ -34,14 +34,14 @@ describe("StrategicMap", () => {
     render(
       <StrategicMap regions={REGIONS} stats={stats} onSelectRegion={onSelect} />,
     );
-    const interview = screen.getByRole("button", { name: "进入面经区" });
+    const interview = screen.getByRole("button", { name: "进入面经记录" });
 
     expect(interview).toHaveAttribute("tabindex", "0");
     interview.focus();
     await user.keyboard("{Enter}");
 
     expect(onSelect).toHaveBeenCalledWith("interview");
-    expect(screen.getByText("目标锁定：面经区")).toBeVisible();
+    expect(screen.getByText("目标锁定：面经记录")).toBeVisible();
   });
 
   it("shows publishing telemetry and the explorer position", () => {
@@ -52,19 +52,19 @@ describe("StrategicMap", () => {
     expect(screen.getByText("18", { selector: "output" })).toBeVisible();
     expect(screen.getByText("4", { selector: "output" })).toBeVisible();
     expect(
-      screen.getByRole("img", { name: "探索者当前位置：八股区" }),
+      screen.getByRole("img", { name: "探索者当前位置：八股盛宴" }),
     ).toBeVisible();
   });
 
-  it("shows the project logo in the map brand", () => {
+  it("shows the Last Frontend Developer wordmark in the map brand", () => {
     render(
       <StrategicMap regions={REGIONS} stats={stats} onSelectRegion={vi.fn()} />,
     );
 
-    expect(screen.getByRole("img", { name: "LastFE 项目 Logo" })).toHaveAttribute(
-      "src",
-      "/lastfe-logo.svg",
-    );
+    expect(
+      screen.getByRole("heading", { name: "Last Frontend Developer", level: 1 }),
+    ).toBeVisible();
+    expect(screen.queryByRole("img", { name: "LastFE 项目 Logo" })).toBeNull();
   });
 
   it("searches published content from the HUD", async () => {
@@ -127,13 +127,13 @@ describe("StrategicMap", () => {
     );
 
     expect(
-      await screen.findByRole("img", { name: "探索者当前位置：算法区" }),
+      await screen.findByRole("img", { name: "探索者当前位置：算法手撕" }),
     ).toHaveAttribute("transform", "translate(759 344)");
     expect(screen.getByTestId("camera-layer")).toHaveAttribute(
       "transform",
       "translate(-120 48) scale(1.4)",
     );
-    expect(screen.getByRole("button", { name: "进入算法区" })).toHaveAttribute(
+    expect(screen.getByRole("button", { name: "进入算法手撕" })).toHaveAttribute(
       "data-selected",
       "true",
     );
@@ -159,12 +159,12 @@ describe("StrategicMap", () => {
     );
 
     expect(
-      await screen.findByRole("img", { name: "探索者当前位置：项目区" }),
+      await screen.findByRole("img", { name: "探索者当前位置：项目推荐" }),
     ).toHaveAttribute("transform", "translate(232 357)");
-    expect(screen.getByRole("button", { name: "进入项目区" })).toHaveAttribute(
+    expect(screen.getByRole("button", { name: "进入项目推荐" })).toHaveAttribute(
       "data-selected",
       "true",
     );
-    expect(screen.getByRole("button", { name: "进入项目区" })).toHaveFocus();
+    expect(screen.getByRole("button", { name: "进入项目推荐" })).toHaveFocus();
   });
 });

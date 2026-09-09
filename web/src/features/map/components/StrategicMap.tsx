@@ -133,13 +133,13 @@ export function StrategicMap({
   };
 
   const status =
-    explorer.phase === "moving"
+    explorer.phase === "pending"
       ? `行进中：${currentRegion.label}`
       : explorer.phase === "loading"
         ? `同步情报：${currentRegion.label}`
-        : explorer.phase === "failed"
+        : explorer.phase === "rejected"
           ? `目标离线：${currentRegion.label}`
-          : explorer.targetSlug
+          : explorer.phase === "fulfilled"
             ? `目标锁定：${currentRegion.label}`
             : `待命：${currentRegion.label}`;
 
@@ -154,7 +154,7 @@ export function StrategicMap({
         role="application"
         aria-label="战略地图画布"
         viewBox="0 0 1000 600"
-        preserveAspectRatio="xMidYMid slice"
+        preserveAspectRatio="xMidYMid meet"
         className="strategic-map__canvas"
         {...camera.bind}
       >
@@ -216,7 +216,7 @@ export function StrategicMap({
           camera.zoomAt(camera.state.scale - 0.2, { x: 500, y: 300 })
         }
         onReset={camera.reset}
-        failed={explorer.phase === "failed"}
+        rejected={explorer.phase === "rejected"}
         onRetry={explorer.retry}
       />
       <RegionListFallback regions={regions} />

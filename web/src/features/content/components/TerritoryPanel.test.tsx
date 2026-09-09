@@ -35,7 +35,7 @@ it("shows only content from the requested territory", async () => {
   render(<TerritoryPanel region={REGIONS[0]} page={page} />);
 
   expect(
-    screen.getByRole("heading", { name: "面经区", level: 1 }),
+    screen.getByRole("heading", { name: "面经记录", level: 1 }),
   ).toBeVisible();
   expect(screen.getByText("字节跳动/基础架构 · 后端开发")).toBeVisible();
   expect(screen.queryByText("动态规划训练路线")).not.toBeInTheDocument();
@@ -43,7 +43,7 @@ it("shows only content from the requested territory", async () => {
     "href",
     "/?region=interview",
   );
-  expect(screen.getByRole("link", { name: "向面经区投稿" })).toHaveAttribute(
+  expect(screen.getByRole("link", { name: "向面经记录投稿" })).toHaveAttribute(
     "href",
     "/submit/interview",
   );
@@ -60,7 +60,7 @@ it("focuses the territory heading when the mobile sheet opens", async () => {
   render(<TerritoryPanel region={REGIONS[0]} page={page} />);
 
   await waitFor(() =>
-    expect(screen.getByRole("heading", { name: "面经区" })).toHaveFocus(),
+    expect(screen.getByRole("heading", { name: "面经记录" })).toHaveFocus(),
   );
 });
 

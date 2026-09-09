@@ -35,7 +35,7 @@ export const REGIONS = [
   {
     slug: "interview",
     href: "/regions/interview",
-    label: "面经区",
+    label: "面经记录",
     description: "公司与岗位实战记录，标记真实面试路径。",
     svgPath: REGION_PATHS.interview,
     anchor: REGION_ANCHORS.interview,
@@ -68,7 +68,7 @@ export const REGIONS = [
   {
     slug: "resources",
     href: "/regions/resources",
-    label: "学习资料区",
+    label: "学习资料",
     description: "经过整理的课程、路线与外部学习入口。",
     svgPath: REGION_PATHS.resources,
     anchor: REGION_ANCHORS.resources,
@@ -101,7 +101,7 @@ export const REGIONS = [
   {
     slug: "fundamentals",
     href: "/regions/fundamentals",
-    label: "八股区",
+    label: "八股盛宴",
     description: "把零散知识组织成可检索的基础情报。",
     svgPath: REGION_PATHS.fundamentals,
     anchor: REGION_ANCHORS.fundamentals,
@@ -144,7 +144,7 @@ export const REGIONS = [
   {
     slug: "projects",
     href: "/regions/projects",
-    label: "项目区",
+    label: "项目推荐",
     description: "拆解能讲清取舍与结果的项目实践。",
     svgPath: REGION_PATHS.projects,
     anchor: REGION_ANCHORS.projects,
@@ -179,7 +179,7 @@ export const REGIONS = [
   {
     slug: "algorithms",
     href: "/regions/algorithms",
-    label: "算法区",
+    label: "算法手撕",
     description: "按来源和难度组织训练路线与题解。",
     svgPath: REGION_PATHS.algorithms,
     anchor: REGION_ANCHORS.algorithms,

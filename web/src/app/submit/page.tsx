@@ -19,9 +19,7 @@ export default function SubmitPage() {
       <header className="submission-page__header">
         <span>INTAKE / TERRITORY INDEX</span>
         <h1 id="submission-directory-title">选择投稿领地</h1>
-        <p>
-          每份情报只进入一个领地。选择最贴近内容主题的入口，提交后将由维护者人工审核。
-        </p>
+        <p>选择与你的内容最贴近的领域后提交。</p>
       </header>
 
       <nav className="submission-directory" aria-label="投稿领地目录">

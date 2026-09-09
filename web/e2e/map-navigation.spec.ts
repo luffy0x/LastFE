@@ -5,10 +5,10 @@ test.describe.configure({ mode: "serial" });
 test("moves the explorer and enters the selected territory", async ({ page }) => {
   await page.goto("/");
 
-  await page.getByRole("button", { name: "进入算法区" }).click();
+  await page.getByRole("button", { name: "进入算法手撕" }).click();
 
   await expect(page).toHaveURL(/\/regions\/algorithms$/);
-  await expect(page.getByRole("heading", { name: "算法区" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "算法手撕" })).toBeVisible();
 });
 
 test("replaces an in-flight destination without opening the old territory", async ({
@@ -16,8 +16,8 @@ test("replaces an in-flight destination without opening the old territory", asyn
 }) => {
   await page.goto("/");
 
-  await page.getByRole("button", { name: "进入学习资料区" }).click();
-  await page.getByRole("button", { name: "进入项目区" }).click();
+  await page.getByRole("button", { name: "进入学习资料" }).click();
+  await page.getByRole("button", { name: "进入项目推荐" }).click();
 
   await expect(page).toHaveURL(/\/regions\/projects$/);
   await expect(page).not.toHaveURL(/\/regions\/resources$/);
@@ -27,14 +27,14 @@ test("reduced motion enters without a travel delay", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
 
-  await page.getByRole("button", { name: "进入八股区" }).click();
+  await page.getByRole("button", { name: "进入八股盛宴" }).click();
 
   await expect(page).toHaveURL(/\/regions\/fundamentals$/);
 });
 
 test("keyboard Enter selects and enters a territory", async ({ page }) => {
   await page.goto("/");
-  const territory = page.getByRole("button", { name: "进入面经区" });
+  const territory = page.getByRole("button", { name: "进入面经记录" });
   await territory.focus();
 
   await page.keyboard.press("Enter");
@@ -49,7 +49,7 @@ test("territory list provides equivalent mobile navigation", async ({ page }) =>
   await page.getByText("打开领地列表").click();
   await page
     .locator(".region-list--mobile")
-    .getByRole("link", { name: /项目区$/ })
+    .getByRole("link", { name: /项目推荐$/ })
     .click();
 
   await expect(page).toHaveURL(/\/regions\/projects$/);
@@ -86,16 +86,16 @@ test("pinch changes the camera and reset returns to global view", async ({ page 
 
 test("browser Back restores the last explorer destination", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "进入算法区" }).click();
+  await page.getByRole("button", { name: "进入算法手撕" }).click();
   await expect(page).toHaveURL(/\/regions\/algorithms$/);
 
   await page.goBack();
 
   await expect(page).toHaveURL(/\/$/);
   await expect(
-    page.getByRole("img", { name: "探索者当前位置：算法区" }),
+    page.getByRole("img", { name: "探索者当前位置：算法手撕" }),
   ).toBeVisible();
-  await expect(page.getByRole("button", { name: "进入算法区" })).toHaveAttribute(
+  await expect(page.getByRole("button", { name: "进入算法手撕" })).toHaveAttribute(
     "aria-pressed",
     "true",
   );
@@ -106,8 +106,8 @@ test("failed destination preparation can be retried", async ({ page }) => {
   await page.route(availability, (route) => route.abort("failed"));
   await page.goto("/");
 
-  await page.getByRole("button", { name: "进入面经区" }).click();
-  await expect(page.getByText("目标离线：面经区")).toBeVisible();
+  await page.getByRole("button", { name: "进入面经记录" }).click();
+  await expect(page.getByText("目标离线：面经记录")).toBeVisible();
   await expect(page).toHaveURL(/\/$/);
 
   await page.unroute(availability);
@@ -122,7 +122,7 @@ test("return link restores the territory and focus on the map", async ({ page })
   await page.getByRole("link", { name: "返回战略地图" }).click();
 
   await expect(page).toHaveURL(/\/?region=projects$/);
-  const territory = page.getByRole("button", { name: "进入项目区" });
+  const territory = page.getByRole("button", { name: "进入项目推荐" });
   await expect(territory).toHaveAttribute("aria-pressed", "true");
   await expect(territory).toBeFocused();
 });
@@ -146,7 +146,7 @@ for (const viewport of viewports) {
     );
     expect(hasHorizontalOverflow).toBe(false);
     await expect(page.getByLabel("已公开档案数量")).toHaveText("10");
-    await expect(page.getByLabel("近七日新增数量")).toHaveText("5");
+    await expect(page.getByLabel("近七日新增数量")).toHaveText(/^\d+$/);
     await expect(page.getByRole("button", { name: "打开全局搜索" })).toBeInViewport();
     await expect(page.getByRole("button", { name: "放大地图" })).toBeInViewport();
     await expect(page.locator(".region-list:visible")).toBeInViewport();

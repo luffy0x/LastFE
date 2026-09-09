@@ -82,9 +82,25 @@ describe("useExplorerNavigation", () => {
     );
 
     await waitFor(() => {
-      expect(getByText("idle")).toBeInTheDocument();
+      expect(getByText("fulfilled")).toBeInTheDocument();
       expect(navigate).toHaveBeenCalledWith("/regions/interview");
     });
+  });
+
+  it("starts fulfilled when an initial territory is selected", () => {
+    const { result } = renderHook(() =>
+      useExplorerNavigation({
+        regions: REGIONS,
+        initialRegion: "algorithms",
+        initialSelectedSlug: "algorithms",
+        prepare: vi.fn().mockResolvedValue(undefined),
+        navigate: vi.fn(),
+        motion: timedMotion(),
+        reducedMotion: false,
+      }),
+    );
+
+    expect(result.current.phase).toBe("fulfilled");
   });
 
   it("cancels navigation when the explorer unmounts during a selection", async () => {
@@ -112,6 +128,43 @@ describe("useExplorerNavigation", () => {
     await act(async () => finishPreparation());
 
     expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it("reports pending while the explorer is moving", () => {
+    vi.useFakeTimers();
+    const { result } = renderHook(() =>
+      useExplorerNavigation({
+        regions: REGIONS,
+        initialRegion: "fundamentals",
+        prepare: vi.fn().mockResolvedValue(undefined),
+        navigate: vi.fn(),
+        motion: timedMotion(),
+        reducedMotion: false,
+      }),
+    );
+
+    act(() => result.current.selectRegion("interview"));
+
+    expect(result.current.phase).toBe("pending");
+  });
+
+  it("reports fulfilled after movement and preparation complete", async () => {
+    vi.useFakeTimers();
+    const { result } = renderHook(() =>
+      useExplorerNavigation({
+        regions: REGIONS,
+        initialRegion: "fundamentals",
+        prepare: vi.fn().mockResolvedValue(undefined),
+        navigate: vi.fn(),
+        motion: timedMotion(),
+        reducedMotion: false,
+      }),
+    );
+
+    act(() => result.current.selectRegion("interview"));
+    await act(() => vi.runAllTimersAsync());
+
+    expect(result.current.phase).toBe("fulfilled");
   });
 
   it("navigates only to the latest selected territory", async () => {
@@ -168,7 +221,7 @@ describe("useExplorerNavigation", () => {
     expect(navigate).toHaveBeenCalledWith("/regions/algorithms");
   });
 
-  it("keeps the explorer at the destination and retries failed preparation", async () => {
+  it("reports rejected at the destination and retries preparation", async () => {
     vi.useFakeTimers();
     const prepare = vi
       .fn<() => Promise<void>>()
@@ -189,7 +242,7 @@ describe("useExplorerNavigation", () => {
     act(() => result.current.selectRegion("interview"));
     await act(() => vi.runAllTimersAsync());
 
-    expect(result.current.phase).toBe("failed");
+    expect(result.current.phase).toBe("rejected");
     expect(result.current.currentPoint).toEqual(REGION_ANCHORS.interview);
     expect(navigate).not.toHaveBeenCalled();
 
@@ -219,7 +272,7 @@ describe("useExplorerNavigation", () => {
 
     expect(result.current.currentPoint).toEqual(REGION_ANCHORS.algorithms);
     expect(result.current.targetSlug).toBe("algorithms");
-    expect(result.current.phase).toBe("idle");
+    expect(result.current.phase).toBe("fulfilled");
     expect(navigate).not.toHaveBeenCalled();
   });
 });

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { REGIONS } from "@/features/map/regions";
-import { SafeMarkdown } from "@/features/markdown/SafeMarkdown";
-import { isSafeHttpUrl } from "@/features/content/submission-schemas";
+import { MarkdownRender } from "@/features/markdown/MarkdownRender";
+import { isSafeHttpUrl } from "@/utils/url";
 import type { ContentRecord } from "../types";
 
 type DossierProps = { record: ContentRecord };
@@ -49,7 +49,7 @@ export function Dossier({ record }: DossierProps) {
 
       {record.markdown ? (
         <section className="dossier__body" aria-label="档案正文">
-          <SafeMarkdown source={record.markdown} />
+          <MarkdownRender content={record.markdown} />
         </section>
       ) : null}
 
