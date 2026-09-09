@@ -1,6 +1,7 @@
 .superpowers/
 node_modules/
 web/.next/
+web/.next-e2e*/
 web/node_modules/
 web/playwright-report/
 web/test-results/
