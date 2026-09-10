@@ -131,15 +131,39 @@ async function importToSupabase(rows) {
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
   if (!url || !key) throw new Error('缺少 SUPABASE_URL 或 SUPABASE_SERVICE_ROLE_KEY');
   const client = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
-  const { error } = await client.from('content').upsert(rows, { onConflict: 'id' });
+
+  // 幂等性检查：先查询数据库中已存在的文档 ID
+  const { data: existingRows, error: queryError } = await client
+    .from('content')
+    .select('id')
+    .like('id', 'feishu-%');
+
+  if (queryError) throw new Error(`Supabase 查询失败: ${queryError.message}`);
+
+  const existingIds = new Set((existingRows || []).map((row) => row.id));
+  const newRows = rows.filter((row) => !existingIds.has(row.id));
+  const skippedCount = rows.length - newRows.length;
+
+  if (newRows.length === 0) {
+    console.log('所有文档已存在，无需导入。');
+    return { inserted: 0, skipped: skippedCount };
+  }
+
+  // 只插入新文档
+  const { error } = await client.from('content').insert(newRows);
   if (error) throw new Error(`Supabase 导入失败: ${error.message}`);
+
+  return { inserted: newRows.length, skipped: skippedCount };
 }
 
 export async function importExport({ exportDir = DEFAULT_EXPORT_DIR, apply = false, now } = {}) {
   const documents = await loadExportDocuments(exportDir);
   const rows = documents.map((document) => buildContentRow({ metadata: document.metadata, markdown: document.markdown, now }));
-  if (apply) await importToSupabase(rows);
-  return { count: rows.length, rows };
+  let result = { inserted: 0, skipped: 0 };
+  if (apply) {
+    result = await importToSupabase(rows);
+  }
+  return { count: rows.length, rows, inserted: result.inserted, skipped: result.skipped };
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
@@ -150,7 +174,11 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
       const manifest = await syncManifest(exportDir);
       const result = await importExport({ exportDir, apply });
       console.log(`清单已同步：${manifest.summary.document_count} 篇文档，${manifest.summary.image_count} 张图片。`);
-      console.log(`${apply ? '已导入' : '预览'}：${result.count} 条 content 记录。${apply ? '' : ' 加 --apply 才会写入 Supabase。'}`);
+      if (apply) {
+        console.log(`导入完成：新增 ${result.inserted} 条，跳过已存在 ${result.skipped} 条。`);
+      } else {
+        console.log(`预览：共 ${result.count} 条 content 记录。加 --apply 才会写入 Supabase。`);
+      }
     })
     .catch((error) => {
       console.error(error.message);

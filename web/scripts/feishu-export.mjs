@@ -1,4 +1,6 @@
 import fs from 'node:fs/promises';
+import fsSync from 'node:fs';
+import os from 'node:os';
 import http from 'node:http';
 import path from 'node:path';
 import { randomBytes } from 'node:crypto';
@@ -58,7 +60,7 @@ export function buildAuthorizeUrl(appId, state, redirectUri) {
   const url = new URL(`${API_BASE}/open-apis/authen/v1/authorize`);
   url.searchParams.set('app_id', appId);
   url.searchParams.set('redirect_uri', redirectUri);
-  url.searchParams.set('scope', 'wiki:wiki:readonly');
+  // 不传 scope：飞书会默认申请应用已开通的全部权限（含文档图片下载）
   url.searchParams.set('state', state);
   return url.toString();
 }
@@ -150,6 +152,11 @@ function createClient(appId, appSecret, userAccessToken, fetchImpl = fetch) {
       body: body ? JSON.stringify(body) : undefined,
     });
     const data = await response.json();
+    if (data.code === 99991663 || data.code === 99991661 || data.code === 99991668) {
+      // 用户令牌过期/无效：清除缓存，抛出可识别的错误让上层重新走授权
+      try { fsSync.unlinkSync(tokenCachePath()); } catch { /* 忽略 */ }
+      throw new Error(`飞书令牌已失效（code=${data.code}），请重新运行以重新授权`);
+    }
     if (!response.ok || data.code) throw new Error(`飞书 API ${endpoint} 失败: ${data.msg ?? response.status}`);
     return data.data ?? data;
   };
@@ -167,6 +174,29 @@ function createClient(appId, appSecret, userAccessToken, fetchImpl = fetch) {
 
 function openBrowser(url) {
   execFile('cmd.exe', ['/c', 'start', '', url], () => {});
+}
+
+function tokenCachePath() {
+  return path.join(os.tmpdir(), 'lastfe-feishu-token.json');
+}
+
+function readCachedToken() {
+  try {
+    const cached = JSON.parse(fsSync.readFileSync(tokenCachePath(), 'utf8'));
+    // 提前 5 分钟视为过期
+    if (cached.expires_at && cached.expires_at > Date.now() + 5 * 60 * 1000) return cached.access_token;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+function writeCachedToken(token, expiresInMs) {
+  try {
+    fsSync.writeFileSync(tokenCachePath(), JSON.stringify({ access_token: token, expires_at: Date.now() + expiresInMs }), 'utf8');
+  } catch {
+    // 缓存失败不影响导出
+  }
 }
 
 async function getUserAccessToken(appId, appSecret) {
@@ -204,7 +234,11 @@ async function getUserAccessToken(appId, appSecret) {
   const response = await fetch(`${API_BASE}/open-apis/authen/v1/access_token`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ grant_type: 'authorization_code', code, app_id: appId, app_secret: appSecret }) });
   const data = await response.json();
   if (!response.ok || data.code) throw new Error(`飞书用户授权换取令牌失败: ${data.msg ?? response.status}`);
-  return data.data?.access_token ?? data.access_token;
+  const accessToken = data.data?.access_token ?? data.access_token;
+  const expiresIn = (data.data?.expires_in ?? data.expires_in ?? 7200) * 1000;
+  writeCachedToken(accessToken, expiresIn);
+  console.log('访问令牌已缓存，下次运行无需重新授权。');
+  return accessToken;
 }
 
 async function downloadAsset(client, token, documentToken, outputPath) {
@@ -216,12 +250,54 @@ async function downloadAsset(client, token, documentToken, outputPath) {
   await fs.writeFile(outputPath, Buffer.from(await response.arrayBuffer()));
 }
 
+// 单张图片下载失败不应导致整篇文档导出失败：降级为跳过该图片
+async function downloadAssetSafe(client, token, documentToken, outputPath) {
+  try {
+    await downloadAsset(client, token, documentToken, outputPath);
+    return true;
+  } catch (error) {
+    console.warn(`  跳过图片 ${token}: ${error.message.split('\n')[0].slice(0, 120)}`);
+    return false;
+  }
+}
+
 async function exportAll({ outputDir = DEFAULT_OUTPUT } = {}) {
   const appId = requiredEnv('FEISHU_APP_ID');
   const appSecret = requiredEnv('FEISHU_APP_SECRET');
   const spaceId = requiredEnv('FEISHU_SPACE_ID');
-  const userAccessToken = process.env.FEISHU_USER_ACCESS_TOKEN || await getUserAccessToken(appId, appSecret);
+  // 令牌优先级：环境变量 > 缓存的用户令牌 > 应用身份(tenant token) > OAuth 授权
+  // 注意：空环境变量视为未设置
+  const envToken = process.env.FEISHU_USER_ACCESS_TOKEN?.trim() || null;
+  const userAccessToken = envToken || readCachedToken() || null;
   const client = createClient(appId, appSecret, userAccessToken);
+
+  if (userAccessToken) {
+    // 预检用户令牌是否仍可访问知识库，失效则自动降级
+    try {
+      await client.request('GET', `/open-apis/wiki/v2/spaces/${spaceId}/nodes`, { page_size: '1' });
+      console.log('使用已有用户令牌访问知识库。');
+    } catch {
+      console.log('用户令牌不可用，改用应用身份（要求应用已被添加为知识库成员）…');
+      const fallback = createClient(appId, appSecret, null);
+      await fallback.request('GET', `/open-apis/wiki/v2/spaces/${spaceId}/nodes`, { page_size: '1' });
+      console.log('应用身份验证通过。');
+      return exportWithClient(fallback, { outputDir, spaceId });
+    }
+  } else {
+    // 无用户令牌：先试应用身份，知识库未授权应用时才走 OAuth
+    try {
+      await client.request('GET', `/open-apis/wiki/v2/spaces/${spaceId}/nodes`, { page_size: '1' });
+      console.log('使用应用身份（tenant token）访问知识库。');
+    } catch {
+      console.log('应用身份无法访问知识库，需要 OAuth 授权…');
+      const userClient = createClient(appId, appSecret, await getUserAccessToken(appId, appSecret));
+      return exportWithClient(userClient, { outputDir, spaceId });
+    }
+  }
+  return exportWithClient(client, { outputDir, spaceId });
+}
+
+async function exportWithClient(client, { outputDir, spaceId }) {
   await fs.mkdir(outputDir, { recursive: true });
   const nodes = [];
   async function visit(parentNodeToken = '') {
@@ -246,22 +322,27 @@ async function exportAll({ outputDir = DEFAULT_OUTPUT } = {}) {
       await fs.writeFile(path.join(documentDir, 'raw-blocks.json'), `${JSON.stringify(blocks, null, 2)}\n`, 'utf8');
       const imagePaths = new Map();
       const images = blocks.filter((block) => Number(block.block_type) === 27);
+      let imageFailures = 0;
       for (let index = 0; index < images.length; index += 1) {
         const image = images[index];
         const token = image.image?.token ?? image.image?.file_token ?? image.image?.source_file_token;
         if (!token) continue;
         const extension = (image.image?.mime_type?.split('/')[1] || 'png').replace(/[^a-z0-9]/gi, '').toLowerCase() || 'png';
         const filename = `image-${String(index + 1).padStart(3, '0')}.${extension}`;
-        await downloadAsset(client, token, node.obj_token, path.join(assetDir, filename));
-        imagePaths.set(token, `./assets/${filename}`);
-        imageCount += 1;
+        const downloaded = await downloadAssetSafe(client, token, node.obj_token, path.join(assetDir, filename));
+        if (downloaded) {
+          imagePaths.set(token, `./assets/${filename}`);
+          imageCount += 1;
+        } else {
+          imageFailures += 1;
+        }
       }
       const built = buildMarkdown(blocks, { imagePaths });
       unsupportedCount += built.unsupportedCount;
       await fs.writeFile(path.join(documentDir, 'document.md'), `# ${node.title}\n\n${built.markdown}`, 'utf8');
       await fs.writeFile(path.join(documentDir, 'metadata.json'), `${JSON.stringify({ title: node.title, wiki_token: node.node_token, object_token: node.obj_token, object_type: node.obj_type, parent_node_token: node.parent_node_token, updated_at: node.updated_at, url: `https://${process.env.FEISHU_DOMAIN ?? 'open.feishu.cn'}/wiki/${node.node_token}` }, null, 2)}\n`, 'utf8');
-      manifest.documents.push({ title: node.title, directory: path.relative(outputDir, documentDir), block_count: blocks.length, image_count: images.length });
-      console.log(`已导出: ${node.title}`);
+      manifest.documents.push({ title: node.title, directory: path.relative(outputDir, documentDir), block_count: blocks.length, image_count: images.length - imageFailures });
+      console.log(`已导出: ${node.title}${imageFailures ? `（${imageFailures} 张图片因权限跳过）` : ''}`);
     } catch (error) {
       manifest.failures.push({ title: node.title, node_token: node.node_token, error: error.message });
       console.error(`导出失败: ${node.title} - ${error.message}`);
