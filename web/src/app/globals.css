@@ -1097,7 +1097,7 @@ button:focus-visible,
 }
 
 .dossier {
-  width: min(100%, 760px);
+  width: min(100%, 880px);
   margin: 0 auto;
 }
 
@@ -1251,7 +1251,7 @@ button:focus-visible,
 }
 
 .markdown-render__heading--2 {
-  margin: 34px 0 12px;
+  margin: 32px 0 12px;
   font-size: 20px;
 }
 
@@ -1259,7 +1259,7 @@ button:focus-visible,
 .markdown-render__heading--4,
 .markdown-render__heading--5,
 .markdown-render__heading--6 {
-  margin: 26px 0 10px;
+  margin: 24px 0 10px;
   font-size: 17px;
 }
 
