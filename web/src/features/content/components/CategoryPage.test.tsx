@@ -96,3 +96,28 @@ it("renders select options for the difficulty filter", () => {
   expect(difficulty.tagName).toBe("SELECT");
   expect(screen.getByRole("option", { name: "简单" })).toBeInTheDocument();
 });
+
+it("renders the static site recommendation cards only for algorithms", () => {
+  const algorithms = CATEGORIES.find(({ slug }) => slug === "algorithms")!;
+
+  const { container, rerender } = render(
+    <CategoryPage category={algorithms} page={emptyPage()} query={{}} />,
+  );
+
+  expect(
+    screen.getByRole("heading", { name: "刷题网站推荐" }),
+  ).toBeInTheDocument();
+  expect(
+    container.querySelectorAll(".algorithm-site-card"),
+  ).toHaveLength(4);
+  expect(
+    screen.getByRole("link", { name: /codetop/ }),
+  ).toHaveAttribute("href", "https://codetop.cc");
+
+  rerender(
+    <CategoryPage category={interview} page={emptyPage()} query={{}} />,
+  );
+  expect(
+    screen.queryByRole("heading", { name: "刷题网站推荐" }),
+  ).not.toBeInTheDocument();
+});

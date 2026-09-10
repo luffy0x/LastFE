@@ -5,6 +5,8 @@ import { ContentCard, contentCardTint } from "@/components/ContentCard";
 import type { CategoryDefinition } from "../categories";
 import type { ContentSummary, Page } from "../types";
 
+import { AlgorithmSiteCards } from "./AlgorithmSiteCards";
+
 type CategoryPageProps = {
   category: CategoryDefinition;
   page: Page<ContentSummary>;
@@ -94,6 +96,8 @@ export function CategoryPage({
           应用筛选
         </Button>
       </form>
+
+      {category.slug === "algorithms" ? <AlgorithmSiteCards /> : null}
 
       <div className="content-grid">
         {page.items.length === 0 ? (
