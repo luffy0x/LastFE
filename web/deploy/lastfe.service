@@ -1,0 +1,23 @@
+[Unit]
+Description=LastFE Next.js application
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=lastfe
+Group=lastfe
+WorkingDirectory=/opt/lastfe/web
+EnvironmentFile=/etc/lastfe.env
+Environment=NODE_ENV=production
+Environment=PORT=3000
+ExecStart=/usr/bin/pnpm start
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target
