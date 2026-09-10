@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { expect, it } from "vitest";
 
 import { LatestContent } from "./LatestContent";
@@ -26,19 +27,28 @@ const items = [
   },
 ];
 
-it("renders a grid of cards linking to the detail page", () => {
-  const { container } = render(<LatestContent items={items} />);
+it("expands the first item by default and switches on click", async () => {
+  const user = userEvent.setup();
+  render(<LatestContent items={items} />);
 
-  expect(container.querySelector(".content-grid")).not.toBeNull();
-  expect(
-    screen.getByRole("link", { name: "示例面经标题" }),
-  ).toHaveAttribute("href", "/content/c-1");
-  expect(
-    screen.getByRole("link", { name: "第二篇内容标题" }),
-  ).toHaveAttribute("href", "/content/c-2");
+  const firstTrigger = screen.getByRole("button", { name: /示例面经标题/ });
+  const secondTrigger = screen.getByRole("button", { name: /第二篇内容标题/ });
+
+  expect(firstTrigger).toHaveAttribute("aria-expanded", "true");
+  expect(secondTrigger).toHaveAttribute("aria-expanded", "false");
   expect(screen.getByText("一面到 HR 面的完整记录。")).toBeInTheDocument();
-  expect(screen.getByText("面经记录 · 2026/09/08")).toBeInTheDocument();
-  expect(screen.getByText("算法手撕 · 2026/09/07")).toBeInTheDocument();
+  expect(
+    screen.getAllByRole("link", { name: /阅读全文/ })[0],
+  ).toHaveAttribute("href", "/content/c-1");
+
+  await user.click(secondTrigger);
+  expect(secondTrigger).toHaveAttribute("aria-expanded", "true");
+  expect(firstTrigger).toHaveAttribute("aria-expanded", "false");
+  expect(screen.getByText("第二篇的摘要。")).toBeInTheDocument();
+  expect(screen.getByText("投稿人：投稿人甲")).toBeInTheDocument();
+
+  await user.click(secondTrigger);
+  expect(secondTrigger).toHaveAttribute("aria-expanded", "false");
 });
 
 it("shows the empty state when there is no content", () => {

@@ -782,6 +782,215 @@ button:focus-visible,
   --shadow-card-strong: oklch(0 0 0 / 42%);
 }
 
+/* 手风琴列表：玻璃质感但独立于 .content-card，只复用其颜色/透明度/圆角 token */
+
+.accordion-list {
+  overflow: hidden;
+  display: grid;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--card-edge);
+  border-radius: 28px;
+  background:
+    linear-gradient(
+      145deg,
+      color-mix(in oklch, var(--card-highlight) 72%, transparent),
+      transparent 42%
+    ),
+    var(--card-glass);
+  box-shadow:
+    0 18px 42px -25px var(--shadow-card-strong),
+    inset 0 1px 0 var(--card-highlight);
+  backdrop-filter: blur(22px) saturate(130%);
+  list-style: none;
+}
+
+.accordion-item {
+  --accordion-accent: var(--tint-blue);
+}
+
+.accordion-item--blue {
+  --accordion-accent: var(--tint-blue);
+}
+
+.accordion-item--violet {
+  --accordion-accent: var(--tint-violet);
+}
+
+.accordion-item--graphite {
+  --accordion-accent: var(--tint-graphite);
+}
+
+.accordion-item + .accordion-item {
+  border-top: 1px solid color-mix(in oklch, var(--card-edge) 60%, transparent);
+}
+
+.accordion-item__heading {
+  margin: 0;
+}
+
+.accordion-item__trigger {
+  display: grid;
+  width: 100%;
+  grid-template-columns: auto auto 1fr auto;
+  align-items: center;
+  padding: 18px 24px;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  gap: 14px;
+  text-align: left;
+  transition: background-color 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.accordion-item[data-open="true"] .accordion-item__trigger {
+  background: color-mix(
+    in oklch,
+    var(--accordion-accent) 7%,
+    transparent
+  );
+}
+
+.accordion-item__date {
+  color: var(--muted-foreground);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.accordion-item__category {
+  padding: 2px 9px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in oklch, var(--accordion-accent) 12%, transparent);
+  color: color-mix(in oklch, var(--accordion-accent) 78%, var(--foreground));
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.accordion-item__title {
+  overflow: hidden;
+  color: var(--foreground);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.accordion-item__chevron {
+  flex-shrink: 0;
+  color: var(--muted-foreground);
+  transition: transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.accordion-item[data-open="true"] .accordion-item__chevron {
+  color: var(--accordion-accent);
+  transform: rotate(180deg);
+}
+
+@media (hover: hover) {
+  .accordion-item__trigger:hover {
+    background: color-mix(
+      in oklch,
+      var(--accordion-accent) 5%,
+      transparent
+    );
+  }
+
+  .accordion-item__trigger:hover .accordion-item__title {
+    color: color-mix(in oklch, var(--accordion-accent) 70%, var(--foreground));
+  }
+}
+
+.accordion-item__trigger:focus-visible {
+  outline-offset: -3px;
+}
+
+.accordion-item__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.accordion-item[data-open="true"] .accordion-item__panel {
+  grid-template-rows: 1fr;
+}
+
+.accordion-item__panel-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.accordion-item__panel-content {
+  display: grid;
+  padding: 0 24px;
+  border-top: 1px solid color-mix(in oklch, var(--card-edge) 45%, transparent);
+  gap: 10px;
+}
+
+.accordion-item[data-open="true"] .accordion-item__panel-content {
+  padding-block-end: 20px;
+}
+
+.accordion-item__panel-content > * {
+  translate: 0 -6px;
+  opacity: 0;
+  transition:
+    translate 280ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    opacity 280ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition-delay: 0ms;
+}
+
+.accordion-item[data-open="true"] .accordion-item__panel-content > * {
+  translate: 0 0;
+  opacity: 1;
+  transition-delay: 120ms;
+}
+
+.accordion-item[data-open="true"] .accordion-item__panel-content > *:nth-child(2) {
+  transition-delay: 190ms;
+}
+
+.accordion-item[data-open="true"] .accordion-item__panel-content > *:nth-child(3) {
+  transition-delay: 260ms;
+}
+
+.accordion-item__panel-content p {
+  margin: 12px 0 0;
+  color: var(--muted-foreground);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.accordion-item__panel-content .accordion-item__author {
+  font-size: 12px;
+}
+
+.accordion-item__panel-content .tag-list {
+  margin: 2px 0 0;
+}
+
+.accordion-item__link {
+  display: inline-flex;
+  justify-self: start;
+  align-items: center;
+  margin-top: 2px;
+  color: var(--accordion-accent);
+  font-size: 14px;
+  font-weight: 600;
+  gap: 6px;
+  text-decoration: none;
+}
+
+@media (hover: hover) {
+  .accordion-item__link:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+}
+
 .content-card {
   --card-accent: var(--tint-blue);
   position: relative;
