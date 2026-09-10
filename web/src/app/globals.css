@@ -114,7 +114,9 @@ a {
   }
 }
 
-:focus-visible {
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 3px;
 }
@@ -188,6 +190,7 @@ a {
   font-size: 14px;
   text-decoration: none;
   white-space: nowrap;
+  transition: color 160ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .site-header__nav a[aria-current="page"] {
@@ -217,6 +220,7 @@ a {
   text-decoration: none;
   white-space: nowrap;
   flex-shrink: 0;
+  transition: filter 160ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .theme-toggle {
@@ -229,6 +233,9 @@ a {
   background: transparent;
   color: var(--muted-foreground);
   cursor: pointer;
+  transition:
+    color 160ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 160ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .mobile-nav__trigger {
@@ -244,18 +251,24 @@ a {
 }
 
 .mobile-nav__panel {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
   border-top: 1px solid var(--line);
   background: var(--background);
 }
 
 .mobile-nav__panel nav {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   padding: 8px 0 16px;
   gap: 2px;
 }
 
 .mobile-nav__panel a {
   display: flex;
+  min-width: 0;
   min-height: 48px;
   align-items: center;
   padding: 0 8px;
@@ -312,6 +325,10 @@ a {
     color: var(--foreground);
   }
 
+  .site-header__submit:hover {
+    filter: brightness(1.08);
+  }
+
   .theme-toggle:hover {
     border-color: var(--line);
     color: var(--foreground);
@@ -339,7 +356,7 @@ a {
 
   .site-header__inner {
     min-height: 56px;
-    gap: 10px;
+    gap: 8px;
   }
 
   .site-header__brand {
@@ -603,7 +620,7 @@ a {
   color: var(--foreground);
   font-size: clamp(30px, 5vw, 48px);
   font-weight: 700;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
   line-height: 1.12;
   text-wrap: balance;
 }
@@ -622,7 +639,7 @@ a {
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  margin-top: 30px;
+  margin-top: 32px;
   gap: 12px;
 }
 
@@ -797,6 +814,7 @@ a {
 .content-card h3 a {
   color: var(--foreground);
   text-decoration: none;
+  transition: color 160ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .content-card > p {
@@ -1068,6 +1086,7 @@ a {
 @media (max-width: 767px) {
   .category-filters {
     grid-template-columns: 1fr;
+    padding: 14px;
   }
 }
 

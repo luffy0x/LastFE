@@ -22,7 +22,13 @@ export function SubmissionForm({ category }: SubmissionFormProps) {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const form = new FormData(event.currentTarget);
+    const formEl = event.currentTarget;
+    if (!formEl.checkValidity()) {
+      const firstInvalid = formEl.querySelector<HTMLElement>(":invalid");
+      firstInvalid?.focus();
+      return;
+    }
+    const form = new FormData(formEl);
     const metadata = Object.fromEntries(
       metadataKeys.map((key) => [key, String(form.get(key) ?? "").trim()]),
     );
