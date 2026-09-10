@@ -1,0 +1,288 @@
+[
+  {
+    "block_id": "CHApdPID6ojfVpxJlEccVQ5fnmc",
+    "block_type": 1,
+    "children": [
+      "ILYpdECpmo8gMvxAaONchfxOn3s",
+      "NvDpdsuk6oRRIhx1mKmc0MGjnUb",
+      "Ow3OdnSBHoEGdHxfXtvclCKlnfb",
+      "M1RzdJkjQokWNJxKu6XcDaTZnUg",
+      "HlzvdV5RQoeNHWx4TGTc5dRNnFg",
+      "KIGddWkduoFpqwxixtHcq2Hgnue",
+      "QmBOdMUHfodB5nxsSzoc0cddnzc",
+      "Ss4DdA1troXHa2xiJ2sc3rCNndx",
+      "Sy5MdDWoyomwsAxz4Nocx4NQnfh",
+      "H5eedkuLuoao5tx8ac8c2twun9g"
+    ],
+    "page": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "lhy-小红书ai全栈一面-0821",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1
+      }
+    },
+    "parent_id": ""
+  },
+  {
+    "block_id": "ILYpdECpmo8gMvxAaONchfxOn3s",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "最有成就感的项目",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "CHApdPID6ojfVpxJlEccVQ5fnmc"
+  },
+  {
+    "block_id": "NvDpdsuk6oRRIhx1mKmc0MGjnUb",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "项目拷打...",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "CHApdPID6ojfVpxJlEccVQ5fnmc"
+  },
+  {
+    "block_id": "Ow3OdnSBHoEGdHxfXtvclCKlnfb",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "场景设计：两个tab通信怎么设计，怎么保证可靠性",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "CHApdPID6ojfVpxJlEccVQ5fnmc"
+  },
+  {
+    "block_id": "M1RzdJkjQokWNJxKu6XcDaTZnUg",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "场景设计：同时请求100张图片",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "CHApdPID6ojfVpxJlEccVQ5fnmc"
+  },
+  {
+    "block_id": "HlzvdV5RQoeNHWx4TGTc5dRNnFg",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "父子组件hook的执行顺序",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "CHApdPID6ojfVpxJlEccVQ5fnmc"
+  },
+  {
+    "block_id": "KIGddWkduoFpqwxixtHcq2Hgnue",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "多个useState会有什么问题",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "CHApdPID6ojfVpxJlEccVQ5fnmc"
+  },
+  {
+    "block_id": "QmBOdMUHfodB5nxsSzoc0cddnzc",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "多个useEffect的执行顺序",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "CHApdPID6ojfVpxJlEccVQ5fnmc"
+  },
+  {
+    "block_id": "Ss4DdA1troXHa2xiJ2sc3rCNndx",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "useEffect外面套一个if会有什么问题，如何排查这个问题",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "CHApdPID6ojfVpxJlEccVQ5fnmc"
+  },
+  {
+    "block_id": "Sy5MdDWoyomwsAxz4Nocx4NQnfh",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "实际开发中是否会有遇到hook的问题，怎么解决的",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "CHApdPID6ojfVpxJlEccVQ5fnmc"
+  },
+  {
+    "block_id": "H5eedkuLuoao5tx8ac8c2twun9g",
+    "block_type": 2,
+    "parent_id": "CHApdPID6ojfVpxJlEccVQ5fnmc",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  }
+]

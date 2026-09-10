@@ -1,0 +1,635 @@
+[
+  {
+    "block_id": "OnEhdeDKSoA1jLx9o6sc2PcfnFn",
+    "block_type": 1,
+    "children": [
+      "XFr0d2uTCo3h45x1X6Ec5G4dnab",
+      "UEjrdK1ksoIKItxCqTXcmuRFngc",
+      "H1xMdhrcNocHlwxecGhc347Tnod",
+      "ITqDdOcMtozeZtxs45ScJqLNnE0",
+      "Xn7Qd1Vepolcb9xJTAdcmqVYnzg",
+      "Bxy4d4jFCojOgYxw0Vfc9sV3nRh",
+      "U0eYdiA15otIA1x10RfciNFBnOd",
+      "SeAwd1TSzozdY9xxPMocwYIonhg",
+      "HvntdhD15oB1nLxerg7chvZgnRf",
+      "O2BKd0tzCoevb8xyb8KcEUQ6nUg",
+      "TWhXdaT8Uoz7S2xQWUbcTXpsnpd",
+      "TTUqdWPZTopy5NxShO8ccb8vnhe",
+      "IRlcdHKN0o8O6ixVwzvcV0n4nSb",
+      "TKXadfEWPoIbjRxUH3ocxOEKnZb",
+      "JOREdOHwdocGVixIsj5csYNpnAh",
+      "KpwNdjfLzoLV0zx3XStcRW14nLc",
+      "LLHsdd6rnonHm4xpcePcA00xneg",
+      "LbN3dsMciobisbxBTXTcLUQunTe",
+      "XaP5dhFcNo85Rlx1ho2cdvtJncd",
+      "ArRNdAgkdoWhivx9TIicNTCMnOg",
+      "DmNdd804doEy6BxqAKbcPOwqnzd"
+    ],
+    "page": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "星神",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "——0727 百度秋招(上海)三面",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1
+      }
+    },
+    "parent_id": ""
+  },
+  {
+    "block_id": "XFr0d2uTCo3h45x1X6Ec5G4dnab",
+    "block_type": 4,
+    "heading2": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "拷打实习，拷打项目",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "OnEhdeDKSoA1jLx9o6sc2PcfnFn"
+  },
+  {
+    "block_id": "UEjrdK1ksoIKItxCqTXcmuRFngc",
+    "block_type": 2,
+    "parent_id": "OnEhdeDKSoA1jLx9o6sc2PcfnFn",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "🈚️八股，甚至还带点闲聊性质",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "H1xMdhrcNocHlwxecGhc347Tnod",
+    "block_type": 2,
+    "parent_id": "OnEhdeDKSoA1jLx9o6sc2PcfnFn",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "ITqDdOcMtozeZtxs45ScJqLNnE0",
+    "block_type": 4,
+    "heading2": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "现在 AI 这么火，那像我们开发以后更需要具备哪一些素质呢？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "OnEhdeDKSoA1jLx9o6sc2PcfnFn"
+  },
+  {
+    "block_id": "Xn7Qd1Vepolcb9xJTAdcmqVYnzg",
+    "block_type": 2,
+    "parent_id": "OnEhdeDKSoA1jLx9o6sc2PcfnFn",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "反问环节又问了面试官，回答：最重要的是需要产品思维",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "Bxy4d4jFCojOgYxw0Vfc9sV3nRh",
+    "block_type": 2,
+    "parent_id": "OnEhdeDKSoA1jLx9o6sc2PcfnFn",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "U0eYdiA15otIA1x10RfciNFBnOd",
+    "block_type": 4,
+    "heading2": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "算法：给定一个数组，怎么写成平衡二叉树",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "OnEhdeDKSoA1jLx9o6sc2PcfnFn"
+  },
+  {
+    "block_id": "SeAwd1TSzozdY9xxPMocwYIonhg",
+    "block_type": 2,
+    "parent_id": "OnEhdeDKSoA1jLx9o6sc2PcfnFn",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "输入：",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "[1, 2, 3, 4, 5, 6, 7]",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "HvntdhD15oB1nLxerg7chvZgnRf",
+    "block_type": 2,
+    "parent_id": "OnEhdeDKSoA1jLx9o6sc2PcfnFn",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "无固定输出，自己规定数据结构",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "O2BKd0tzCoevb8xyb8KcEUQ6nUg",
+    "block_type": 14,
+    "code": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "// 思路：找到数组中间的节点作为当前处理节点，然后使用递归进行左右节点处理\n/*\n[1, 2, 3, 4, 5, 6, 7]\n         ↑\n\n          4\n[1, 2, 3]   [5, 6, 7]\n   ↑           ↑\n\n    2           6\n[1]  [3]    [5]   [7]\n*/\n\nclass treeNode {\n    val: number;\n    left: treeNode | null;\n    right: treeNode | null;\n\n    constructor(val: number) {\n        this.val = val;\n        this.left = null;\n        this.right = null;\n    }\n}\n\nfunction sortedArrayToBST(arr: number[]): treeNode | null {\n    if (arr.length === 0) return null;\n\n    const mid = Math.floor(arr.length / 2);\n    const root = new treeNode(arr[mid]);\n    root.left = sortedArrayToBST(arr.slice(0, mid));\n    root.right = sortedArrayToBST(arr.slice(mid + 1));\n    return root;\n",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "}",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "language": 63,
+        "wrap": false
+      }
+    },
+    "parent_id": "OnEhdeDKSoA1jLx9o6sc2PcfnFn"
+  },
+  {
+    "block_id": "TWhXdaT8Uoz7S2xQWUbcTXpsnpd",
+    "block_type": 2,
+    "parent_id": "OnEhdeDKSoA1jLx9o6sc2PcfnFn",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "TTUqdWPZTopy5NxShO8ccb8vnhe",
+    "block_type": 4,
+    "heading2": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "逻辑题：如何不利用第三个变量实现两个变量交换",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "OnEhdeDKSoA1jLx9o6sc2PcfnFn"
+  },
+  {
+    "block_id": "IRlcdHKN0o8O6ixVwzvcV0n4nSb",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "直接运算",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "1"
+      }
+    },
+    "parent_id": "OnEhdeDKSoA1jLx9o6sc2PcfnFn"
+  },
+  {
+    "block_id": "TKXadfEWPoIbjRxUH3ocxOEKnZb",
+    "block_type": 14,
+    "code": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "A = A + B\nB = A - B\n",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "A = A - B",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "language": 63,
+        "wrap": false
+      }
+    },
+    "parent_id": "OnEhdeDKSoA1jLx9o6sc2PcfnFn"
+  },
+  {
+    "block_id": "JOREdOHwdocGVixIsj5csYNpnAh",
+    "block_type": 2,
+    "parent_id": "OnEhdeDKSoA1jLx9o6sc2PcfnFn",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "KpwNdjfLzoLV0zx3XStcRW14nLc",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "异或",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "OnEhdeDKSoA1jLx9o6sc2PcfnFn"
+  },
+  {
+    "block_id": "LLHsdd6rnonHm4xpcePcA00xneg",
+    "block_type": 2,
+    "parent_id": "OnEhdeDKSoA1jLx9o6sc2PcfnFn",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "LbN3dsMciobisbxBTXTcLUQunTe",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "位运算",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "OnEhdeDKSoA1jLx9o6sc2PcfnFn"
+  },
+  {
+    "block_id": "XaP5dhFcNo85Rlx1ho2cdvtJncd",
+    "block_type": 2,
+    "parent_id": "OnEhdeDKSoA1jLx9o6sc2PcfnFn",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "ArRNdAgkdoWhivx9TIicNTCMnOg",
+    "block_type": 34,
+    "children": [
+      "WtkHd8Yvqoh0MbxtdtXc5PdnnEd"
+    ],
+    "parent_id": "OnEhdeDKSoA1jLx9o6sc2PcfnFn",
+    "quote_container": {}
+  },
+  {
+    "block_id": "WtkHd8Yvqoh0MbxtdtXc5PdnnEd",
+    "block_type": 2,
+    "parent_id": "ArRNdAgkdoWhivx9TIicNTCMnOg",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "一直在问我有没有其他解法，我说完这三个就没问了，可能就是这三种",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "indentation_level": "NoIndent"
+      }
+    }
+  },
+  {
+    "block_id": "DmNdd804doEy6BxqAKbcPOwqnzd",
+    "block_type": 2,
+    "parent_id": "OnEhdeDKSoA1jLx9o6sc2PcfnFn",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  }
+]

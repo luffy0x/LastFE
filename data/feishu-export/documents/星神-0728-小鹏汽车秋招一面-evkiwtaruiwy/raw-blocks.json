@@ -1,0 +1,923 @@
+[
+  {
+    "block_id": "AoBOdNZVaoKNykxBmGzc8iBfnOh",
+    "block_type": 1,
+    "children": [
+      "AQJhdogTgoE2fExUCj8cr0dbnmg",
+      "FahldELpmozr7fxlNsXc89sfnDb",
+      "FiecdX5UgorlLrxkUWGchK9jnIf",
+      "YfrGddujooMt4lxkgfUcku75nxe",
+      "UjSjdCwjooWdB8xbSdOciMJznZI",
+      "R8IldEdtIoDaU4xg2Prcn7QknzD",
+      "BHoSd1CaqoogHAxGx1bcxlUAnyg",
+      "YPsMd7szeoxvSux0URicy1iOnPe",
+      "Vau0dm9emo1GJ1xCWWVc9mAGnKd",
+      "Wh9vdFzIxoHoQ0xsAG3cj3y3njg",
+      "R9aJdmY2loTGb4xpFj5cgG2annh",
+      "Iz5vdhwQIowR3Ux3J0Vcj2qQnTf",
+      "CQxhdE86roiKztxjnZRc03NznDc",
+      "Yt8Td7x6Cok8xNxtYmucyZDGnyg",
+      "Pfi9dy24moTUgbxV4cUc3eKLnHd",
+      "GkPXdQtLyoDthBxMC6zczfrln7f",
+      "YFBWdu41joMN4zx5izoc5Ytgn3g",
+      "L4sCd6iEZoH0UXxFKg3cIWXfnYd",
+      "JU3udUOEcoRzFkxSXvrc2LB0nBd",
+      "OicPdsCEwoWwtpx9mM8chWn4nbf",
+      "ZyTrdZKOooPGXqxYLFzckFuJndh",
+      "AxEtd3jzro65YTxdx3VcdjXSnke",
+      "KnlcdsubsovJ7cxb1YicB0yXnjb",
+      "DSaPdEsmBoW6hfxIGz1cy9Binpe",
+      "XtMddvbU1oVUsJxigrrcROd6ne2",
+      "Pj1mdxD8ooRClkx25JgcrRKNnuf",
+      "ETvzdRBDto2piqxil9McR37anlh",
+      "MtbmdA1HHo2gxJxqMjOcF4rwnEc",
+      "VdsRddIUCoMeGJxKs6jc2fZJnxh",
+      "AWEGd6KRrovZzjx9zk6cHokznJf",
+      "WCZidmxDiob4rVxrNZvcoK8wnAh",
+      "Qv2ydc7LqopjTPx8XaPchU4qnnc",
+      "HPJ6doq1ooitcEx5g1BctXV2npe"
+    ],
+    "page": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "星神",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "——0728  小鹏汽车秋招一面",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1
+      }
+    },
+    "parent_id": ""
+  },
+  {
+    "block_id": "AQJhdogTgoE2fExUCj8cr0dbnmg",
+    "block_type": 3,
+    "heading1": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "面经",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "AoBOdNZVaoKNykxBmGzc8iBfnOh"
+  },
+  {
+    "block_id": "FahldELpmozr7fxlNsXc89sfnDb",
+    "block_type": 4,
+    "heading2": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "拷打实习与项目",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "AoBOdNZVaoKNykxBmGzc8iBfnOh"
+  },
+  {
+    "block_id": "FiecdX5UgorlLrxkUWGchK9jnIf",
+    "block_type": 2,
+    "parent_id": "AoBOdNZVaoKNykxBmGzc8iBfnOh",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "就是在这里问到了我的缓存逻辑，我讲了用了 React Hook 做的（为后面手撕没写出来埋下伏笔了）",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "YfrGddujooMt4lxkgfUcku75nxe",
+    "block_type": 2,
+    "parent_id": "AoBOdNZVaoKNykxBmGzc8iBfnOh",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "UjSjdCwjooWdB8xbSdOciMJznZI",
+    "block_type": 4,
+    "heading2": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "手撕实现 useDebounceSearch Hook",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "AoBOdNZVaoKNykxBmGzc8iBfnOh"
+  },
+  {
+    "block_id": "R8IldEdtIoDaU4xg2Prcn7QknzD",
+    "block_type": 2,
+    "parent_id": "AoBOdNZVaoKNykxBmGzc8iBfnOh",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "题目：搜索框防抖，比如用户先输入 apple ，在防抖时间内又继续输入为 AppleWatch，只会处理一次。另外，需处理搜索 AppleWatch 先返回但 apple 后返回的情况——旧请求不能覆盖新请求结果。",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "BHoSd1CaqoogHAxGx1bcxlUAnyg",
+    "block_type": 14,
+    "code": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "import React from 'react';\n\nfunction SearchProduct() {\n  const [keyword, setKeyword] = useState('');\n\n  // 入参：keyword（搜索关键词），searchProduct（异步搜索函数），300（防抖时间）\n  const { data, loading, error } = useDebounceSearch(keyword, searchProduct, 300);\n\n  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {\n    setKeyword(e.target.value);\n  };\n\n  return (\n    <div>\n      <input\n        type=\"text\"\n        value={keyword}\n        onChange={handleInputChange}\n        placeholder=\"搜索商品...\"\n      />\n      {loading && <div>加载中...</div>}\n      {error && <div>出错了：{error.message}</div>}\n      {data && <div>搜索结果：{JSON.stringify(data)}</div>}\n    </div>\n  );\n}\n\n// 模拟的异步搜索函数\nasync function searchProduct(keyword: string) {\n  const response = await fetch(`/api/products?q=${keyword}`);\n  return response.json();\n",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "}",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "language": 63,
+        "wrap": false
+      }
+    },
+    "parent_id": "AoBOdNZVaoKNykxBmGzc8iBfnOh"
+  },
+  {
+    "block_id": "YPsMd7szeoxvSux0URicy1iOnPe",
+    "block_type": 14,
+    "code": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "function useDebounceSearch() {\n  \n",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "}",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "language": 63,
+        "wrap": false
+      }
+    },
+    "parent_id": "AoBOdNZVaoKNykxBmGzc8iBfnOh"
+  },
+  {
+    "block_id": "Vau0dm9emo1GJ1xCWWVc9mAGnKd",
+    "block_type": 14,
+    "code": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "import { useState, useEffect, useRef } from 'react';\n\ninterface UseDebounceSearchResult<T> {\n  data: T | null;\n  loading: boolean;\n  error: Error | null;\n}\n\n/**\n * 带防抖和竞态处理的搜索 Hook\n *\n * @param keyword   搜索关键词\n * @param searchFunc  异步搜索函数 (keyword: string) => Promise<T>\n * @param delay    防抖延迟时间（毫秒），默认 300ms\n */\nfunction useDebounceSearch<T>(\n  keyword: string,\n  searchFunc: (keyword: string) => Promise<T>,\n  delay: number = 300\n): UseDebounceSearchResult<T> {\n  const [data, setData] = useState<T | null>(null);\n  const [loading, setLoading] = useState(false);\n  const [error, setError] = useState<Error | null>(null);\n\n  // 存储最新的 keyword，用于竞态处理：旧请求返回时与当前实际 keyword 对比\n  const latestKeywordRef = useRef(keyword);\n  // 存储定时器 id\n  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);\n\n  useEffect(() => {\n    // 更新最新的 keyword\n    latestKeywordRef.current = keyword;\n\n    // 清除上一次的定时器 —— 防抖核心逻辑\n    if (timerRef.current) {\n      clearTimeout(timerRef.current);\n    }\n\n    // keyword 为空时直接清空结果，不发起请求\n    if (!keyword.trim()) {\n      setData(null);\n      setError(null);\n      setLoading(false);\n      return;\n    }\n\n    // 设置新的防抖定时器\n    setLoading(true);\n    timerRef.current = setTimeout(async () => {\n      try {\n        const result = await searchFunc(keyword);\n        // 竞态处理：只有当前返回的 keyword 仍然是最新的 keyword 时才更新数据\n        // 如果用户已经输入了新的关键词，旧请求的结果直接丢弃\n        if (latestKeywordRef.current === keyword) {\n          setData(result);\n          setError(null);\n        }\n      } catch (err) {\n        if (latestKeywordRef.current === keyword) {\n          setError(err instanceof Error ? err : new Error(String(err)));\n          setData(null);\n        }\n      } finally {\n        if (latestKeywordRef.current === keyword) {\n          setLoading(false);\n        }\n      }\n    }, delay);\n\n    // 清理函数：组件卸载或 keyword 变化时清除定时器\n    return () => {\n      if (timerRef.current) {\n        clearTimeout(timerRef.current);\n      }\n    };\n  }, [keyword, searchFunc, delay]);\n\n  return { data, loading, error };\n}\n\nexport default useDebounceSearch;\n",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "language": 63,
+        "wrap": false
+      }
+    },
+    "parent_id": "AoBOdNZVaoKNykxBmGzc8iBfnOh"
+  },
+  {
+    "block_id": "Wh9vdFzIxoHoQ0xsAG3cj3y3njg",
+    "block_type": 2,
+    "parent_id": "AoBOdNZVaoKNykxBmGzc8iBfnOh",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "R9aJdmY2loTGb4xpFj5cgG2annh",
+    "block_type": 4,
+    "heading2": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "拷打项目——单点登录流程",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "AoBOdNZVaoKNykxBmGzc8iBfnOh"
+  },
+  {
+    "block_id": "Iz5vdhwQIowR3Ux3J0Vcj2qQnTf",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "子前端无 AT → 调 SDK 向 Supabase OAuth 请求，检查 refresh token",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "1"
+      }
+    },
+    "parent_id": "AoBOdNZVaoKNykxBmGzc8iBfnOh"
+  },
+  {
+    "block_id": "CQxhdE86roiKztxjnZRc03NznDc",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "302 重定向到 IDP 系统",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "2"
+      }
+    },
+    "parent_id": "AoBOdNZVaoKNykxBmGzc8iBfnOh"
+  },
+  {
+    "block_id": "Yt8Td7x6Cok8xNxtYmucyZDGnyg",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "IDP 检查登录状态，无 AT 则跳转到统一登录页",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "3"
+      }
+    },
+    "parent_id": "AoBOdNZVaoKNykxBmGzc8iBfnOh"
+  },
+  {
+    "block_id": "Pfi9dy24moTUgbxV4cUc3eKLnHd",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "登录完成后，用户确认授权 → IDP 向服务端请求颁发 AT 和 RT",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "4"
+      }
+    },
+    "parent_id": "AoBOdNZVaoKNykxBmGzc8iBfnOh"
+  },
+  {
+    "block_id": "GkPXdQtLyoDthBxMC6zczfrln7f",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "重定向回子前端 callback 页面，子前端再与服务端对齐，拿到 AT",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "5"
+      }
+    },
+    "parent_id": "AoBOdNZVaoKNykxBmGzc8iBfnOh"
+  },
+  {
+    "block_id": "YFBWdu41joMN4zx5izoc5Ytgn3g",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "恢复用户原始访问路径",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "6"
+      }
+    },
+    "parent_id": "AoBOdNZVaoKNykxBmGzc8iBfnOh"
+  },
+  {
+    "block_id": "L4sCd6iEZoH0UXxFKg3cIWXfnYd",
+    "block_type": 2,
+    "parent_id": "AoBOdNZVaoKNykxBmGzc8iBfnOh",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "JU3udUOEcoRzFkxSXvrc2LB0nBd",
+    "block_type": 4,
+    "heading2": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "浏览器事件循环题",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "AoBOdNZVaoKNykxBmGzc8iBfnOh"
+  },
+  {
+    "block_id": "OicPdsCEwoWwtpx9mM8chWn4nbf",
+    "block_type": 2,
+    "parent_id": "AoBOdNZVaoKNykxBmGzc8iBfnOh",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "要求写出 console.log 输出顺序（涉及 async/await、Promise、setTimeout、requestAnimationFrame）",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "ZyTrdZKOooPGXqxYLFzckFuJndh",
+    "block_type": 2,
+    "parent_id": "AoBOdNZVaoKNykxBmGzc8iBfnOh",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "相对比较基础，不过 requestAnimationFrame 这个 API 当时不知道是宏任务还是微任务。其他比较常规",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "AxEtd3jzro65YTxdx3VcdjXSnke",
+    "block_type": 2,
+    "parent_id": "AoBOdNZVaoKNykxBmGzc8iBfnOh",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "KnlcdsubsovJ7cxb1YicB0yXnjb",
+    "block_type": 4,
+    "heading2": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "反问",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "AoBOdNZVaoKNykxBmGzc8iBfnOh"
+  },
+  {
+    "block_id": "DSaPdEsmBoW6hfxIGz1cy9Binpe",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "部门工作内容 → 仿真部，做 3D 可视化（Three.js/WebGL），仿真任务可视化展示",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "AoBOdNZVaoKNykxBmGzc8iBfnOh"
+  },
+  {
+    "block_id": "XtMddvbU1oVUsJxigrrcROd6ne2",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "分工情况 → 不严格区分，前端同学也会写后端",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "AoBOdNZVaoKNykxBmGzc8iBfnOh"
+  },
+  {
+    "block_id": "Pj1mdxD8ooRClkx25JgcrRKNnuf",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "技术栈 → React + Three.js，后端 Python/C++",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "AoBOdNZVaoKNykxBmGzc8iBfnOh"
+  },
+  {
+    "block_id": "ETvzdRBDto2piqxil9McR37anlh",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "AI coding 使用情况 → 已在大量使用，会越来越多",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "AoBOdNZVaoKNykxBmGzc8iBfnOh"
+  },
+  {
+    "block_id": "MtbmdA1HHo2gxJxqMjOcF4rwnEc",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "对校招生期望 → 面试官建议后续问总监",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "AoBOdNZVaoKNykxBmGzc8iBfnOh"
+  },
+  {
+    "block_id": "VdsRddIUCoMeGJxKs6jc2fZJnxh",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "面试反馈 → 实习做了很多 hook 封装，但比较依赖 AI 写代码，基础需要注意",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "AoBOdNZVaoKNykxBmGzc8iBfnOh"
+  },
+  {
+    "block_id": "AWEGd6KRrovZzjx9zk6cHokznJf",
+    "block_type": 2,
+    "parent_id": "AoBOdNZVaoKNykxBmGzc8iBfnOh",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "WCZidmxDiob4rVxrNZvcoK8wnAh",
+    "block_type": 3,
+    "heading1": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "录音源文件（文本）",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "AoBOdNZVaoKNykxBmGzc8iBfnOh"
+  },
+  {
+    "block_id": "Qv2ydc7LqopjTPx8XaPchU4qnnc",
+    "block_type": 33,
+    "children": [
+      "TrKxdagRSoLGadxr41kcYHKQnkg"
+    ],
+    "parent_id": "AoBOdNZVaoKNykxBmGzc8iBfnOh",
+    "view": {
+      "view_type": 2
+    }
+  },
+  {
+    "block_id": "TrKxdagRSoLGadxr41kcYHKQnkg",
+    "block_type": 23,
+    "file": {
+      "name": "面经录音.md",
+      "token": "WCmoboS33oN66MxgOlIcJBL6nuh"
+    },
+    "parent_id": "Qv2ydc7LqopjTPx8XaPchU4qnnc"
+  },
+  {
+    "block_id": "HPJ6doq1ooitcEx5g1BctXV2npe",
+    "block_type": 2,
+    "parent_id": "AoBOdNZVaoKNykxBmGzc8iBfnOh",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  }
+]

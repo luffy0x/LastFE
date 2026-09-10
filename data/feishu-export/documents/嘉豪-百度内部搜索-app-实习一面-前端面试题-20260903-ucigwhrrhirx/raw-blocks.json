@@ -1,0 +1,1783 @@
+[
+  {
+    "block_id": "EenbdP0EFol3LQxl6t5c16V4n2d",
+    "block_type": 1,
+    "children": [
+      "YgGedntqDoFP7HxYPVSc6NvIn5e",
+      "J1lAdpdFtogYSIxLYbSc67OcnVh",
+      "P0iMdE3SpoJAtsx8n10ckHLrnhf",
+      "NdvZdJjpJozY73xVQg9chpiFnYg",
+      "UMQsdxo4Do8qR2xBza8cEWbZndd",
+      "UgEfdIJv9obkZHxgLUkcI032nvb",
+      "B7whdh7Alowtn9xSewgcI1MGnud",
+      "BHzBdKaA7oKrhNx3qXYc0juOnbe",
+      "Vvtsdkdm4o3onoxmut8cXU0EnYd",
+      "TN1KdGWUrohborxOsD9cQvCInHc",
+      "L179dibcPosWG9xpme3cGl93nWm",
+      "OLiHd3AcmoiFECxmqpPc3swDncd",
+      "FbCSdSHKWojeQwxWqBNcI42onPg",
+      "L4sndMm0NojV7Xx6D6ac3tEJnnf",
+      "F2qLdbWp2obdI0xHvLccMn29nve",
+      "X540dBc7zowcWjxVWkdcEAQknib",
+      "JVtbdOXPOo8aLrxzN7Hc0vwDn6d",
+      "CUgcdOWFAoBv6dxXnr1ct1VznFf",
+      "Rh3nd2KvBogRA1xCN5CcMRInnte",
+      "QeACdAEk9oMqmBxcAk1cThhInAh",
+      "PnUfdM5U3ofgdkxH4yyceKEpnI4",
+      "YyhLdJOT6opV7VxgK7Qc33wHnYc",
+      "K4IsdUjXcoAKoPx1RL0ctBTTnyc",
+      "V2fUdBawxo95OYxO7QecuY4pnFb",
+      "EFrWdtP4YoAq9uxW44ZcJChvnNb",
+      "QWQYdWOUcoaGPxxrSHbc7gu0nQd",
+      "YND0dVcG5ocEbWx0PKAcP558nic",
+      "BwjsdUia8onccFxwKVMc4lTMn0b",
+      "NSaudCjB3oHlGkx9OjXce4stn0F",
+      "WUOWdHisKoqQRSxb7PTcmSgJnRe",
+      "OBHUdBU6LoFTBPxerp3cviMsnsb",
+      "Wqu2dumuco74m3x2vWTcjKgKnPe",
+      "GhSDdbg8vonb9jxPhrKcJZtJnhh",
+      "YNbodLamAoyS3QxMIsGccZATnke",
+      "QhLmdT2eXo56HDxfybkcRkGmnEg",
+      "UFZsdsm8Zo9o62xQ40ac15tOnBb",
+      "WddRdVCNYo3NyuxbKorc159TnPb",
+      "UQPsdSCNgo3lK7xuepYccZ48n0b",
+      "CRB0dQ6g7opZq3x06hIc14Sknaf",
+      "VJ5rdTo32oI6iRxeXg2cvfyinHd",
+      "NKqydniQYoKshmxItZPcwEiXnye",
+      "NH3OdYikDomxykxbekrcucvbnvc",
+      "MmHZdT58So7QJEx47WmcRZ7tnRd",
+      "XtLSduZUGov6hNxsn7OcJdlXnDb",
+      "RKwrdY32voXv8TxbfcacmumWnfg",
+      "W23MdxnKwo6GMvxyWbdcx4Binmf",
+      "U4Eid04XNozb1TxDzjgcz60kn5d",
+      "KU7mdB8FhoVvjzxyLQqce8Pwnme",
+      "Ac87d8Mxgof6blxRu2Dc4x4gnCe",
+      "KezEd9UyiohL07x4Bdzc2eMWn1e",
+      "S2ZbdhHoUoKgV4xgkrwcLPaxn4b",
+      "W3Qdd3PXpofnU9xcSIWcgmtCn1c"
+    ],
+    "page": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "嘉豪-百度内部搜索 APP 实习一面-前端面试题-20260903",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1
+      }
+    },
+    "parent_id": ""
+  },
+  {
+    "block_id": "YgGedntqDoFP7HxYPVSc6NvIn5e",
+    "block_type": 4,
+    "heading2": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "JavaScript",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "J1lAdpdFtogYSIxLYbSc67OcnVh",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "什么是闭包？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "1"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "P0iMdE3SpoJAtsx8n10ckHLrnhf",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "Promise 相关问题。",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "NdvZdJjpJozY73xVQg9chpiFnYg",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "箭头函数和普通函数有什么区别？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "UMQsdxo4Do8qR2xBza8cEWbZndd",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "深拷贝和浅拷贝有什么区别？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "UgEfdIJv9obkZHxgLUkcI032nvb",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "前端跨域有哪些解决方案？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "B7whdh7Alowtn9xSewgcI1MGnud",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "除了 CORS、JSONP 和代理，还有哪些跨域解决方案？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "BHzBdKaA7oKrhNx3qXYc0juOnbe",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "不同 Web 项目 / 页面之间有哪些通信方式？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "Vvtsdkdm4o3onoxmut8cXU0EnYd",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "除了 ",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "postMessage",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "，还有哪些页面通信方式？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "TN1KdGWUrohborxOsD9cQvCInHc",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "什么是浏览器的前进/后退缓存（bfcache）？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "L179dibcPosWG9xpme3cGl93nWm",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "浏览器有哪些数据存储方式？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "OLiHd3AcmoiFECxmqpPc3swDncd",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "IndexedDB、Cookie、LocalStorage、SessionStorage 有什么区别？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "FbCSdSHKWojeQwxWqBNcI42onPg",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "什么是事件委托？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "L4sndMm0NojV7Xx6D6ac3tEJnnf",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "事件委托有哪些优缺点？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "F2qLdbWp2obdI0xHvLccMn29nve",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "哪些场景不适合使用事件委托？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "X540dBc7zowcWjxVWkdcEAQknib",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "事件的捕获、目标和冒泡机制是什么？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "JVtbdOXPOo8aLrxzN7Hc0vwDn6d",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "如何阻止事件冒泡？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "CUgcdOWFAoBv6dxXnr1ct1VznFf",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "JavaScript 中 ",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "this",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": " 的指向有哪些情况？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "Rh3nd2KvBogRA1xCN5CcMRInnte",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "箭头函数的 ",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "this",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": " 有什么特殊之处？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "QeACdAEk9oMqmBxcAk1cThhInAh",
+    "block_type": 4,
+    "heading2": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "React",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "PnUfdM5U3ofgdkxH4yyceKEpnI4",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "React 中有哪些状态管理相关的 Hooks？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "1"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "YyhLdJOT6opV7VxgK7Qc33wHnYc",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "useState",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": " 有哪些状态更新方式？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "K4IsdUjXcoAKoPx1RL0ctBTTnyc",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "什么是 React 的批处理（Batching）？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "V2fUdBawxo95OYxO7QecuY4pnFb",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "一次批更新中同时存在函数式更新和替换式更新时，状态如何更新？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "EFrWdtP4YoAq9uxW44ZcJChvnNb",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "状态更新过程中出现异常或更新结果不符合预期时，可能是什么原因？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "QWQYdWOUcoaGPxxrSHbc7gu0nQd",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "useEffect",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": " 不传依赖参数、传空数组 ",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "[]",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "、传依赖数组 ",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "[dep]",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": " 有什么区别？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "YND0dVcG5ocEbWx0PKAcP558nic",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "有没有封装过自定义 Hooks？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "BwjsdUia8onccFxwKVMc4lTMn0b",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "如何实现 ",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "useRequest",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": " 和 ",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "useDebounce",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "NSaudCjB3oHlGkx9OjXce4stn0F",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "React Diff 算法的过程是什么？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "WUOWdHisKoqQRSxb7PTcmSgJnRe",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "Diff 过程中 ",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "key",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": " 的作用是什么？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "OBHUdBU6LoFTBPxerp3cviMsnsb",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "Fiber 是什么？Fiber 的数据结构是什么？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "Wqu2dumuco74m3x2vWTcjKgKnPe",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "React 16 为什么引入 Fiber？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "GhSDdbg8vonb9jxPhrKcJZtJnhh",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "React Diff 和 Vue 双端 Diff 有什么区别？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "YNbodLamAoyS3QxMIsGccZATnke",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "Vue 双端 Diff 的过程是什么？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "QhLmdT2eXo56HDxfybkcRkGmnEg",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "useLayoutEffect",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": " 和 ",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "useEffect",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": " 有什么区别？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "UFZsdsm8Zo9o62xQ40ac15tOnBb",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "React 18 有哪些新特性和新增 API？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "WddRdVCNYo3NyuxbKorc159TnPb",
+    "block_type": 4,
+    "heading2": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "TypeScript",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "UQPsdSCNgo3lK7xuepYccZ48n0b",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "interface",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": " 和 ",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "type",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": " 有什么区别？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "1"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "CRB0dQ6g7opZq3x06hIc14Sknaf",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "如何理解泛型？泛型有什么作用？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "VJ5rdTo32oI6iRxeXg2cvfyinHd",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "交叉类型和联合类型有什么区别？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "NKqydniQYoKshmxItZPcwEiXnye",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "any",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "、",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "unknown",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": " 和 ",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "never",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": " 有什么区别？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "NH3OdYikDomxykxbekrcucvbnvc",
+    "block_type": 4,
+    "heading2": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "前端工程化",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "MmHZdT58So7QJEx47WmcRZ7tnRd",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "Webpack 和 Vite 有什么区别？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "1"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "XtLSduZUGov6hNxsn7OcJdlXnDb",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "Vite 的工作原理是什么？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "RKwrdY32voXv8TxbfcacmumWnfg",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "Vite Plugin 的底层原理是什么？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "W23MdxnKwo6GMvxyWbdcx4Binmf",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "除了 Webpack 和 Vite，还使用或了解过哪些构建工具？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "U4Eid04XNozb1TxDzjgcz60kn5d",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "是否了解 Bun？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "KU7mdB8FhoVvjzxyLQqce8Pwnme",
+    "block_type": 4,
+    "heading2": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "实习 & 项目经历",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "Ac87d8Mxgof6blxRu2Dc4x4gnCe",
+    "block_type": 4,
+    "heading2": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "算法",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "KezEd9UyiohL07x4Bdzc2eMWn1e",
+    "block_type": 5,
+    "heading3": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "Event Loop 事件循环输出题",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "S2ZbdhHoUoKgV4xgkrwcLPaxn4b",
+    "block_type": 14,
+    "code": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "console.log(1);\n\nsetTimeout(() => {\n  console.log(8);\n  Promise.resolve().then(() => {\n    console.log(9);\n  });\n}, 0);\n\nPromise.resolve()\n  .then(() => {\n    console.log(2);\n    return Promise.resolve();\n  })\n  .then(() => {\n    console.log(3);\n    setTimeout(() => {\n      console.log(10);\n    }, 0);\n  })\n  .then(() => {\n    console.log(4);\n  });\n\nnew Promise((resolve) => {\n  console.log(5);\n  resolve();\n}).then(() => {\n  console.log(6);\n  Promise.resolve().then(() => {\n    console.log(7);\n  });\n});\n\nconsole.log(11);\n\n",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "// 输出：// 1// 5// 11// 2// 6// 7// 3// 4// 8// 9// 10",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": true,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "language": 30,
+        "wrap": false
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  },
+  {
+    "block_id": "W3Qdd3PXpofnU9xcSIWcgmtCn1c",
+    "block_type": 5,
+    "heading3": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "最长无重复子串",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "EenbdP0EFol3LQxl6t5c16V4n2d"
+  }
+]

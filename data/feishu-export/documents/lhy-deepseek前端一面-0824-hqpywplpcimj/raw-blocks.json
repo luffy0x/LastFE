@@ -1,0 +1,220 @@
+[
+  {
+    "block_id": "RJkSdVtj6oS0eaxO3Buc7cByn7Y",
+    "block_type": 1,
+    "children": [
+      "DX15d9mCToQJuNxYyVDcmAZMnKh",
+      "XuOBdsImQodJZDxqYwecW2I5ncg",
+      "RmwGdRGefo2UM3x3mXFcyoMynrc",
+      "Wht7dru9aoFmoWxxQj3cfwV3nId",
+      "LLHGd6osdowyBaxmx4pcAeoknlH",
+      "SeBUdF4xyoXiOPxKERccUPMNnug"
+    ],
+    "page": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "lhy-deepseek前端一面-0824",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1
+      }
+    },
+    "parent_id": ""
+  },
+  {
+    "block_id": "DX15d9mCToQJuNxYyVDcmAZMnKh",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "项目拷打...",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "RJkSdVtj6oS0eaxO3Buc7cByn7Y"
+  },
+  {
+    "block_id": "XuOBdsImQodJZDxqYwecW2I5ncg",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "遍历一个树调用栈超过限制怎么办",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "RJkSdVtj6oS0eaxO3Buc7cByn7Y"
+  },
+  {
+    "block_id": "RmwGdRGefo2UM3x3mXFcyoMynrc",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "为什么object要存在堆上，全部存在栈上可以吗",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "RJkSdVtj6oS0eaxO3Buc7cByn7Y"
+  },
+  {
+    "block_id": "Wht7dru9aoFmoWxxQj3cfwV3nId",
+    "block_type": 14,
+    "code": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "// 组件预期功能：每次点击后 count + 1，并上报最新的 count，上报操作有 debounce 防抖\n// 哪里有问题？\nconst [count, setCount] = useState(0)\nconst reportCount = useMemo(\n  () => debounce((c) => {\n        report(c)\n    }, 1000),\n  [count]\n)\n\nreturn (\n  <button\n    onClick={() => {\n      setCount(count + 1)\n      reportCount()\n    }}\n  >\n    {count}\n  </button>\n",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": ")",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "language": 63,
+        "wrap": false
+      }
+    },
+    "parent_id": "RJkSdVtj6oS0eaxO3Buc7cByn7Y"
+  },
+  {
+    "block_id": "LLHGd6osdowyBaxmx4pcAeoknlH",
+    "block_type": 14,
+    "code": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "const BUTTON_TYPES = ['primary', 'secondary', 'error'] as const\n\ntype ButtonType = never; // 'primary' | 'secondary' | 'error'\n\nfunction isValidButtonType(s: string): s is ButtonType {\n  return BUTTON_TYPES.includes(s)\n  // 报错 Argument of type 'string' is not assignable to parameter of type '\"primary\" | \"secondary\" | \"error\"'.(2345)\n  // 怎么改？\n",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "}",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "language": 63,
+        "wrap": false
+      }
+    },
+    "parent_id": "RJkSdVtj6oS0eaxO3Buc7cByn7Y"
+  },
+  {
+    "block_id": "SeBUdF4xyoXiOPxKERccUPMNnug",
+    "block_type": 14,
+    "code": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "/* 定义：\n对每个 words[i]，返回它在数组中的最短前缀，使得没有其他单词也以这个前缀开头。\n如果不存在这样的前缀（例如有重复词），返回完整单词本身。\n输出顺序与输入一致。*/\nfunction shortestUniquePrefixes(words: string[]): string[] {\n}\n\nconsole.log(\n  JSON.stringify(shortestUniquePrefixes([\"dog\", \"dove\", \"duck\"])) ===\n  JSON.stringify([\"dog\", \"dov\", \"du\"])\n)\n\nconsole.log(\n  JSON.stringify(shortestUniquePrefixes([\"zebra\", \"dog\", \"duck\", \"dove\"])) ===\n  JSON.stringify([\"z\", \"dog\", \"du\", \"dov\"])\n)\n\n// 重复词：唯一前缀不存在，返回原词\nconsole.log(\n  JSON.stringify(shortestUniquePrefixes([\"app\", \"apple\", \"app\"])) ===\n  JSON.stringify([\"app\", \"appl\", \"app\"])\n",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": ")",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "language": 63,
+        "wrap": false
+      }
+    },
+    "parent_id": "RJkSdVtj6oS0eaxO3Buc7cByn7Y"
+  }
+]

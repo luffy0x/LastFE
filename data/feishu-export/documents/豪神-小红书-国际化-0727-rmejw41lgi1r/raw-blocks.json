@@ -1,0 +1,338 @@
+[
+  {
+    "block_id": "EyqRdSr50oUqXAxDSIYcyGDhnQg",
+    "block_type": 1,
+    "children": [
+      "XSFndQr63ogOSMxknHJcLcQynFb",
+      "RopKd4yKsoEOmwxrvj5cIEF3nTf",
+      "Vf4sdEkJgoVWyXxuGolcLM4nngd",
+      "BEjEdFz0yo7Grixsiiucscf9ndh",
+      "Tp3UdNmTfoBqV2xPHYacFqIKniA",
+      "QYjFd9XtaofAaSxIMIuceO4Gn7b",
+      "XKyGdJ2FeohONYxFMkkcNUtpnib",
+      "J180degXuoYcHSxHL6ecoVJWnWd",
+      "LedOdgHwEoS15xxjV8GcOmAEnCW",
+      "PfxBdvmXdouOw2xO0I7cea6gnIh",
+      "PZIjdpS7XokFyhxy8nLcSyZ4nEb"
+    ],
+    "page": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "豪神——",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "小红书-国际化-0727",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1
+      }
+    },
+    "parent_id": ""
+  },
+  {
+    "block_id": "XSFndQr63ogOSMxknHJcLcQynFb",
+    "block_type": 2,
+    "parent_id": "EyqRdSr50oUqXAxDSIYcyGDhnQg",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "全程AI",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "RopKd4yKsoEOmwxrvj5cIEF3nTf",
+    "block_type": 5,
+    "heading3": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "Rag流程",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "EyqRdSr50oUqXAxDSIYcyGDhnQg"
+  },
+  {
+    "block_id": "Vf4sdEkJgoVWyXxuGolcLM4nngd",
+    "block_type": 5,
+    "heading3": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "如何开发一个tool",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "EyqRdSr50oUqXAxDSIYcyGDhnQg"
+  },
+  {
+    "block_id": "BEjEdFz0yo7Grixsiiucscf9ndh",
+    "block_type": 5,
+    "heading3": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "如何开发一个skill",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "EyqRdSr50oUqXAxDSIYcyGDhnQg"
+  },
+  {
+    "block_id": "Tp3UdNmTfoBqV2xPHYacFqIKniA",
+    "block_type": 5,
+    "heading3": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "mcp什么作用",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "EyqRdSr50oUqXAxDSIYcyGDhnQg"
+  },
+  {
+    "block_id": "QYjFd9XtaofAaSxIMIuceO4Gn7b",
+    "block_type": 5,
+    "heading3": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "mcp分为client和server，在哪开发tool",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "EyqRdSr50oUqXAxDSIYcyGDhnQg"
+  },
+  {
+    "block_id": "XKyGdJ2FeohONYxFMkkcNUtpnib",
+    "block_type": 5,
+    "heading3": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "agent的设计范式",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "EyqRdSr50oUqXAxDSIYcyGDhnQg"
+  },
+  {
+    "block_id": "J180degXuoYcHSxHL6ecoVJWnWd",
+    "block_type": 4,
+    "heading2": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "算法",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "EyqRdSr50oUqXAxDSIYcyGDhnQg"
+  },
+  {
+    "block_id": "LedOdgHwEoS15xxjV8GcOmAEnCW",
+    "block_type": 5,
+    "heading3": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "Promise输出题",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "EyqRdSr50oUqXAxDSIYcyGDhnQg"
+  },
+  {
+    "block_id": "PfxBdvmXdouOw2xO0I7cea6gnIh",
+    "block_type": 5,
+    "heading3": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "Promise并发控制",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "EyqRdSr50oUqXAxDSIYcyGDhnQg"
+  },
+  {
+    "block_id": "PZIjdpS7XokFyhxy8nLcSyZ4nEb",
+    "block_type": 14,
+    "code": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "/* 题目：实现 pLimit(concurrency)，返回一个函数 limit(fn)，用于限制同时执行的 Promise 任务数量。\n要求：\nconcurrency 为最大并发数（>=1）\nlimit(() => promise) 返回 Promise<T>\n任务按“进入队列顺序”调度\n",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "任一任务失败不影响后续任务继续调度（但该任务返回的 Promise 仍 reject）*/",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "language": 39,
+        "wrap": false
+      }
+    },
+    "parent_id": "EyqRdSr50oUqXAxDSIYcyGDhnQg"
+  }
+]

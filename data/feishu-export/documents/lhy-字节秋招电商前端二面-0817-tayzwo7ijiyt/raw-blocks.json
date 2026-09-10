@@ -1,0 +1,562 @@
+[
+  {
+    "block_id": "WDe7dD4N0oqRgTxWSojcEF2qn7d",
+    "block_type": 1,
+    "children": [
+      "MgEUdpdxjoGQHFxglOVcGjvvnGc",
+      "AKy2dspkHopdyrx0qPWcrBFtnTe",
+      "QjrBdlYFgojYarxVNyPcJct9n2g",
+      "Oa2XdgUOaoew4rxwWORcy7xonsh",
+      "CzisdDr7loUx4IxQBQXcqOf1nXb",
+      "H48EdQzlwobqIbxbnljcPnJynzc",
+      "LKSjdgAKBoNfDSxXRN7cnMXeny7",
+      "OYC8dPeOWowFnzx5d4HcR9CunOe",
+      "O58rd4mx8oj0RGxKebUcTlJgnOb",
+      "DXxQd22m2oTQmLxX4C5cb89hnPd",
+      "Y0f8dYRm0oZAYCxpjBzcXTFSnrh",
+      "KIrbdQeploVkloxg3q7c1ELBngf",
+      "UB3KdCvbloCnqYxysBMcttQPnfd",
+      "L3nUdunDOodsk8x6g0YcvC6hneg",
+      "Pd6md6DGFo3K4SxeDWscutVEnra",
+      "Cx4AdVYXqoHD76xhJtGcBsh3nXg",
+      "Fybod2O3roOJKVxJEMycf9TPnEf",
+      "S7z4dbnRlo1iJzx8MxLchS2WnDf"
+    ],
+    "page": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "lhy-字节秋招电商前端二面-0817",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1
+      }
+    },
+    "parent_id": ""
+  },
+  {
+    "block_id": "MgEUdpdxjoGQHFxglOVcGjvvnGc",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "为什么在之前的部门没转正",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "WDe7dD4N0oqRgTxWSojcEF2qn7d"
+  },
+  {
+    "block_id": "AKy2dspkHopdyrx0qPWcrBFtnTe",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "js有哪些作用域",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "WDe7dD4N0oqRgTxWSojcEF2qn7d"
+  },
+  {
+    "block_id": "QjrBdlYFgojYarxVNyPcJct9n2g",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "css元素怎么垂直居中",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "WDe7dD4N0oqRgTxWSojcEF2qn7d"
+  },
+  {
+    "block_id": "Oa2XdgUOaoew4rxwWORcy7xonsh",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "介绍一下js事件循环，宏任务微任务有哪些",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "WDe7dD4N0oqRgTxWSojcEF2qn7d"
+  },
+  {
+    "block_id": "CzisdDr7loUx4IxQBQXcqOf1nXb",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "一道事件循环输出判断题",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "WDe7dD4N0oqRgTxWSojcEF2qn7d"
+  },
+  {
+    "block_id": "H48EdQzlwobqIbxbnljcPnJynzc",
+    "block_type": 14,
+    "code": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "console.log('Start');\nPromise.resolve().then(() => console.log('1'));\nsetTimeout(() => console.log('timeout 1'), 0);\nconsole.log('Process');\nPromise.resolve().then(() => console.log('2'));\nsetTimeout(() => console.log('timeout 2'), 100);\n",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "console.log('End');",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "language": 30,
+        "wrap": false
+      }
+    },
+    "parent_id": "WDe7dD4N0oqRgTxWSojcEF2qn7d"
+  },
+  {
+    "block_id": "LKSjdgAKBoNfDSxXRN7cnMXeny7",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "实习的时候在项目中有哪些 ai 实践，项目中的harness怎么做的（代码仓库侧的harness，不是agent开发中的harness）",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "WDe7dD4N0oqRgTxWSojcEF2qn7d"
+  },
+  {
+    "block_id": "OYC8dPeOWowFnzx5d4HcR9CunOe",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "如何理解harness",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "WDe7dD4N0oqRgTxWSojcEF2qn7d"
+  },
+  {
+    "block_id": "O58rd4mx8oj0RGxKebUcTlJgnOb",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "skill的机制",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "WDe7dD4N0oqRgTxWSojcEF2qn7d"
+  },
+  {
+    "block_id": "DXxQd22m2oTQmLxX4C5cb89hnPd",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "分别在哪些情况下使用 skill、mcp、cli、hook，有什么区别",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "WDe7dD4N0oqRgTxWSojcEF2qn7d"
+  },
+  {
+    "block_id": "Y0f8dYRm0oZAYCxpjBzcXTFSnrh",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "自己写过 skill 吗，一个好的skill应该是什么样的",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "WDe7dD4N0oqRgTxWSojcEF2qn7d"
+  },
+  {
+    "block_id": "KIrbdQeploVkloxg3q7c1ELBngf",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "实习/学习中最有成就感的项目是哪个（面试官觉得我说的这个项目没什么难度，我又说了项目的难点）",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "WDe7dD4N0oqRgTxWSojcEF2qn7d"
+  },
+  {
+    "block_id": "UB3KdCvbloCnqYxysBMcttQPnfd",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "实习/学习中有哪些压力比较大的时候",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "WDe7dD4N0oqRgTxWSojcEF2qn7d"
+  },
+  {
+    "block_id": "L3nUdunDOodsk8x6g0YcvC6hneg",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "说说自己的优缺点",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "WDe7dD4N0oqRgTxWSojcEF2qn7d"
+  },
+  {
+    "block_id": "Pd6md6DGFo3K4SxeDWscutVEnra",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "最近学了什么前沿知识",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "WDe7dD4N0oqRgTxWSojcEF2qn7d"
+  },
+  {
+    "block_id": "Cx4AdVYXqoHD76xhJtGcBsh3nXg",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "未来1-3年的职业规划",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "WDe7dD4N0oqRgTxWSojcEF2qn7d"
+  },
+  {
+    "block_id": "Fybod2O3roOJKVxJEMycf9TPnEf",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "ai coding任务：",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "children": [
+      "K2X2dBIC5o5UHCxK4B9cbroAn0b",
+      "FJs8dyZk8oikwCxbaPJcVUztnJb"
+    ],
+    "parent_id": "WDe7dD4N0oqRgTxWSojcEF2qn7d"
+  },
+  {
+    "block_id": "K2X2dBIC5o5UHCxK4B9cbroAn0b",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "怎么让模型按照自己的设计来实现",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "Fybod2O3roOJKVxJEMycf9TPnEf"
+  },
+  {
+    "block_id": "FJs8dyZk8oikwCxbaPJcVUztnJb",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "再次问到了代码仓库中的harness怎么做的",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "Fybod2O3roOJKVxJEMycf9TPnEf"
+  },
+  {
+    "block_id": "S7z4dbnRlo1iJzx8MxLchS2WnDf",
+    "block_type": 2,
+    "parent_id": "WDe7dD4N0oqRgTxWSojcEF2qn7d",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  }
+]

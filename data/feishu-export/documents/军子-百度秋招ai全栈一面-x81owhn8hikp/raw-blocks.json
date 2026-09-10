@@ -1,0 +1,326 @@
+[
+  {
+    "block_id": "Hx1MdW1OZoRF0ExRhmFcUDP2nHc",
+    "block_type": 1,
+    "children": [
+      "H4OXd13nIoeyCvxbDgWcsSVYnaf",
+      "A1csdy17aopi9mxzEu9chjuunqd",
+      "Uvg6drcTNo3l6mxGqDfcR3t3nr8",
+      "DdMmd29Dpo9JCqxsoe4cHdnEnZc",
+      "UxPJd36mZoywjvxTpGecGtQznQg",
+      "FCdfd6GbnoWWhOxXPCvcsXqonZd",
+      "PmF5dJDwiowObdxwiNxc8W3lnch",
+      "Anjnd3E4foVl6GxOGecc9kMZn6H",
+      "WwOUd5vY1oaV10x72F0cdQVWn5j",
+      "WPqqdVfuXol5bZxT7wIcYDKBnkf",
+      "OKNYdQapAoCxmIxxXHacH9Fknxg"
+    ],
+    "page": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "军子-百度秋招AI全栈一面",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1
+      }
+    },
+    "parent_id": ""
+  },
+  {
+    "block_id": "H4OXd13nIoeyCvxbDgWcsSVYnaf",
+    "block_type": 2,
+    "parent_id": "Hx1MdW1OZoRF0ExRhmFcUDP2nHc",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "1.自己讲述实习和项目  30分钟",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "A1csdy17aopi9mxzEu9chjuunqd",
+    "block_type": 2,
+    "parent_id": "Hx1MdW1OZoRF0ExRhmFcUDP2nHc",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "2.claude code不是已经有worktree了吗？为什么实习还要使用worktree？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "Uvg6drcTNo3l6mxGqDfcR3t3nr8",
+    "block_type": 2,
+    "parent_id": "Hx1MdW1OZoRF0ExRhmFcUDP2nHc",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "3.如果有三个请求，用户先请求了a，但是a请求却是最后到达的，会导致什么问题吗？怎么解决？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "DdMmd29Dpo9JCqxsoe4cHdnEnZc",
+    "block_type": 2,
+    "parent_id": "Hx1MdW1OZoRF0ExRhmFcUDP2nHc",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "算法和手撕：",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "UxPJd36mZoywjvxTpGecGtQznQg",
+    "block_type": 2,
+    "parent_id": "Hx1MdW1OZoRF0ExRhmFcUDP2nHc",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "1.合并两个有序数组",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "FCdfd6GbnoWWhOxXPCvcsXqonZd",
+    "block_type": 2,
+    "parent_id": "Hx1MdW1OZoRF0ExRhmFcUDP2nHc",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "2.最大并发限制执行任务",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "PmF5dJDwiowObdxwiNxc8W3lnch",
+    "block_type": 2,
+    "parent_id": "Hx1MdW1OZoRF0ExRhmFcUDP2nHc",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "3.sleep函数",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "Anjnd3E4foVl6GxOGecc9kMZn6H",
+    "block_type": 2,
+    "parent_id": "Hx1MdW1OZoRF0ExRhmFcUDP2nHc",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "4.最后打印的是哪个",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "WwOUd5vY1oaV10x72F0cdQVWn5j",
+    "block_type": 14,
+    "code": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "function change(obj) {\n  obj.name = \"tom\";\n  obj = {\n    name: \"join\",\n  };\n}\nconst obj = {\n  name: \"son\",\n};\nchange(obj);\n",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "console.log(obj.name); ",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "language": 1,
+        "wrap": false
+      }
+    },
+    "parent_id": "Hx1MdW1OZoRF0ExRhmFcUDP2nHc"
+  },
+  {
+    "block_id": "WPqqdVfuXol5bZxT7wIcYDKBnkf",
+    "block_type": 2,
+    "parent_id": "Hx1MdW1OZoRF0ExRhmFcUDP2nHc",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "OKNYdQapAoCxmIxxXHacH9Fknxg",
+    "block_type": 2,
+    "parent_id": "Hx1MdW1OZoRF0ExRhmFcUDP2nHc",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  }
+]

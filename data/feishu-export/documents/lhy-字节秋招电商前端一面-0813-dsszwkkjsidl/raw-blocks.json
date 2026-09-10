@@ -1,0 +1,600 @@
+[
+  {
+    "block_id": "QghrdErDdoR9kkxuv9Xc5YTJnVg",
+    "block_type": 1,
+    "children": [
+      "WnBKd3Jx4oD9l4xaDtYc4oponhg",
+      "Sl59dBuEgodpmsxe87schTkange",
+      "MPJadHGWIok1bWxFjVecUUHpnnh",
+      "WT41dSMitoi1ROx7gW2cr8munph",
+      "Paf0d5SE5oRbH7xAsg9cMIP0nre",
+      "GDsFd2FsboI5pZxqG7WcVCEgnkb",
+      "OFUddPLoeoWTFPxHQA7czhacnLe",
+      "VHcEdMxdwobK8AxxZqFcCAMLn9f",
+      "Bs4ydhZU2oECkkxzPIvc9wJXn8c",
+      "QYEzdXxJqo0B7sxeW36ctbmAnpb",
+      "ErPHdiaRCo2lU5xChcIc9UJfnxf",
+      "PNaFdFROaowylixIBvlc8tD2nGc",
+      "VxsSdbjTjo6gksxTad8cWUcGn2G",
+      "TFfWdflgpoX3dvxfV6tcmv4Qn6z",
+      "EEqwdrcPDo0Kc9xEIW3cG4zGn6e"
+    ],
+    "page": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "lhy-字节秋招电商前端一面-0813",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1
+      }
+    },
+    "parent_id": ""
+  },
+  {
+    "block_id": "WnBKd3Jx4oD9l4xaDtYc4oponhg",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "怎么学前端的",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "QghrdErDdoR9kkxuv9Xc5YTJnVg"
+  },
+  {
+    "block_id": "Sl59dBuEgodpmsxe87schTkange",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "能否独立完成一个全栈需求",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "QghrdErDdoR9kkxuv9Xc5YTJnVg"
+  },
+  {
+    "block_id": "MPJadHGWIok1bWxFjVecUUHpnnh",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "说一下http常用方法、header",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "QghrdErDdoR9kkxuv9Xc5YTJnVg"
+  },
+  {
+    "block_id": "WT41dSMitoi1ROx7gW2cr8munph",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "介绍一下css位置属性",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "QghrdErDdoR9kkxuv9Xc5YTJnVg"
+  },
+  {
+    "block_id": "Paf0d5SE5oRbH7xAsg9cMIP0nre",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "JavaScript 原型链和继承机制",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "QghrdErDdoR9kkxuv9Xc5YTJnVg"
+  },
+  {
+    "block_id": "GDsFd2FsboI5pZxqG7WcVCEgnkb",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "sse和websocket",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "QghrdErDdoR9kkxuv9Xc5YTJnVg"
+  },
+  {
+    "block_id": "OFUddPLoeoWTFPxHQA7czhacnLe",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "项目拷打",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "children": [
+      "Dsm5dBigWo5Ppgx8IECcfM7Fnug",
+      "LeiXdE2dqo9GZJxAblNcO6HDnfG",
+      "Ofj8dL7UrodWNOxprT9c7PIHn9b",
+      "Ftzmd9aJtoLi4PxmRmwceDAnnpd",
+      "SCSJdrllLoWShgxtRh2cWoxYnfh",
+      "E3k7d92u4oeJC8x0o7LcEkhln4g"
+    ],
+    "parent_id": "QghrdErDdoR9kkxuv9Xc5YTJnVg"
+  },
+  {
+    "block_id": "Dsm5dBigWo5Ppgx8IECcfM7Fnug",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "sse的断连和中止怎么做的",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "OFUddPLoeoWTFPxHQA7czhacnLe"
+  },
+  {
+    "block_id": "LeiXdE2dqo9GZJxAblNcO6HDnfG",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "sse跨会话污染如何解决",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "OFUddPLoeoWTFPxHQA7czhacnLe"
+  },
+  {
+    "block_id": "Ofj8dL7UrodWNOxprT9c7PIHn9b",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "实习时做的项目介绍一下",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "OFUddPLoeoWTFPxHQA7czhacnLe"
+  },
+  {
+    "block_id": "Ftzmd9aJtoLi4PxmRmwceDAnnpd",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "遇到哪些难点",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "OFUddPLoeoWTFPxHQA7czhacnLe"
+  },
+  {
+    "block_id": "SCSJdrllLoWShgxtRh2cWoxYnfh",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "还有哪些落地的项目，介绍一下",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "OFUddPLoeoWTFPxHQA7czhacnLe"
+  },
+  {
+    "block_id": "E3k7d92u4oeJC8x0o7LcEkhln4g",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "这些项目后续有哪些改进方向",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "OFUddPLoeoWTFPxHQA7czhacnLe"
+  },
+  {
+    "block_id": "VHcEdMxdwobK8AxxZqFcCAMLn9f",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "一个需求前后端存在分歧时怎么做",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "QghrdErDdoR9kkxuv9Xc5YTJnVg"
+  },
+  {
+    "block_id": "Bs4ydhZU2oECkkxzPIvc9wJXn8c",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "js 作用域输出判断",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "QghrdErDdoR9kkxuv9Xc5YTJnVg"
+  },
+  {
+    "block_id": "QYEzdXxJqo0B7sxeW36ctbmAnpb",
+    "block_type": 14,
+    "code": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "var a = 5;\n\n(function() {\n    console.log(a);\n    a = 10;\n    console.log(window.a);\n    console.log(a);\n    var a = 20;\n    console.log(a);\n",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "})()",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "language": 30,
+        "wrap": false
+      }
+    },
+    "parent_id": "QghrdErDdoR9kkxuv9Xc5YTJnVg"
+  },
+  {
+    "block_id": "ErPHdiaRCo2lU5xChcIc9UJfnxf",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "this输出判断",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "QghrdErDdoR9kkxuv9Xc5YTJnVg"
+  },
+  {
+    "block_id": "PNaFdFROaowylixIBvlc8tD2nGc",
+    "block_type": 14,
+    "code": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "window.name = 'bytedance';\n\nfunction A() {\n    this.name = 125;\n}\n\nA.prototype.getA = function() {\n    console.log(this);\n    return this.name + 1;\n}\n\nconst a = new A();\nlet funcA = a.getA;\n",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "funcA();",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "language": 30,
+        "wrap": false
+      }
+    },
+    "parent_id": "QghrdErDdoR9kkxuv9Xc5YTJnVg"
+  },
+  {
+    "block_id": "VxsSdbjTjo6gksxTad8cWUcGn2G",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "Leetcode: 二叉树的右视图",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "QghrdErDdoR9kkxuv9Xc5YTJnVg"
+  },
+  {
+    "block_id": "TFfWdflgpoX3dvxfV6tcmv4Qn6z",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "Leetcode改编：不含重复字符的最长子串，需要输出对应的子串（可能含多个子串）",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "QghrdErDdoR9kkxuv9Xc5YTJnVg"
+  },
+  {
+    "block_id": "EEqwdrcPDo0Kc9xEIW3cG4zGn6e",
+    "block_type": 2,
+    "parent_id": "QghrdErDdoR9kkxuv9Xc5YTJnVg",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  }
+]

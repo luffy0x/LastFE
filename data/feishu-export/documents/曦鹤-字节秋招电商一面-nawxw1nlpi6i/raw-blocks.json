@@ -1,0 +1,503 @@
+[
+  {
+    "block_id": "FlYAds22eolI34xEOUPcvqj9nTb",
+    "block_type": 1,
+    "children": [
+      "UQWgdIjyLoZp2GxLcMEckDMEnIc",
+      "IfHIdLM5KozWegxviQLcPLPnnzc",
+      "J1N8dRlwHowu6BxX21QcAKAwnJe",
+      "P8VKdu3iNo7BymxMPxDcsiQrnyg",
+      "EsIpdx5CMobRRpxT5Tmcn43qnDe",
+      "IbjCdUm76ou1qHxB4yVcnyAUnEf",
+      "Wph8dOvtpo0RagxeJ2vc3vFCn1c",
+      "XxTOdH28CoJcCXxFoC9ca8cVnbd",
+      "AddXdXFqxoRM8Kx2xt5cHyjbnEd",
+      "YjXsdEqbvo7RmQxrrwmcaaePnkd",
+      "TtuvdKzRjoCmQCxYhjMcPPChnwe",
+      "QNx6diuuWoS5MbxrUWOcpgTunOe",
+      "LjwcdJRtpoUiN3xIkNRc4F8QnCH",
+      "O9tPdVUmlonEknxpVd3cshK1n5d",
+      "HC4qdM2b0oA9eUxiSzFcA4hCnue",
+      "X2fjd8dXloCZxyxJtn2c8TYYnhg",
+      "LHT6dSsHaoUp27xpRrmcL8fLnFg",
+      "UliadejIxoz7I6xgiAUcltsJnQh"
+    ],
+    "page": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "曦鹤-字节秋招电商一面",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1
+      }
+    },
+    "parent_id": ""
+  },
+  {
+    "block_id": "UQWgdIjyLoZp2GxLcMEckDMEnIc",
+    "block_type": 5,
+    "heading3": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "八股",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "FlYAds22eolI34xEOUPcvqj9nTb"
+  },
+  {
+    "block_id": "IfHIdLM5KozWegxviQLcPLPnnzc",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "v-show 和v-if 的区别",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "1"
+      }
+    },
+    "parent_id": "FlYAds22eolI34xEOUPcvqj9nTb"
+  },
+  {
+    "block_id": "J1N8dRlwHowu6BxX21QcAKAwnJe",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "怎么实现v-show",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "FlYAds22eolI34xEOUPcvqj9nTb"
+  },
+  {
+    "block_id": "P8VKdu3iNo7BymxMPxDcsiQrnyg",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "vue 怎么实现一个元素慢慢从隐藏到显示",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "FlYAds22eolI34xEOUPcvqj9nTb"
+  },
+  {
+    "block_id": "EsIpdx5CMobRRpxT5Tmcn43qnDe",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "React 性能优化方法",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "FlYAds22eolI34xEOUPcvqj9nTb"
+  },
+  {
+    "block_id": "IbjCdUm76ou1qHxB4yVcnyAUnEf",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "usecallback 不使用依赖数组怎么拿到最新的缓存函数",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "FlYAds22eolI34xEOUPcvqj9nTb"
+  },
+  {
+    "block_id": "Wph8dOvtpo0RagxeJ2vc3vFCn1c",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "操控 dom 的 API 有哪些？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "FlYAds22eolI34xEOUPcvqj9nTb"
+  },
+  {
+    "block_id": "XxTOdH28CoJcCXxFoC9ca8cVnbd",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "怎么通过 js 去执行脚本，已拿到 url",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "FlYAds22eolI34xEOUPcvqj9nTb"
+  },
+  {
+    "block_id": "AddXdXFqxoRM8Kx2xt5cHyjbnEd",
+    "block_type": 5,
+    "heading3": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "代码输出",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "FlYAds22eolI34xEOUPcvqj9nTb"
+  },
+  {
+    "block_id": "YjXsdEqbvo7RmQxrrwmcaaePnkd",
+    "block_type": 14,
+    "code": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "var a=10;\nvar obj={\n    a:20;\n    mycall:function (){\n       console.log(this.a);\n    }\n}\nobj.mycall();\nobj.mycall.call();\nnew obj.mycall();\n",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "language": 30,
+        "wrap": false
+      }
+    },
+    "parent_id": "FlYAds22eolI34xEOUPcvqj9nTb"
+  },
+  {
+    "block_id": "TtuvdKzRjoCmQCxYhjMcPPChnwe",
+    "block_type": 4,
+    "heading2": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "算法题",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "FlYAds22eolI34xEOUPcvqj9nTb"
+  },
+  {
+    "block_id": "QNx6diuuWoS5MbxrUWOcpgTunOe",
+    "block_type": 2,
+    "parent_id": "FlYAds22eolI34xEOUPcvqj9nTb",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "实现一个 函数，遍历二维数组，输入：",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "LjwcdJRtpoUiN3xIkNRc4F8QnCH",
+    "block_type": 2,
+    "parent_id": "FlYAds22eolI34xEOUPcvqj9nTb",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "arr=[[1,2,3],",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "O9tPdVUmlonEknxpVd3cshK1n5d",
+    "block_type": 2,
+    "parent_id": "FlYAds22eolI34xEOUPcvqj9nTb",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "[4,5,6],",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "HC4qdM2b0oA9eUxiSzFcA4hCnue",
+    "block_type": 2,
+    "parent_id": "FlYAds22eolI34xEOUPcvqj9nTb",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "[7,8,9]",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "X2fjd8dXloCZxyxJtn2c8TYYnhg",
+    "block_type": 2,
+    "parent_id": "FlYAds22eolI34xEOUPcvqj9nTb",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "]",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "LHT6dSsHaoUp27xpRrmcL8fLnFg",
+    "block_type": 2,
+    "parent_id": "FlYAds22eolI34xEOUPcvqj9nTb",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "输出：[1,2,4,3,5,7,6,8,9]",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "UliadejIxoz7I6xgiAUcltsJnQh",
+    "block_type": 2,
+    "parent_id": "FlYAds22eolI34xEOUPcvqj9nTb",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "大概是斜四五度遍历",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  }
+]

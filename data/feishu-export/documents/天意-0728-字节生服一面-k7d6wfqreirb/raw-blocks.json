@@ -1,0 +1,430 @@
+[
+  {
+    "block_id": "ILMJdu3pPoLMguxNgq1cyS1Inhc",
+    "block_type": 1,
+    "children": [
+      "SiNvdNOcKoOhO3xQSUpcGOdEnsf",
+      "RZ1rdbzmCo6Pj6xjprfcPNsonxf",
+      "N7lcdRDwJo7v9QxcaAqc42NlnBe",
+      "U9ZLd2MTOoY92axUAmocf9Lxnqh",
+      "PRvrdlNDJoNF9mxaY21cN5rlnHg",
+      "Nsk7dyHgBofkUTx3nE0ca6wqnsd",
+      "Psu8dIdIsoemRWx1rXdcApnNnQL",
+      "G9y5dRoCjorysfxPhqscYNqynGe",
+      "SPANdZ5pAorkdxxxAD8cLJGQnZg",
+      "KYYxdubxWof1UsxDA4Hc5vAVnSC",
+      "W5yrdojn5oaMgBxnjf1cpR17nbf",
+      "F0qGdb9DYojj8FxnWSbccyeUnmb",
+      "PlH1doVvDo0A7sxzflNcyEwEnDb",
+      "WBcpddQ8loWsPlxATJqcP5gznRb",
+      "BbAad83WxoCeY3xFVQ3cbMqjnpc"
+    ],
+    "page": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "天意-0728-字节生服一面",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1
+      }
+    },
+    "parent_id": ""
+  },
+  {
+    "block_id": "SiNvdNOcKoOhO3xQSUpcGOdEnsf",
+    "block_type": 2,
+    "parent_id": "ILMJdu3pPoLMguxNgq1cyS1Inhc",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "时长42min，大部分都是根据实习和项目来问，只有一道八股和一道手写题",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "RZ1rdbzmCo6Pj6xjprfcPNsonxf",
+    "block_type": 2,
+    "parent_id": "ILMJdu3pPoLMguxNgq1cyS1Inhc",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "        ",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "N7lcdRDwJo7v9QxcaAqc42NlnBe",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "畅听实习主要负责什么模块",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "1"
+      }
+    },
+    "parent_id": "ILMJdu3pPoLMguxNgq1cyS1Inhc"
+  },
+  {
+    "block_id": "U9ZLd2MTOoY92axUAmocf9Lxnqh",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "具体介绍一下业务",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "2"
+      }
+    },
+    "parent_id": "ILMJdu3pPoLMguxNgq1cyS1Inhc"
+  },
+  {
+    "block_id": "PRvrdlNDJoNF9mxaY21cN5rlnHg",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "挑一个有价值的来讲一讲（这里看得出来是想让我找个有价值的点展示自己）",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "3"
+      }
+    },
+    "parent_id": "ILMJdu3pPoLMguxNgq1cyS1Inhc"
+  },
+  {
+    "block_id": "Nsk7dyHgBofkUTx3nE0ca6wqnsd",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "为什么会从nuxt迁移到next",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "4"
+      }
+    },
+    "parent_id": "ILMJdu3pPoLMguxNgq1cyS1Inhc"
+  },
+  {
+    "block_id": "Psu8dIdIsoemRWx1rXdcApnNnQL",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "项目讲解，挑一个难点来讲一下（语意化操作）",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "5"
+      }
+    },
+    "parent_id": "ILMJdu3pPoLMguxNgq1cyS1Inhc"
+  },
+  {
+    "block_id": "G9y5dRoCjorysfxPhqscYNqynGe",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "面试官没听明白我为什么选择crdt而不是ot",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "6"
+      }
+    },
+    "parent_id": "ILMJdu3pPoLMguxNgq1cyS1Inhc"
+  },
+  {
+    "block_id": "SPANdZ5pAorkdxxxAD8cLJGQnZg",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "ot除了服务端限制还有其他原因吗",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "7"
+      }
+    },
+    "parent_id": "ILMJdu3pPoLMguxNgq1cyS1Inhc"
+  },
+  {
+    "block_id": "KYYxdubxWof1UsxDA4Hc5vAVnSC",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "如果多人同时操纵你是怎么处理的",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "8"
+      }
+    },
+    "parent_id": "ILMJdu3pPoLMguxNgq1cyS1Inhc"
+  },
+  {
+    "block_id": "W5yrdojn5oaMgBxnjf1cpR17nbf",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "如果同一时间有大量同步操作，有什么优化手段没有",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "ILMJdu3pPoLMguxNgq1cyS1Inhc"
+  },
+  {
+    "block_id": "F0qGdb9DYojj8FxnWSbccyeUnmb",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "讲一下什么是重排什么是重绘，什么操作会引起重排重绘，",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "ILMJdu3pPoLMguxNgq1cyS1Inhc"
+  },
+  {
+    "block_id": "PlH1doVvDo0A7sxzflNcyEwEnDb",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "dom的什么读操作会引起重排（没答得好）",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "ILMJdu3pPoLMguxNgq1cyS1Inhc"
+  },
+  {
+    "block_id": "WBcpddQ8loWsPlxATJqcP5gznRb",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "手撕：数组转树，稍微卡壳但是最后还是写出来了",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "ILMJdu3pPoLMguxNgq1cyS1Inhc"
+  },
+  {
+    "block_id": "BbAad83WxoCeY3xFVQ3cbMqjnpc",
+    "block_type": 2,
+    "parent_id": "ILMJdu3pPoLMguxNgq1cyS1Inhc",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  }
+]

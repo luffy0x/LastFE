@@ -1,0 +1,624 @@
+[
+  {
+    "block_id": "H04ndI8gsoPcRZxlcWccTNPunGf",
+    "block_type": 1,
+    "children": [
+      "RQROdo48ToCAc6xhYGwcJ7OznTd",
+      "ZNxtdGIhroSsoaxUVqnc7IHpnYb",
+      "K388djkboohwx8xgnSFc2f8Cn8g",
+      "OL5SdvRujoA7Zdx02jrcGqOinnM",
+      "OQf1dUTorotgnVx7QqecY684n57",
+      "QK8kd9eV7ov1nlxSQvycAWIYn2c",
+      "ThNTd4DgJodHQKxPYJhca2UynCc",
+      "FFrNd7rLCoRd9Qxu5Uecs2OcnSg",
+      "BmAYdXUBPoaEG4xzA6zc29o5n6f",
+      "K5lQddjg2oVQYLxqd3Icnux5nFd",
+      "UhkSdMR06o1VqcxqOmqcWkLYned",
+      "KXvqd8paNo5zapx5vigcMN6Ynyd",
+      "YrfIdCKidoXwm5xH9AQcJaNBnAd",
+      "TyLqd6E5eo4oSxxEBfccMxuhncg",
+      "Mzu1dqZiFoP0otx9Ho0c80mJnkY",
+      "NlTkdTHI4oWXnVxqHLmcFHK5n5g",
+      "IKV8dr7r6ossFRx8KitcAjqWnrc",
+      "KiHjdzxgRopSYSxpoLHcItf9nbh",
+      "DQ3Mda8p6oAz2yxqT4lc6LHonJc",
+      "Gmcwd7nWIoLzbRxmQYscreQ7ncb",
+      "KEvddWqzqoEdmxxLCdHcsfg8nfg",
+      "V35ldIcYJo8oKMxLmYGc6mNZnGd"
+    ],
+    "page": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "豪神——",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "百度-app开发",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1
+      }
+    },
+    "parent_id": ""
+  },
+  {
+    "block_id": "RQROdo48ToCAc6xhYGwcJ7OznTd",
+    "block_type": 3,
+    "heading1": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "0724一面",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "H04ndI8gsoPcRZxlcWccTNPunGf"
+  },
+  {
+    "block_id": "ZNxtdGIhroSsoaxUVqnc7IHpnYb",
+    "block_type": 5,
+    "heading3": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "this指向的算法输出题",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "H04ndI8gsoPcRZxlcWccTNPunGf"
+  },
+  {
+    "block_id": "K388djkboohwx8xgnSFc2f8Cn8g",
+    "block_type": 14,
+    "code": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "const obj = {\n  name: \"dodo\",\n  fn: function() {\n    const arrowFn = () => {\n      console.log(this.name);\n    };\n    \n    function normalFn() {\n      console.log(this.name);\n    }\n    \n    arrowFn();\n    normalFn();\n  }\n};\n\nobj.fn();\n// dodo,undefined\n// 追问fn改为箭头函数呢\n",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "//undefined，undefined",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "language": 30,
+        "wrap": false
+      }
+    },
+    "parent_id": "H04ndI8gsoPcRZxlcWccTNPunGf"
+  },
+  {
+    "block_id": "OL5SdvRujoA7Zdx02jrcGqOinnM",
+    "block_type": 5,
+    "heading3": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "项目开发过程中如何避免CSS的class的命名重复",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "H04ndI8gsoPcRZxlcWccTNPunGf"
+  },
+  {
+    "block_id": "OQf1dUTorotgnVx7QqecY684n57",
+    "block_type": 5,
+    "heading3": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "webpack 和 Vite 的区别，如何根据项目选型",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "H04ndI8gsoPcRZxlcWccTNPunGf"
+  },
+  {
+    "block_id": "QK8kd9eV7ov1nlxSQvycAWIYn2c",
+    "block_type": 5,
+    "heading3": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "ai 怎么给前端开提效",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "H04ndI8gsoPcRZxlcWccTNPunGf"
+  },
+  {
+    "block_id": "ThNTd4DgJodHQKxPYJhca2UynCc",
+    "block_type": 5,
+    "heading3": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "ai 怎么知道他需要进行Rag的",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "H04ndI8gsoPcRZxlcWccTNPunGf"
+  },
+  {
+    "block_id": "FFrNd7rLCoRd9Qxu5Uecs2OcnSg",
+    "block_type": 5,
+    "heading3": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "Rag的整体流程，为什么需要Rag",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "H04ndI8gsoPcRZxlcWccTNPunGf"
+  },
+  {
+    "block_id": "BmAYdXUBPoaEG4xzA6zc29o5n6f",
+    "block_type": 5,
+    "heading3": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "如何验证你的 harness 和 loop enginnering 是有效的",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "H04ndI8gsoPcRZxlcWccTNPunGf"
+  },
+  {
+    "block_id": "K5lQddjg2oVQYLxqd3Icnux5nFd",
+    "block_type": 5,
+    "heading3": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "介绍一下自己开发的skill",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "H04ndI8gsoPcRZxlcWccTNPunGf"
+  },
+  {
+    "block_id": "UhkSdMR06o1VqcxqOmqcWkLYned",
+    "block_type": 3,
+    "heading1": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "0728二面",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "H04ndI8gsoPcRZxlcWccTNPunGf"
+  },
+  {
+    "block_id": "KXvqd8paNo5zapx5vigcMN6Ynyd",
+    "block_type": 2,
+    "parent_id": "H04ndI8gsoPcRZxlcWccTNPunGf",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "全程AI和实习经历！实习就不谈了",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "YrfIdCKidoXwm5xH9AQcJaNBnAd",
+    "block_type": 5,
+    "heading3": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "tool，mcp，skill的渐进式披露",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "H04ndI8gsoPcRZxlcWccTNPunGf"
+  },
+  {
+    "block_id": "TyLqd6E5eo4oSxxEBfccMxuhncg",
+    "block_type": 5,
+    "heading3": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "Rag的整体流程？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "H04ndI8gsoPcRZxlcWccTNPunGf"
+  },
+  {
+    "block_id": "Mzu1dqZiFoP0otx9Ho0c80mJnkY",
+    "block_type": 5,
+    "heading3": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "有什么向量数据库库？哪个库可以通过GPU加速？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "H04ndI8gsoPcRZxlcWccTNPunGf"
+  },
+  {
+    "block_id": "NlTkdTHI4oWXnVxqHLmcFHK5n5g",
+    "block_type": 5,
+    "heading3": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "计算相似度的算法「欧氏距离和余弦近似度，还有别的没答出来」？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "H04ndI8gsoPcRZxlcWccTNPunGf"
+  },
+  {
+    "block_id": "IKV8dr7r6ossFRx8KitcAjqWnrc",
+    "block_type": 5,
+    "heading3": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "如何提高Rag的召回率？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "H04ndI8gsoPcRZxlcWccTNPunGf"
+  },
+  {
+    "block_id": "KiHjdzxgRopSYSxpoLHcItf9nbh",
+    "block_type": 5,
+    "heading3": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "如何保证llm的结构化输出「答了prompt+ReAct+降级+schema校验」？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "H04ndI8gsoPcRZxlcWccTNPunGf"
+  },
+  {
+    "block_id": "DQ3Mda8p6oAz2yxqT4lc6LHonJc",
+    "block_type": 5,
+    "heading3": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "写HTTP接口用了什么库？mcp有什么封装好的库？ fastapi，fastmcp ",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "H04ndI8gsoPcRZxlcWccTNPunGf"
+  },
+  {
+    "block_id": "Gmcwd7nWIoLzbRxmQYscreQ7ncb",
+    "block_type": 5,
+    "heading3": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "讲一讲提示词的发展？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "H04ndI8gsoPcRZxlcWccTNPunGf"
+  },
+  {
+    "block_id": "KEvddWqzqoEdmxxLCdHcsfg8nfg",
+    "block_type": 2,
+    "parent_id": "H04ndI8gsoPcRZxlcWccTNPunGf",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "prompt->context enginnering->harness enginnering->loop enginnering->graph enginnering",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "V35ldIcYJo8oKMxLmYGc6mNZnGd",
+    "block_type": 5,
+    "heading3": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "H04ndI8gsoPcRZxlcWccTNPunGf"
+  }
+]

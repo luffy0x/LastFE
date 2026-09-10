@@ -1,0 +1,272 @@
+[
+  {
+    "block_id": "CGgadGrMkonEN6xabd3c5H2pnTv",
+    "block_type": 1,
+    "children": [
+      "QC84dWg7foH3GCxheP3cOJYfnab",
+      "KHN5dmNKroVHjux0T8qc7iDqnRf",
+      "Ll8GdMiOAoSpZTxj9KIcfPapnre",
+      "F0wVdIKwYoOBfRxbA1LcrhoFnzh",
+      "Vo6UdPRTwoPFtuxh8URcFXSUnAe",
+      "URlfd49j8oHvmsxQGvkcYq24ngy",
+      "ABz7dQAMIoJ3DNxhldxcQHemnyf"
+    ],
+    "page": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "dhy-BIGO秋招前端（互娱）开发一面",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1
+      }
+    },
+    "parent_id": ""
+  },
+  {
+    "block_id": "QC84dWg7foH3GCxheP3cOJYfnab",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "TCP和TLS分别讲一下，然后DNS的过程，端口号和ip号是在哪层的",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "1"
+      }
+    },
+    "parent_id": "CGgadGrMkonEN6xabd3c5H2pnTv"
+  },
+  {
+    "block_id": "KHN5dmNKroVHjux0T8qc7iDqnRf",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "TCP四次挥手",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "CGgadGrMkonEN6xabd3c5H2pnTv"
+  },
+  {
+    "block_id": "Ll8GdMiOAoSpZTxj9KIcfPapnre",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "拷打实习的点，但是都只是简单问我怎么实现的，没有进一步追问",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "CGgadGrMkonEN6xabd3c5H2pnTv"
+  },
+  {
+    "block_id": "F0wVdIKwYoOBfRxbA1LcrhoFnzh",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "让我介绍一下自己的agent项目，问了下posteventsource是什么，怎么实现的",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "CGgadGrMkonEN6xabd3c5H2pnTv"
+  },
+  {
+    "block_id": "Vo6UdPRTwoPFtuxh8URcFXSUnAe",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "手撕instanceof",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "CGgadGrMkonEN6xabd3c5H2pnTv"
+  },
+  {
+    "block_id": "URlfd49j8oHvmsxQGvkcYq24ngy",
+    "block_type": 13,
+    "children": [
+      "S8JVdqwGaoXVXlxZ3IwcPbcanod",
+      "CpJBdFZG2oJJ2lxlz07c0oISnmb"
+    ],
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "反问：",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "CGgadGrMkonEN6xabd3c5H2pnTv"
+  },
+  {
+    "block_id": "S8JVdqwGaoXVXlxZ3IwcPbcanod",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "业务：主要是促销，充值页面。这里给我讲了十五分钟左右",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "1"
+      }
+    },
+    "parent_id": "URlfd49j8oHvmsxQGvkcYq24ngy"
+  },
+  {
+    "block_id": "CpJBdFZG2oJJ2lxlz07c0oISnmb",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "对agent开发和全栈的看法和偏好：更看重基础和原理，agent开发懂怎么做和用就行了。这里又讲了五六分钟",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "URlfd49j8oHvmsxQGvkcYq24ngy"
+  },
+  {
+    "block_id": "ABz7dQAMIoJ3DNxhldxcQHemnyf",
+    "block_type": 2,
+    "parent_id": "CGgadGrMkonEN6xabd3c5H2pnTv",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  }
+]

@@ -1,0 +1,457 @@
+[
+  {
+    "block_id": "BM5idVZ4oomwnKxLCk9cKLmQnFh",
+    "block_type": 1,
+    "children": [
+      "LTF1d1lE6ovNIFxtXfZcZeYEnlh",
+      "Ch6xdQ21joqjVUxacuMcLDORnvK",
+      "Ow5adFLlpouvZ4xfR3rcutwMnLf",
+      "SucjdPFCbo5sMGx7VficcwtWn9c",
+      "JkMhdsM1joUNdGxPg6icEiBjnXd",
+      "VD69dQRJdoK0ruxlij5cKTgsnn8",
+      "LQ1wdzyLSoHjODxqmT4cWFRSnmb",
+      "Krufdj4wPoKEPYxjl0VcwPQ9nTh",
+      "A1pSd1WwVovaI0xRH5IczVxUnhJ",
+      "Je3idjVL2o2p8Pxs3h5ck5I9npc",
+      "DWVndl64toW3NYxPEQpc9fWJn8g",
+      "CLXqdvJZ2oIabKx334Ac1A6knhb",
+      "Ruj8dD4fnooSG0xCniScjzu4nYd",
+      "G2B9dpxPxoEMmfx4qsHcxzwJnXc",
+      "HisgdNnG8oadtjxtzsNc5k4XnH5",
+      "F1bPdSueUoTGPOxv7PAcNqcin3b",
+      "JN7odEdToo3MDtx5IHoc5zxqn4d"
+    ],
+    "page": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "军子-快手AI全栈秋招一面",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1
+      }
+    },
+    "parent_id": ""
+  },
+  {
+    "block_id": "LTF1d1lE6ovNIFxtXfZcZeYEnlh",
+    "block_type": 2,
+    "parent_id": "BM5idVZ4oomwnKxLCk9cKLmQnFh",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "快手秋招岗全是服务端类的AI全栈，前端已死",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "Ch6xdQ21joqjVUxacuMcLDORnvK",
+    "block_type": 2,
+    "parent_id": "BM5idVZ4oomwnKxLCk9cKLmQnFh",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "1.上来先做道算法题",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "Ow5adFLlpouvZ4xfR3rcutwMnLf",
+    "block_type": 27,
+    "image": {
+      "align": 2,
+      "height": 820,
+      "scale": 1,
+      "token": "HJQWbymovoLp1ox7fxwc3N9Rnvb",
+      "width": 801
+    },
+    "parent_id": "BM5idVZ4oomwnKxLCk9cKLmQnFh"
+  },
+  {
+    "block_id": "SucjdPFCbo5sMGx7VficcwtWn9c",
+    "block_type": 2,
+    "parent_id": "BM5idVZ4oomwnKxLCk9cKLmQnFh",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "2.git合并的操作，各有什么区别，有冲突怎么办",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "JkMhdsM1joUNdGxPg6icEiBjnXd",
+    "block_type": 2,
+    "parent_id": "BM5idVZ4oomwnKxLCk9cKLmQnFh",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "3.RAG的详细流程",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "VD69dQRJdoK0ruxlij5cKTgsnn8",
+    "block_type": 2,
+    "parent_id": "BM5idVZ4oomwnKxLCk9cKLmQnFh",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "4.各种embdding和rerank的模型有什么效果的区别吗",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "LQ1wdzyLSoHjODxqmT4cWFRSnmb",
+    "block_type": 2,
+    "parent_id": "BM5idVZ4oomwnKxLCk9cKLmQnFh",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "5.BM25的原理是什么",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "Krufdj4wPoKEPYxjl0VcwPQ9nTh",
+    "block_type": 2,
+    "parent_id": "BM5idVZ4oomwnKxLCk9cKLmQnFh",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "6.正排索引和倒排索引的区别是什么",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "A1pSd1WwVovaI0xRH5IczVxUnhJ",
+    "block_type": 2,
+    "parent_id": "BM5idVZ4oomwnKxLCk9cKLmQnFh",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "7.BM25你是怎么分词的",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "Je3idjVL2o2p8Pxs3h5ck5I9npc",
+    "block_type": 2,
+    "parent_id": "BM5idVZ4oomwnKxLCk9cKLmQnFh",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "8.向量数据库是怎么存储向量的，比如pg的vector",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "DWVndl64toW3NYxPEQpc9fWJn8g",
+    "block_type": 2,
+    "parent_id": "BM5idVZ4oomwnKxLCk9cKLmQnFh",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "9.前后端交互的协议是什么？微服务交互的协议呢",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "CLXqdvJZ2oIabKx334Ac1A6knhb",
+    "block_type": 2,
+    "parent_id": "BM5idVZ4oomwnKxLCk9cKLmQnFh",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "10.用过微服务没？http和rpc的区别是什么",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "Ruj8dD4fnooSG0xCniScjzu4nYd",
+    "block_type": 2,
+    "parent_id": "BM5idVZ4oomwnKxLCk9cKLmQnFh",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "11.讲一下redis和数据库各自干什么的，以及原理是什么",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "G2B9dpxPxoEMmfx4qsHcxzwJnXc",
+    "block_type": 2,
+    "parent_id": "BM5idVZ4oomwnKxLCk9cKLmQnFh",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "12.redis做分布式怎么理解",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "HisgdNnG8oadtjxtzsNc5k4XnH5",
+    "block_type": 2,
+    "parent_id": "BM5idVZ4oomwnKxLCk9cKLmQnFh",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "13.langchain和langgraph有什么区别",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "F1bPdSueUoTGPOxv7PAcNqcin3b",
+    "block_type": 2,
+    "parent_id": "BM5idVZ4oomwnKxLCk9cKLmQnFh",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "JN7odEdToo3MDtx5IHoc5zxqn4d",
+    "block_type": 2,
+    "parent_id": "BM5idVZ4oomwnKxLCk9cKLmQnFh",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  }
+]

@@ -1,0 +1,883 @@
+[
+  {
+    "block_id": "Bq5Pdzv7KoSpa9xfXxbcu4oSnKh",
+    "block_type": 1,
+    "children": [
+      "U9BjdeLFFoeCRlxG2cAc3RxOnqL",
+      "LqWSdVRqRoJsgax9leucJF2mnmc",
+      "S3ged5gDKoIenVxITVccTcWhn9e",
+      "JGp9drxpEouZJ5xY4VVckoW3nKd",
+      "SKnydUMpXo9Xa4xgS9Xc7JxPnQ1",
+      "WDBtd5oLOoZl9ZxPePfctJIInAj",
+      "CyWHdYgmmoV9BlxZeBecP3sgnsg",
+      "W08fdikWQopi1mx6Brtce3cGnQd",
+      "GeDQdjReIocWgKxZjDAcHKhLnmG",
+      "CINqdSHSSoK0GDxrnXEco0ocn7d",
+      "SP5AdT0jroCgmlx0y1rcQaoFndf",
+      "SSeDd8mBSod76XxstaPc1UvQnDh",
+      "S1yydNIuCoY4zdx6bhqcfVNqnPe",
+      "GoXVdam8UoDHGPxyVzqcrL5GnPg",
+      "O6W0dotzIoKg6yxm6DlcnQfnn5c",
+      "S7aYdk0BxosvF4xcPkVcS1LJnqP",
+      "FQNedYfQPoKVT4x1X4dcperGnnc",
+      "ZvVhdgqSMoWdofxMSRbcUH8hn3g",
+      "WjgkdMFosoJChqx2BzecSdgHnJh",
+      "ZQGFda7bMo9t8axo6VccoNpynSg",
+      "VVScdHzEeo3wazxdB82cI87fnLh",
+      "TbpTd3GjMor9BHx1wL2cd8Qdnyc",
+      "SLmLdohBHoPP71xFRGIcGh26n7d"
+    ],
+    "page": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "携程｜支付部门｜前端一面面经",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1
+      }
+    },
+    "parent_id": ""
+  },
+  {
+    "block_id": "U9BjdeLFFoeCRlxG2cAc3RxOnqL",
+    "block_type": 2,
+    "parent_id": "Bq5Pdzv7KoSpa9xfXxbcu4oSnKh",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "📅 面试时间：2026-09-08",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "LqWSdVRqRoJsgax9leucJF2mnmc",
+    "block_type": 2,
+    "parent_id": "Bq5Pdzv7KoSpa9xfXxbcu4oSnKh",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "🏢 面试部门：携程支付部门（国内 / 国际及海外支付方向）",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "S3ged5gDKoIenVxITVccTcWhn9e",
+    "block_type": 4,
+    "heading2": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "一、实习 & 项目经历",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "Bq5Pdzv7KoSpa9xfXxbcu4oSnKh"
+  },
+  {
+    "block_id": "JGp9drxpEouZJ5xY4VVckoW3nKd",
+    "block_type": 2,
+    "parent_id": "Bq5Pdzv7KoSpa9xfXxbcu4oSnKh",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "主要围绕实习经历和项目产出深挖：",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "SKnydUMpXo9Xa4xgS9Xc7JxPnQ1",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "实习期间主要负责哪些工作？有什么具体产出？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "1"
+      }
+    },
+    "parent_id": "Bq5Pdzv7KoSpa9xfXxbcu4oSnKh"
+  },
+  {
+    "block_id": "WDBtd5oLOoZl9ZxPePfctJIInAj",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "针对具体项目经历进行细节追问。",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "Bq5Pdzv7KoSpa9xfXxbcu4oSnKh"
+  },
+  {
+    "block_id": "CyWHdYgmmoV9BlxZeBecP3sgnsg",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "实习中的开发工作流是怎样的？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "Bq5Pdzv7KoSpa9xfXxbcu4oSnKh"
+  },
+  {
+    "block_id": "W08fdikWQopi1mx6Brtce3cGnQd",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "Skill 相关工作是如何设计和使用的？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "Bq5Pdzv7KoSpa9xfXxbcu4oSnKh"
+  },
+  {
+    "block_id": "GeDQdjReIocWgKxZjDAcHKhLnmG",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "定时任务相关功能是如何实现的？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "Bq5Pdzv7KoSpa9xfXxbcu4oSnKh"
+  },
+  {
+    "block_id": "CINqdSHSSoK0GDxrnXEco0ocn7d",
+    "block_type": 4,
+    "heading2": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "二、JavaScript 基础",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "Bq5Pdzv7KoSpa9xfXxbcu4oSnKh"
+  },
+  {
+    "block_id": "SP5AdT0jroCgmlx0y1rcQaoFndf",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "什么是闭包？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "1"
+      }
+    },
+    "parent_id": "Bq5Pdzv7KoSpa9xfXxbcu4oSnKh"
+  },
+  {
+    "block_id": "SSeDd8mBSod76XxstaPc1UvQnDh",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "闭包在实际开发中有哪些应用场景？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "Bq5Pdzv7KoSpa9xfXxbcu4oSnKh"
+  },
+  {
+    "block_id": "S1yydNIuCoY4zdx6bhqcfVNqnPe",
+    "block_type": 4,
+    "heading2": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "三、React",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "Bq5Pdzv7KoSpa9xfXxbcu4oSnKh"
+  },
+  {
+    "block_id": "GoXVdam8UoDHGPxyVzqcrL5GnPg",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "如何理解 ",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "useState",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "？状态更新的过程是怎样的？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "1"
+      }
+    },
+    "parent_id": "Bq5Pdzv7KoSpa9xfXxbcu4oSnKh"
+  },
+  {
+    "block_id": "O6W0dotzIoKg6yxm6DlcnQfnn5c",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "useMemo",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": " 和 ",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "useCallback",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": " 有什么区别？分别适用于什么场景？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "Bq5Pdzv7KoSpa9xfXxbcu4oSnKh"
+  },
+  {
+    "block_id": "S7aYdk0BxosvF4xcPkVcS1LJnqP",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "全局变量能不能放到 ",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "useMemo",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": " 的依赖数组中？为什么？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "Bq5Pdzv7KoSpa9xfXxbcu4oSnKh"
+  },
+  {
+    "block_id": "FQNedYfQPoKVT4x1X4dcperGnnc",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "useEffect",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": " 和 ",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "useLayoutEffect",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": " 有什么区别？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "Bq5Pdzv7KoSpa9xfXxbcu4oSnKh"
+  },
+  {
+    "block_id": "ZvVhdgqSMoWdofxMSRbcUH8hn3g",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "React 为什么要引入 Fiber 架构？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "Bq5Pdzv7KoSpa9xfXxbcu4oSnKh"
+  },
+  {
+    "block_id": "WjgkdMFosoJChqx2BzecSdgHnJh",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "React 的 Diff 过程是怎样的？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "Bq5Pdzv7KoSpa9xfXxbcu4oSnKh"
+  },
+  {
+    "block_id": "ZQGFda7bMo9t8axo6VccoNpynSg",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "Diff 过程中 ",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "key",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": " 起什么作用？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "Bq5Pdzv7KoSpa9xfXxbcu4oSnKh"
+  },
+  {
+    "block_id": "VVScdHzEeo3wazxdB82cI87fnLh",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "为什么要求 ",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "key",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": " 唯一且稳定？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "Bq5Pdzv7KoSpa9xfXxbcu4oSnKh"
+  },
+  {
+    "block_id": "TbpTd3GjMor9BHx1wL2cd8Qdnyc",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "什么样的 ",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "key",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": " 才算是一个好的 ",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "key",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "Bq5Pdzv7KoSpa9xfXxbcu4oSnKh"
+  },
+  {
+    "block_id": "SLmLdohBHoPP71xFRGIcGh26n7d",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "同层节点 Diff 时，React 是如何利用 ",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "key",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": " 进行匹配的？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "Bq5Pdzv7KoSpa9xfXxbcu4oSnKh"
+  }
+]

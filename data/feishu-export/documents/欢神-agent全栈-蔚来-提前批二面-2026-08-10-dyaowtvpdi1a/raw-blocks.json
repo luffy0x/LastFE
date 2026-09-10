@@ -1,0 +1,1501 @@
+[
+  {
+    "block_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv",
+    "block_type": 1,
+    "children": [
+      "JndldI5UcoXJOPxz8ZXcLkainZc",
+      "VnS6d6I4joAzmzxMexhcMshznsb",
+      "YnlPdgImyo38G5xQeUBc4IbNnHg",
+      "YnAsdYyqYooXkqxzxZ6cj4IIncf",
+      "Rv2adLOnFoX2aGxJ4Z9ccnc5nkh",
+      "M7P6dblWuoNzBmxbNWGchly3nMg",
+      "QT9BdLfiWoHSxrxIvnqcPKHknvd",
+      "ICaudx5wgovgVzxM5KWcQZIdnLe",
+      "IDk2d5EOsoHThExsUHBc8kQWnUd",
+      "Nl5gdZT6RoD2oUxqpGhckQornLb",
+      "R7ySdq7Z9oOKYuxBtZJcDLFknqe",
+      "HdF2dsyukozLx5xs3VYcES6bnFq",
+      "C57TdxeR6ot5D2xFFiuc8ixXn9b",
+      "EHxydbgRIoPPHTxGmAPcUEjQnYb",
+      "N1nfdsWVnovVzFxDSAqcQsTwnpd",
+      "W6HSdNweWoWfTjxhClfclB8Wn1b",
+      "SazqdDQQwoMueUxYCsacUqBVnup",
+      "SIpddZYnnoUYADxzzeqcLACQnSc",
+      "ZxiIdSk8VonqVexuF1Ec3Nhkn0f",
+      "LP5cdVwZuofYtrx5K7Wcj1pqn5g",
+      "MuPjdctRBoa1lHx9TZncdQQunOc",
+      "BDUJdyj7Fo2AfQx6mVvcT4FqnVb",
+      "SjmpdD74Vo4uZVxFUGKcHXDJntf",
+      "JfH2dwnOQoI6SPxCxNCck25onif",
+      "SFB4dZqgBofl3NxpDJ6c8w7Mnoc",
+      "UhDLd1jZJoMM5YxyYlFcMYIjnOe",
+      "CaJGdZYPaodwU7xnppscq9XWnub",
+      "DbfVdBxmMoE4VyxexQTcWsBknuc",
+      "FKEbdPfpcoh4CsxViD8c7rvbn0f",
+      "GP6kdINtMoUBpmxyYplcGaEqn5f",
+      "EdXfdKCqpo938qxfSNBc0WkEnhh",
+      "DICHd1eyroyoXgxDkozceNRvn9E",
+      "WWIldwCgUoeOHjxQqVLcOz24nxe",
+      "GiiPdGiFNovTcZxJcpXcfIpGnoc",
+      "IJp8dBKCVoq6ktxHwBicltSFn3b",
+      "PAd2dQtdco7VI8xbM4VcIEWnnbh",
+      "ENXHd1UmNomdAnxyWKvcYxt9nec",
+      "BoXUdFXZhoRLkWxE7vjcJS0lnPh",
+      "OFdNdZGjtofxpMxTYz7cSx0anec",
+      "HPmJdrSwboTo36xjgsZcHKiJnhh",
+      "TfpOdYuxsoqmxrx17SncFeLNnCb",
+      "FnS1d81AzoLC36xkJx6coXZ9nFd",
+      "IJqbdMPTZo35k1xKl7jc4cVSnRb",
+      "ZfbZdlaT6oUYfCxg0Rqc79d4nIb",
+      "Xe8mdr0hDoc81UxIWSTcoWAnnce",
+      "NmXadbZKEoxjCrxwYJ9ctCRQnGd"
+    ],
+    "page": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "欢",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "神",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "-agent全栈-蔚来-提前批二面-2026-08-10",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1
+      }
+    },
+    "parent_id": ""
+  },
+  {
+    "block_id": "JndldI5UcoXJOPxz8ZXcLkainZc",
+    "block_type": 4,
+    "heading2": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "一、学习与实习背景",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv"
+  },
+  {
+    "block_id": "VnS6d6I4joAzmzxMexhcMshznsb",
+    "block_type": 5,
+    "heading3": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "1.1 个人概况",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv"
+  },
+  {
+    "block_id": "YnlPdgImyo38G5xQeUBc4IbNnHg",
+    "block_type": 2,
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "问题1",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "：你是明年毕业是吧？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "YnAsdYyqYooXkqxzxZ6cj4IIncf",
+    "block_type": 2,
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "问题2",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "：最近一年是在做Agent相关开发吗？还是只做了两个月？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "Rv2adLOnFoX2aGxJ4Z9ccnc5nkh",
+    "block_type": 2,
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "追问",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "：Agent的开发做了一段时间后就没有持续做了？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "M7P6dblWuoNzBmxbNWGchly3nMg",
+    "block_type": 2,
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "问题3",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "：专业是软件工程，在学校学过哪些计算机相关课程？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "QT9BdLfiWoHSxrxIvnqcPKHknvd",
+    "block_type": 2,
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "问题4",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "：毕业设计开始做了吗？到什么程度？什么题目？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "ICaudx5wgovgVzxM5KWcQZIdnLe",
+    "block_type": 2,
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "问题5",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "：传统软件开发这块你有什么侧重点？对什么语言比较熟悉？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "IDk2d5EOsoHThExsUHBc8kQWnUd",
+    "block_type": 2,
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "问题6",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "：对Java熟悉吗？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "Nl5gdZT6RoD2oUxqpGhckQornLb",
+    "block_type": 2,
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "问题7",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "：移动端开发没有做过是吧？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "R7ySdq7Z9oOKYuxBtZJcDLFknqe",
+    "block_type": 5,
+    "heading3": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "1.2 AI Coding 接触经历",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv"
+  },
+  {
+    "block_id": "HdF2dsyukozLx5xs3VYcES6bnFq",
+    "block_type": 2,
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "问题8",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "：你是什么时间开始接触AI Coding的？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "C57TdxeR6ot5D2xFFiuc8ixXn9b",
+    "block_type": 2,
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "问题9",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "：后续做的那些项目，是自己手写代码完成的，还是主要用AI Coding工具来完成的？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "EHxydbgRIoPPHTxGmAPcUEjQnYb",
+    "block_type": 22,
+    "divider": {},
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv"
+  },
+  {
+    "block_id": "N1nfdsWVnovVzFxDSAqcQsTwnpd",
+    "block_type": 4,
+    "heading2": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "二、AI Coding 深度问题",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv"
+  },
+  {
+    "block_id": "W6HSdNweWoWfTjxhClfclB8Wn1b",
+    "block_type": 2,
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "问题10",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "：说一下用AI Coding你自己沉淀下来的经验和范式，以及现在AI Coding存在哪些问题，整体上讲一下。",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "SazqdDQQwoMueUxYCsacUqBVnup",
+    "block_type": 2,
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "追问",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "：你觉得从设计稿到代码目前还不太好解决是吧？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "SIpddZYnnoUYADxzzeqcLACQnSc",
+    "block_type": 2,
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "问题11",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "：在一个特别大的项目里面去增加一部分需求，AI怎么能够快速理解这个项目现在是怎么做的？需求文档可能只描述局部功能的迭代，但AI做的时候需要了解历史功能以及依赖的系统上下游，这种大型项目中小需求迭代的开发怎么解决？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "ZxiIdSk8VonqVexuF1Ec3Nhkn0f",
+    "block_type": 22,
+    "divider": {},
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv"
+  },
+  {
+    "block_id": "LP5cdVwZuofYtrx5K7Wcj1pqn5g",
+    "block_type": 4,
+    "heading2": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "三、系统设计题：APP自诊断Agent",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv"
+  },
+  {
+    "block_id": "MuPjdctRBoa1lHx9TZncdQQunOc",
+    "block_type": 2,
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "问题12",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "：如果让你设计一个APP的自诊断Agent技能——APP在使用过程中会遇到白屏、闪退、某些功能不可用等问题，传统做法是用户截图发给客服或提交问题反馈系统，由研发排查。现在要做成让用户跟AI交互，或者提交问题后能自助排查、通过引导方式解决。你说一下：",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "BDUJdyj7Fo2AfQx6mVvcT4FqnVb",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "架构上应该怎么设计？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv"
+  },
+  {
+    "block_id": "SjmpdD74Vo4uZVxFUGKcHXDJntf",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "有哪些关键点？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv"
+  },
+  {
+    "block_id": "JfH2dwnOQoI6SPxCxNCck25onif",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "和传统做法不一样的地方应该怎么实现？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv"
+  },
+  {
+    "block_id": "SFB4dZqgBofl3NxpDJ6c8w7Mnoc",
+    "block_type": 2,
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "追问1",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "：前端UI交互可能是问答式的，用户可能发截图说\"我昨天下单买商品那个错了\"，时间是用自然语言描述的。你不能把本地所有日志都提交，太大了。AI怎么从APP本地去捞数据？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "UhDLd1jZJoMM5YxyYlFcMYIjnOe",
+    "block_type": 2,
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "追问2",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "：相当于在本地做一个类似MCP服务的东西是吧？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "CaJGdZYPaodwU7xnppscq9XWnub",
+    "block_type": 2,
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "追问3",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "：技术实现上，如果本地起HTTP Server的话，服务端访问不了客户端，应该用什么方式实现？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "DbfVdBxmMoE4VyxexQTcWsBknuc",
+    "block_type": 2,
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "追问4",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "：服务端怎么给客户端下发指令？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "FKEbdPfpcoh4CsxViD8c7rvbn0f",
+    "block_type": 2,
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "追问5",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "：信息链路用什么方式？怎么建立？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "GP6kdINtMoUBpmxyYplcGaEqn5f",
+    "block_type": 2,
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "追问6",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "：WebSocket可以去建立连接是吧？建立一个命令通道？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "EdXfdKCqpo938qxfSNBc0WkEnhh",
+    "block_type": 2,
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "追问7",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "：这个链路跟AI绘画是完全独立的另外一条链路吗？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "DICHd1eyroyoXgxDkozceNRvn9E",
+    "block_type": 2,
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "追问8",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "：是两条链路还是一条？用一条吗？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "WWIldwCgUoeOHjxQqVLcOz24nxe",
+    "block_type": 2,
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "追问9",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "：用户可见的聊天记录里不能有信息传输的流程，应该是用户不可见的，反正都是一些数据对吧？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "GiiPdGiFNovTcZxJcpXcfIpGnoc",
+    "block_type": 22,
+    "divider": {},
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv"
+  },
+  {
+    "block_id": "IJp8dBKCVoq6ktxHwBicltSFn3b",
+    "block_type": 4,
+    "heading2": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "四、记忆系统与知识图谱",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv"
+  },
+  {
+    "block_id": "PAd2dQtdco7VI8xbM4VcIEWnnbh",
+    "block_type": 2,
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "问题13",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "：之前在美团做过记忆系统是吧？你觉得记忆系统有什么难点？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "ENXHd1UmNomdAnxyWKvcYxt9nec",
+    "block_type": 2,
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "问题14",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "：知识库RAG、知识图谱、本体这些名词你都了解过吗？能解释一下它们之间的关联关系吗？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "BoXUdFXZhoRLkWxE7vjcJS0lnPh",
+    "block_type": 2,
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "追问",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "：后面我说了一个词叫\"本体\"，你听过吗？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "OFdNdZGjtofxpMxTYz7cSx0anec",
+    "block_type": 22,
+    "divider": {},
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv"
+  },
+  {
+    "block_id": "HPmJdrSwboTo36xjgsZcHKiJnhh",
+    "block_type": 4,
+    "heading2": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "五、其他",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv"
+  },
+  {
+    "block_id": "TfpOdYuxsoqmxrx17SncFeLNnCb",
+    "block_type": 2,
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "问题15",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "：工作地点主要是武汉跟合肥这两个城市，你觉得OK吗？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "FnS1d81AzoLC36xkJx6coXZ9nFd",
+    "block_type": 2,
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "问题16",
+            "text_element_style": {
+              "bold": true,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "：你有什么问题吗？（反问环节）",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "IJqbdMPTZo35k1xKl7jc4cVSnRb",
+    "block_type": 22,
+    "divider": {},
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv"
+  },
+  {
+    "block_id": "ZfbZdlaT6oUYfCxg0Rqc79d4nIb",
+    "block_type": 4,
+    "heading2": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "录音转文字",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv"
+  },
+  {
+    "block_id": "Xe8mdr0hDoc81UxIWSTcoWAnnce",
+    "block_type": 14,
+    "code": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "\n发言人1   00:04\n\n能听见。\n\n发言人2   00:06\n\n欢迎参加今天的面试。\n\n发言人1   00:08\n\n你好你好。\n\n发言人2   00:12\n\n你是明年毕业是吧？\n\n发言人1   00:16\n\n是的。\n\n发言人2   00:16\n\n有过。最近一年是在做这个A型的相关开发吗？还是说只其中是做了两个月？\n\n发言人1   00:28\n\n两个月那个是指我在美团的一个经营是吧？那个的话确实只做两个月。因为在那我一进去，就是我进去两个月之后，那个主被上面给砍掉了。然后后续其实在这六个月，是在美团的一个核心本地商业一个下面一个业务基建部门去做相应的一个基建相关的一个开发。然后后续再字节跳动的话，其实我除了业务之外，也有去做一些AIAT的相关AI以及AT的相关的一些东西，大概是这样的。\n\n发言人2   01:05\n\n所以AD的开发其实是做了一段时间，然后后面没有持续的去做？今年今年。\n\n发言人1   01:16\n\n是的。\n\n发言人2   01:18\n\n好的，然后你的专业是软件工程，在学校里面学过相关的一些课程吗？\n\n发言人1   01:26\n\n学过的像数据结构，然后计算机网络，计算机的原理这些专业课都是有学习过。\n\n发言人2   01:35\n\n学了哪些计算机相关的课程。\n\n发言人1   01:37\n\n可以讲一下吗？计算机网络、计算机图层原理，然后软件测试，然后java，然后那个网页开发，就前端相关的以及那些什么计算机组成原理，数据结构与算法。我想想还有一些专业。\n\n发言人2   02:00\n\n你们会做那个毕业设计吗？\n\n发言人1   02:04\n\n会的对。\n\n发言人2   02:05\n\n这个是现在开始做了吗？是到什么程度？\n\n发言人1   02:09\n\n这个。\n\n发言人2   02:09\n\n什么什么题目。\n\n发言人1   02:11\n\n我们还没开始。这个的话参照往年一般是年底11月、12月才会开始。参照网上的学长他们来看的话，还没开始做对吧？是的。\n\n发言人2   02:26\n\n然后关于这个传统的软件开发这一块儿，你有什么侧重点吗？是对哪一块比较熟悉，对什么语言比较熟悉？\n\n发言人1   02:36\n\n我其实最熟悉的是那个前端，GS和TS。然后其实像后端是之前学过，也在全球开发的时候也做过，但是后面几段实习的话就没太接触。然后后面的后端能力就是靠自己去做项目的时候，自己做自己项目才去那个的。所以说所所以说在我自己的能力上和工作平时做的内容来看，目前更熟悉的是前端，就GS和GS这些内容。\n\n发言人2   03:08\n\nOK对java怎么样？熟悉吗？\n\n发言人1   03:14\n\nJava挺熟悉的，然后相关的mysql、redis, 然后消息队列那是有所了解的。\n\n发言人2   03:22\n\n但是移动端的开发是没有做过的，是吧？\n\n发言人1   03:26\n\n移动端的话就是我只做过那种跨端开发的，但是没有去做过那种原生开发。然后之前自己有做过一个小项目，是用那个KT看KT去开发。但是那一块其实主要是我去写需求，然后让AI去开发，我验证效果。所以说对移动端本身可能没那么熟悉。\n\n发言人2   03:50\n\n那你是什么时间开始接触这个AI coding呢？\n\n发言人1   03:55\n\n我的话其实encoding就时间点，我感觉应该是大二上海还是大一下那个时候。那个时候我就是在学习家，然后当时是也出了那个视频AI当时还没有进入到那个没问的那一个，还没有专门的的包。就是在sp刚结束的时候，我当时就是你去有去跑过一个demo，后续也加就是我在我们学校里面去给一些学长他做之前有段时间给他们做毕设。然后在毕设里面去做后端开发的时候，就融入了一些AI相关的功能。但是当时做的比较简单，我其实就是用视频AI去配置好相关的一个大模型。然后大模型其实部署的是本地通过本地奥拉马去部署的一个模型，然后去做一些问答式的一个系统，大概是这样的。\n\n发言人2   04:54\n\n后续的你在做的那些项目，是你自己手写代码完成的，还是主要有些coding那个工具来完成的？\n\n发言人1   05:04\n\n后续的话其实就是感觉就是在那个吉安之星，也就是我第一家实习公司的时候，我可能有个百分之五六十的AI共AI担保贡献率。然后后面的话后面可能就是八九十。当时在坚持自信的时候，一个是因为那个公司比较小，然后我个人金钱比较窘迫，没有去用好的AI当时就是和老板一起拼的cos然后去免费用的。后面进入美团和字节之后，就是用内部的一些AI的一些余额去做开发。然后就主要是给AI输入信息，然后去review，去兜底，去这样子完成需求。\n\n发言人2   05:58\n\n你说一下用AI coding的话，就是你自己所沉淀下来的一些经验跟范式，以及现在AI coding它存在哪些问题，你整体上讲一下。\n\n发言人1   06:15\n\n好的，我先讲一下我自己现在的一个开发流程的话。现在的话我基本上就是比如说我拿到一个PID或者说一句话需求，那么我就会把这个需求直接发给AI，然后让他去总结一个50就50行左右的一个实现的一个文档，让它包括一些这个东西的背景是什么，然后现有的状态是什么，然后他打算怎么改动，会涉及哪些点，然后这些东西我会去留给他的这一个文件，然后根据我自己对PRD和需求的理解去进行一些纠正。纠正完了之后再让AI他把再让AI用闺蜜回回sock这样的skill，然后让他去查找。如果按照这个计划实施行的话，他还欠还需要哪些信息。比如说有哪些边界信息没有包含到，有哪些的场景没有包含到，然后有哪些需求点没有包含到。然后这些东西我会审核的给他确认，然后确认之后生成一个详细的文档，然后让他去进行一个开发。\n\n发言人1   07:27\n\n开发的时候如果比较大的任务的话，我会让他一个一个去拆分，拆分出那个比较细的一个执行步骤。然后他们完成一个步骤，我再进行一个检查。然后在AI写代码的时候，我就会去看AI正在动哪一块上下文，然后相关的就是它的上游和下游是怎么样的，他这样的改动合不合理，会去这样评估。然后等待开发完成之后，我会让他去跑一个自己去尝试一下，能不能把代码给改的给更简洁一点。\n\n发言人1   07:56\n\n然后去看review，自己留用一下，看看有没有什么安全隐患之类的东西。如果是一个比较好验证的东西的话，我可能还会让AI去通过那个浏览器的那一个科目的一个MCP去连接到浏览器，进行一个字体验证。然后这些流程完成之后，我再会进行一个自己再去跑自己再去留个代码再去验证。然后在AICR，然后在CR这样子的一个流程去开发。\n\n发言人1   08:25\n\n然后我遇到的问题其实怎么说，比如说在那个项目里面，我之前有加了很多那个skill，但是说实话那些skill它有一些描述信息不是很准确，而且有一些比较重复的一些，然后他就会去干扰他的上下文。然后这一块的话，其实我们部门有想做一个需求，就是是一个一个治理。然后这一块我在调研，其实场内自己内部也有一些实践，然后这个的话可以待会可以详细说一下。\n\n发言人1   09:09\n\n然后还有一个问题的话就是目前我们也有在推进一个DTOC的一个东西，就是design to code。然后我想直接通过B干嘛或者说设计稿的方式去去直接生成一个代码。然后这一块的话，其实我们基本上是能够实现一个大体的效果。但是如果投放到C端平台的话，在UI走查层面会有很多细小的细节不能够满足不能没有完全和设计稿吻合，会出现就之前这些走查的时候出现了十几个差那种小细节方面的一些变动。然后这一块其实我目前来说可能觉得没有什么好的办法去解决话。如果可以有提升的地方，一个是AI氧酸AI能力自己的一个提升。另一个我觉得是在西格玛还有出设计稿的那个环节，去让他们能够更加输出一些结构化的一些信息。\n\n发言人1   10:16\n\n比如说我这个按钮它对应的什么颜色，然后对应的一个字体大小，这些信息都能把你的输出出来，然后让AI再优化一下它的那个AI工作理由可能会效果好一点。但是我觉得这个问题至少在这几年之内肯定还会存在的，不能可能完全解决。所以说只能是一个在工程层面上尽量去避免，然后这个大概就是我想说的内容。\n\n发言人2   10:49\n\nOK你觉得从设计稿到代码这个目前还不太好解决是吧？\n\n发言人1   10:56\n\n是的。\n\n发言人2   10:57\n\nOK如果是在一个特别大的项目里面去增加一部分需求的话，你觉得这个AI他怎么能够让AI快速的理解这个项目，现在是怎么做的？就是你你可能有需求文档，但这个需求文档它描述的可能只是一个局部功能的一个迭代。但是AI做的时候，它需要了解这个历史的功能，以及它依赖的这个系统的上下游。就是这个是怎么去解决这种大型项目，AI去理解大型项目以及需求，就是小的需求迭代这种功能的。\n\n发言人1   11:40\n\n开发的这种的话，我觉得首先就是这个项目本身要比较AF friendly。什么AF的呢？比如说我这一个模块，它就是我项目不是有很多模块，然后模块之间要尽量的从目录上面就可以做到那个值得分明，不要就是一个文件里面可能耦合了几个模块的内容耦合在一起。当然如果这个文件是本身的一个是一个刹的，或者说一个聚合类的一个，它本身功能就是聚合的那当然无所厚非。但是本身模块清晰的话，这样子AI它搜索相关的上下文就能够顺着这个文件以及文件的依赖，就是这些信息可以去比较好的一个查找，然后不会有一个太大的一个干扰。还有的话就是我们这边其实也做了一些native的改造。\n\n发言人1   12:37\n\n其实这边的思路的话怎么说呢？就是我们就是会去定期就是会定期的去扫描整个项目，然后让他去更新项目里面每个模块，现在有哪些功能，然后这些功能对应到哪个文件夹。然后就是通过通过大家去扫描仓库的方式去构建项目这些基本信息，然后将AI这样子在后续开发的时候，他就能够根据这些信息去进行一个路由，然后去找到相关的一个上下文，然后尽量的去排除掉其他模块的一个干扰。\n\n发言人1   13:11\n\n其实其实你刚刚说到的就是一个提交信息，我这边之前有在场内看见过一个我觉得比较有意思的实践。他的一个思路是这样的，就是在我开发一个项目的时候，我和那个AI每每一轮进行沟通。然后他主要是给gate的一个hook，还有就是比如说cloud后cloud code的一个hook里面埋下了一些回调函数。然后当用户他和AI沟通的时候，就会把沟通的内容给记下来。然后当用户在提交信息，提交那个get commit的时候，就会get到get push的时候，就会把相应的这一次绘画中所涉及到的那些对话历史给带上去。\n\n发言人1   13:57\n\n然后用AI做一轮压缩，然后去说明这一次改动它考虑到了哪些点，然后改动的范围是怎样的，然后相关的上下文是怎样的，把这些给作为一个单独文件上传，然后和本身文件的就是和本身代码的改动去一起上传。然后上传的话它是分开的，就是代码上传到某个需求分支，然后那个上下文的话上传到一个story叉叉叉的一个分支，然后通过get它一个提交对象的SH去关联起来。然后这样子的话就可能就可以做到在代码提交的时候，不仅可以能够让后续的人看到代码地址变化，也能够看到他在地府的时候他的一个考量点，一些方案为什么要这么设计的一些内容。然后这些就是我了解到。\n\n发言人2   14:49\n\n一些。\n\n发言人1   14:50\n\n实践OK.\n\n发言人2   14:54\n\n如果让你设计一个APP的一个自诊断的AA技能，现在APP不是在使用的过程中会遇到一些白屏、闪退，以及某些功能不可用的这些问题。然后传统的做法是用户去把问题描述一下，截个图然后发给客服，或者是提交一个问题反馈系统，然后由这个研发人员来排查这个问题。假如说你要做一个APP上的这个自诊断的agent，就是我们不用客服去去诊断它，让让这个用户跟那个AI交互。或者是说他提交了这个问题以后，能够自助的去给他排除这个问题，或者是通过引导的方式，那就做这样的一个问题诊断的一个agent。你说一下它的架构上应该怎么设计，以及有哪些关键的点。设计上关键的点需要就跟传统的一点的不一样的地方，应该怎么去实现这个AG.\n\n发言人1   16:03\n\n首先我觉得价格上的话，这个AG它就是我们开发区的朋友吃饭是吧？一个像work floor，然后workflow去编排，或者说让AS去探索。我觉得这种场景它更加适合那种VI去通过工具去获取上下文，然后去收集信息，再去排查问题这么一个方式。所以我觉得第二个的话就是给一个AI他一些相应的收集上下文的工具，然后给他一些文档库，然后让他根据设计的一个简化的模型，就是让他根据设计它的上下文去对照文档库。然后一些上下文就是堆栈信息这类东西去进行一个判断。然后去，还有一个就是大概思路是这样的。\n\n发言人1   16:50\n\n然后他具体的实现，比如说工具的话，我可能会去关注它，就是我们这个系统它肯定要有一个比较完善的日志体系。当我每个功能不可用的时候，那相应的对战信息，然后相应的trace ID，然后能够推更更需要能够根据这些确实ID去追溯到它一个完整的比较完整的一个执行链路。然后AI就可以通过这些测试ID以及相应的根据初始ID去收集相应的一个上下文以及堆栈信息的一个工具去判断出然后去判断出我程序出了具体说什么问题是空指针，还是什么资源404，还是什么超时之类的原因，就是最基本的原因是能够判断的。然后。\n\n发言人1   17:40\n\n比如说作为一个如果是前端发生问题的话，那他可能去通过对待信息是获取到的是一个反编译，就是那个筹划之ugly之后的那个的一个代码。那么我们可能就需要去准备像说是mark这些东西。让他能够通过那个花格里之后的代码去进行一个源码的映射。然后去找到通过那个那个日志以及相关的上线，以及相关的对账信息，去找到是哪一个方面进行的出了一个问题。其实这也要求我们的一个代码，它本身的一个异常管理体系也要做好。不能就是随便抛一个很宽泛，或者说在顶部去捕获一个错误这些东西。\n\n发言人1   18:31\n\n然后当AI去收集到相应的堆栈信息，然后确实信息之后，就去访问我们集团内部的一些相关的基建的一些东西。比如说相关的一些像美团的塔罗斯，或者说字节的T这样的一个日志管理平台，以及相应的一个以及相应的一个代码仓库去整去排查这个代码的仓。就是我们找到了一个代码的出错的点之后，就去排查这个代码它的上下游，然后去代码仓库里面去寻找具体是哪里出了问题，然后给出一个诊断建议。然后大体的事我觉得是这样，然后想想还有什么。\n\n发言人2   19:19\n\n他那个前端的UI交互有可能是这种问答式的。他可能会跟大家发一下截图，说我出什么时间出现什么问题。那AI就这个时候是用户一次性的把所有的信息，比如说日志，什么各种买点都上报给AI还是说AI它可以在APP的后台自动的去收集这些信息呢？其实举个例子，用户可能发个图说我昨天下单买商品那个错了，但他说的这个时间是他自然语言描述的。但是你可能提交日志的时候，你又不能提交本地所有的日志，这样可能会太大了。就是他只是这样一个绘画，在这个过程中可能AI会自动的去他的APP里面去收集一些用户相关的日志以及使用信息。这些信息有可能不是在服务端，有可能在APP本地存着呢。这个AI怎么样去从APP本地去捞这个数据呢？\n\n发言人1   20:33\n\n然后这个数据的话，我觉得就比如说你刚刚说那个场景，就是因为他描述他在昨天时间点。\n\n发言人2   20:40\n\n下单某个。\n\n发言人1   20:42\n\n时间点，然后每个页面这一块页面的话，应该可以通过动脉态模型，去能够判断出来这个页面对应的是哪一个路由。其实我觉得这一块我想去尽可能的扫描日志的话，就需要在日志那边去装一些元数据。\n\n发言人2   21:02\n\n就是我它可能是在本地存着的，它有大模型，不是运行AD的，不是运行在服务器上面。他其实没有这个日志信息，他需要让这个用户跟用户需要从用户这个APP里面去提取这个用户日志信息。那这个架构上应该怎么设计？还是说应该在本地做一个APP本地的一个agent，让他直接去读本地的日志呢？\n\n发言人1   21:31\n\n我觉得本地设计的，可能我目前对I的判断来说，可能还是成本比较高，然后性能对低端用户不太友好。所以我觉得还是可能放在那个远端。然后可能的一个方法就是AI就是用户通过这个就是通过一个聊天界面和端的服务器进行沟远端服务器上面的AI进行一个沟通。比如说传一个图片，然后有相关的一些时间信息，然后动漫三模型去找这个图片属于哪个组件，哪来的度是什么。然后在在客户端本地的应用里面去买一个暴露一个接口。然后就让远程的服务端的AI去去发送一条信息，然后到本地的一个客户端，然后客户端去检查一下信息，解析那条信息之后，确认到是哪端，服务端的AI想要去调取到本地的日志，那么就根据，每当AI传过来的一些参数，像时间，然后路由这些信息去本地。像如果说一句话说单独的一个日志文件里面存储的一些日志去提取出来，然后去里面筛选出相关的内容。根据原数据相关筛选出相关的内容之后，需要把这些东西上报给远端的AI。我想到的可能是这样的。\n\n发言人2   22:57\n\n相当于是在本地需要做一个类似MPMCP服务一样的东西是吧？\n\n发言人1   23:04\n\n是的。\n\n发言人2   23:04\n\n其实这个技术实现上来说，其实本地你要是写HTP服务的话，远程应该是访问不到。从传统的这种技术上来说，他应该用什么方式去实现呢？你如果在本地起HTV server的话，服务端是访问不了客户端的。\n\n发言人1   23:28\n\n那其实其实我感觉就是比起MCP，它更适合那个放射性颗粒一点。\n\n发言人2   23:37\n\n那那服务端怎么给客户端下发指令呢？\n\n发言人1   23:42\n\n比如说我用户描述了一些描述了相关的一些图片，然后时间之类的信息，然后让AI他会主动去就在用户和AI聊的过程中，AI远那边会直接收集信息。就比如说我觉得收集完成了，那么就是我在客户端和服务端之间维护一个双向的一个信息链路，这样的话可能维护收费的比较好一点。然后当AI原。\n\n发言人2   24:07\n\n信息电路用什么方式呢？怎么建立呢？\n\n发言人1   24:11\n\n我现在想到的可能就是那个开。\n\n发言人2   24:16\n\n可以去建立连接是吧？\n\n发言人1   24:19\n\n是的。\n\n发言人2   24:22\n\n建立一个命令通道是吧？\n\n发言人1   24:25\n\n是的。\n\n发言人2   24:26\n\nOK. 这个是跟AI跟这个绘画是完全独立的另外一个链路是吧？\n\n发言人1   24:36\n\n应该也不用完全独立。既然都认为社会的话，那它的一个上下文，就是他们的双向通信。我不太理解为什么会需要用户和AI聊的时候是一个打一个微微博士会的端口。然后AI和原来的和客户端和和客户端的一个放心颗粒也要的一个那一个端口是两个。\n\n发言人2   25:05\n\n是两条链路还是一条？用一条吗？\n\n发言人1   25:08\n\n我觉得一条应该也可以。\n\n发言人2   25:11\n\n但是那个用户聊天的那个用户可见的聊天记录是不能有一些信息传输的流程，应该是用户不可见的，反正都是一些数据对吧？\n\n发言人1   25:23\n\n这个肯定用户是不可见的。但是我觉得这一块前端它肯定能去做一个过滤。然后其实我觉得比较那个的其实是一个权限问题的话，就是可能我用户他需要去同意上传某些日志。我可能考虑的是这样的问题，就是那个本身的他的一个日志的上传这些流程，他可能可以让用户去看见一个上传进度，然后要不要上传，但是发出了哪些东西，就是具体的那些日志文件里面的内容，应该前端是可以控制它展不展示的。\n\n发言人2   26:01\n\nOK好，对，之前你做过美团那边做过那个记忆系统是吧？你觉得记忆系统它有什么难点呢？\n\n发言人1   26:15\n\n基于系统我觉得它的难点就是当时我们做那个场景的话，它面向的用就是怎么去比如说它是一个机器人，然后它会存储用户相关的一些信息。不同的人如果来问那个，就是比如说我用户A然后就是那个硬件存储的用户A的一个信息。那么用户B他想让他去访问，他有没有对应的权限去访问到用户A的一些信息？如果这个信息敏感了怎么办？这是一个权限和安全的问题。\n\n发言人1   26:55\n\n然后另一个就是他的一个召回的，就是他的信息召回的话，其实会有一些问题。就比如说用户他之前用陈述句的方式说了他干了某些事情。然后当用户他访问他想问就是他之前说过什么东西的时候，这个借检索该去怎么去做？就是比如说他某某某天去泰山玩了，那么当用户去问那一周他干了什么东西。如果是通过只通过那个RAG去做一个语音映射的话，就是向量化然后去做一个比对的话，它可能搜出来答案里面是没有相关的内容的。那么我怎么去把相关的内容给捞出来，这些我觉得是难点。然后还有一个是数据的一个归档，我觉得这些是比较难的地方。\n\n发言人2   28:02\n\nOK那个像应该是这个是记忆，你应该做过知识库rab对吧？还有还有知识图谱，这些名词你都有了解过吗？就是有有图对，知识图谱还有本体就是它它应该是解决你说的这些问题的那几个这几个词这些概念能解释一下他们之间的相关的关系，单应的关系吗？\n\n发言人1   28:32\n\n好的，那个的话检索增强生成它分为两个流程。一个是把一个我们的一些信息切片，转化成一个向量，然后存储到向量数据库。然后后续把用户的提问也转换成向量，然后去做向量相似度比对，然后去把相似的信息给捞出来，然后去做一个给大家提供一个上下文信息的这么一个工具。他后续也有，但是它有几个问题，一个就是刚刚说的那一个相关性。\n\n发言人2   29:12\n\n的问题。\n\n发言人1   29:14\n\n对，相关性的问题。还有的话就是他对于精确，就是精确的一些名词，他捕获信息信息捕获不太敏感这些问题。然后刺涂抹的话，它可以解决掉那个相关性和那个敏感的问题。\n\n发言人1   29:33\n\n它是怎么解决的？就是他会把用户的一个输入给抽象成那个点和边。就比如说点的话可能是人、事、地方这些名词。然后编的话就是我就是某个人干某个事，他们之间的一个关系或者说一个动作这样的方式给存储起来。那么当我比如然后也可以加入一些原数据。比如说这样子当用户问我在过去一周之内干什么，那AI可以先去把它转写成先取当前时间，然后把它转写成这一周的一个时间的起始范围。然后通过在知识图谱里面去排查那个云排查出来就是通过节点去筛选用户，筛选用户的节点，然后去筛选它的原数据里面时间位于这个时间段之内的，然后就可以把通过这两个信息给筛选出来的一个实体，还有之间他们的关系都给扒出来，然后作为一个上下文给让他去回复的时候做一个参考。\n\n发言人1   30:38\n\n然后知识图谱的话其实他也有问题，就是他每一步其实都需要用VI去做一个比如说他在转换成那个尸体边的时候，是用大模型去做的。然后在后续那个信息更新的时候，它迁移可能迁移发而动全身，然后这一块也需要去AI就是用大模型去做一个合并，它对token的消耗比较大。然后认识我了认识。然后其实现在也有像我也听说过一些像LMVK之类的一些解决方案。\n\n发言人2   31:15\n\n对，后面我说了一个词叫本体。\n\n发言人1   31:17\n\n你听过吗？本体这个词我可能印象不深。\n\n发言人2   31:23\n\n好吧，行，可能这是最近比较新的一个一些概念。行，大概就这些问题。你这边有什么问题吗？你的这个工作地点主要是武汉跟合肥这两个城市。\n\n发言人1   31:39\n\n你觉得OK吗？都OK的，都OK的，我这边对工作地点是没有需求的话。\n\n发言人2   31:45\n\n行，那你你有什么问题吗？\n\n发言人1   31:48\n\n我就是想想问，对我的一个后续的一个职业发展，还有一个学习方向上有没有什么建议？\n\n发言人2   31:58\n\n后期我们这边因为以前是我我们部门是做这个前端开发的。后期的发展的方向虽然是招聘的这个岗位是AD的开发，但是肯定也就像你在美团的工作一样，也不完全是只做，应该说是一个全栈的方向。它的业务内容不仅包含这个agent本身的开发，还包括使用AI coding的方式做一些传统的业务需求。\n\n发言人2   32:26\n\n我们期望的方式是可以实现这个端到端的，就是不仅是做前端，像使用view或者react这种技术站。那可能也使用也会做一个端到端的一个闭环的系统。就是后端也也是后台开发也需要做。甚至有一些我们自己B端的系统，有可能那个产品的工作也是需要自己去做的。这样就是期望能达到一个减少沟通成本，然后一个人做一个需求。这样的一种方式可以对研发的效率提升是比较多的。\n\n发言人2   33:09\n\n目前就是一个需求，可能再小的一个需求，它如果涉及到端比较多，也需要四五个人去参与。像安卓IOS、鸿蒙什么前端还有后端的沟通的成本是比较高的。可能真正用于这个开发的时间，写代码的时间并没有那么多。那AI coding它可能节省了你这部分写代码的时间，但是沟通的成本也是没有办法降下来。所以想整体提效的话，我们目前的发展方向就是全栈的方式，一个人去做一个需求，这样的话沟通成本会比较低一些。甚至通过自动化测试的方式来做一个整个的一个闭环。这是这反正我们期望的方向是这样的。所以我们招聘这个工程师就没有说定位于一个前端或者是后端某一个技术站，本质上是做全站的。\n\n发言人1   34:05\n\n好的，我觉得我也有一些全程开发的经历，应该还蛮小的。然后就是我能第二个想法就是那个流程的话，就是后续流程可能会需要多久呢？对。\n\n发言人2   34:24\n\n应该会不会很慢，可能一两个月之内会给一个结果。这是应该是第一批招聘，不会拖太长时间，后面就等这个HR的通知。\n\n发言人1   34:38\n\n好的，那我这边暂时没有其他问题。\n\n发言人2   34:42\n\n好，行，感谢参加，感谢今天的面试，好吧？好的，那今天就到这儿。\n\n发言人1   34:48\n\n好的。\n\n发言人2   34:49\n\n谢谢，再见。\n\n发言人1   34:50\n\n",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "再见再见。",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "language": 1,
+        "wrap": false
+      }
+    },
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv"
+  },
+  {
+    "block_id": "NmXadbZKEoxjCrxwYJ9ctCRQnGd",
+    "block_type": 2,
+    "parent_id": "C9Frd8xO0ouSBKxGMEXcbQpHncv",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  }
+]

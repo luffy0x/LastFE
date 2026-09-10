@@ -1,0 +1,662 @@
+[
+  {
+    "block_id": "N6mfdBut4oZ0fjxkg1acy1EKnle",
+    "block_type": 1,
+    "children": [
+      "Q0cSd2K0XoUyDwxzv6WcnXpXn2o",
+      "YX9HdzubYoYFOVxjm9wcHELvnFE",
+      "FkMSdVgXdoAK13xljqkc9j33nZH",
+      "REkgdu1Aio5ZQMxsn4Nco8rMnQg",
+      "Q848dHMMOofCy8xmHTQc1Pmpn9f",
+      "Z6MAdE2emoDY6dxvdLkcFeJLn4c",
+      "S06rdBdSXoKaOnxQjn0cV6WNn2b",
+      "RAyQdXxKioNYEWx5VbZcWv9unob",
+      "MjrMd43j9oEgghxYFi4cS2axnth",
+      "NK2RdktKeoIv33xDH6pcSW7QnUg",
+      "ZghodoiIjolFRDxSWpgcNpBRnB5",
+      "DK7rd2oHVoofsIxPFrOc8BAsnQc",
+      "WVrFd33TwoqDc7x4vhPc9rK6nEg",
+      "X9EadOYkcoUd2WxJ8fxchzvYnaf",
+      "Wf3wd7Coboog0zxM0twcBBlJnKb",
+      "PdY7dQ7GSoLBYcxPWFGcXLsCn1b",
+      "NqnfdudPWoA8eLxAXHMcTzhqndO",
+      "QRUXdViYAolncqxoTHocFWplnHe",
+      "PnuIdSqodorGdsxR04Vc6CjFn2e",
+      "H4cjdyljHoIyaDxqSKHcdNbQn9g",
+      "DXmMd23SKoIutKx3jjsclpFsnAe",
+      "G8Oxds0Dlo1IWjxTERFcLaRJnXc",
+      "JKXhd7pK9oOfBkxhCBxcqS0pnVd"
+    ],
+    "page": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "lhy-滴滴泛前端技术-0827",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1
+      }
+    },
+    "parent_id": ""
+  },
+  {
+    "block_id": "Q0cSd2K0XoUyDwxzv6WcnXpXn2o",
+    "block_type": 4,
+    "heading2": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "一面",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "N6mfdBut4oZ0fjxkg1acy1EKnle"
+  },
+  {
+    "block_id": "YX9HdzubYoYFOVxjm9wcHELvnFE",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "项目拷打",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "N6mfdBut4oZ0fjxkg1acy1EKnle"
+  },
+  {
+    "block_id": "FkMSdVgXdoAK13xljqkc9j33nZH",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "手撕快排",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "N6mfdBut4oZ0fjxkg1acy1EKnle"
+  },
+  {
+    "block_id": "REkgdu1Aio5ZQMxsn4Nco8rMnQg",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "事件循环输出判断",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "N6mfdBut4oZ0fjxkg1acy1EKnle"
+  },
+  {
+    "block_id": "Q848dHMMOofCy8xmHTQc1Pmpn9f",
+    "block_type": 14,
+    "code": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "const async1 = async () => {\n  console.log('async1');\n  setTimeout(() => {\n    console.log('timer1')\n  }, 2000)\n\n  await new Promise(resolve => {\n    console.log('promise1')\n  })\n\n  console.log('async1 end')\n  return 'async1 success'\n}\n\nconsole.log('script start');\n\nasync1().then(res => console.log(res));\n\nconsole.log('script end');\n\nPromise.resolve(1)\n  .then(2)\n  .then(Promise.resolve(3))\n  .catch(4)\n  .then(res => console.log(res))\n\nsetTimeout(() => {\n  console.log('timer2')\n",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "}, 1000)",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "language": 30,
+        "wrap": false
+      }
+    },
+    "parent_id": "N6mfdBut4oZ0fjxkg1acy1EKnle"
+  },
+  {
+    "block_id": "Z6MAdE2emoDY6dxvdLkcFeJLn4c",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "react16前后diff算法的差异",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "N6mfdBut4oZ0fjxkg1acy1EKnle"
+  },
+  {
+    "block_id": "S06rdBdSXoKaOnxQjn0cV6WNn2b",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "引入fiber后为什么render过程可以被中断",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "N6mfdBut4oZ0fjxkg1acy1EKnle"
+  },
+  {
+    "block_id": "RAyQdXxKioNYEWx5VbZcWv9unob",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "fiber节点的结构",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "N6mfdBut4oZ0fjxkg1acy1EKnle"
+  },
+  {
+    "block_id": "MjrMd43j9oEgghxYFi4cS2axnth",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "flex: 1",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": " 有什么效果，如何实现给一个元素设置为可压缩且存在最小宽度",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "N6mfdBut4oZ0fjxkg1acy1EKnle"
+  },
+  {
+    "block_id": "NK2RdktKeoIv33xDH6pcSW7QnUg",
+    "block_type": 2,
+    "parent_id": "N6mfdBut4oZ0fjxkg1acy1EKnle",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "ZghodoiIjolFRDxSWpgcNpBRnB5",
+    "block_type": 4,
+    "heading2": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "二面",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "N6mfdBut4oZ0fjxkg1acy1EKnle"
+  },
+  {
+    "block_id": "DK7rd2oHVoofsIxPFrOc8BAsnQc",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "聊项目",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "N6mfdBut4oZ0fjxkg1acy1EKnle"
+  },
+  {
+    "block_id": "WVrFd33TwoqDc7x4vhPc9rK6nEg",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "类似下面的this输出判断",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "N6mfdBut4oZ0fjxkg1acy1EKnle"
+  },
+  {
+    "block_id": "X9EadOYkcoUd2WxJ8fxchzvYnaf",
+    "block_type": 14,
+    "code": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "class Person {\n  name = 'Tom';\n\n  arrowFn = () => {\n    console.log(this.name);\n  };\n\n  normalFn() {\n    console.log(this.name);\n  }\n}\n\nconst person = new Person();\n\nconst fn1 = person.arrowFn;\nconst fn2 = person.normalFn;\n\nfn1(); // Person 实例、'Tom'\n",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        },
+        {
+          "text_run": {
+            "content": "fn2(); // undefined，随后读取 this.name 报错",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "language": 30,
+        "wrap": false
+      }
+    },
+    "parent_id": "N6mfdBut4oZ0fjxkg1acy1EKnle"
+  },
+  {
+    "block_id": "Wf3wd7Coboog0zxM0twcBBlJnKb",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "最长连续字符统计 'abbcc' => { 'b': 2, 'c': 2 };",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "N6mfdBut4oZ0fjxkg1acy1EKnle"
+  },
+  {
+    "block_id": "PdY7dQ7GSoLBYcxPWFGcXLsCn1b",
+    "block_type": 2,
+    "parent_id": "N6mfdBut4oZ0fjxkg1acy1EKnle",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "NqnfdudPWoA8eLxAXHMcTzhqndO",
+    "block_type": 4,
+    "heading2": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "三面",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "N6mfdBut4oZ0fjxkg1acy1EKnle"
+  },
+  {
+    "block_id": "QRUXdViYAolncqxoTHocFWplnHe",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "聊项目",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "N6mfdBut4oZ0fjxkg1acy1EKnle"
+  },
+  {
+    "block_id": "PnuIdSqodorGdsxR04Vc6CjFn2e",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "聊ai提效",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "N6mfdBut4oZ0fjxkg1acy1EKnle"
+  },
+  {
+    "block_id": "H4cjdyljHoIyaDxqSKHcdNbQn9g",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "手撕EventBus，实现on订阅、off取消订阅、emit发布事件、once仅执行一次对应时间的回调",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "N6mfdBut4oZ0fjxkg1acy1EKnle"
+  },
+  {
+    "block_id": "DXmMd23SKoIutKx3jjsclpFsnAe",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "用的什么构建工具，rspack有什么优势",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "N6mfdBut4oZ0fjxkg1acy1EKnle"
+  },
+  {
+    "block_id": "G8Oxds0Dlo1IWjxTERFcLaRJnXc",
+    "block_type": 12,
+    "bullet": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "css的postion属性有哪些值，分别有什么效果",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "N6mfdBut4oZ0fjxkg1acy1EKnle"
+  },
+  {
+    "block_id": "JKXhd7pK9oOfBkxhCBxcqS0pnVd",
+    "block_type": 2,
+    "parent_id": "N6mfdBut4oZ0fjxkg1acy1EKnle",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  }
+]
