@@ -1,8 +1,9 @@
 import Link from "next/link";
 
+import { Button } from "@/components/Button";
+import { ContentCard, contentCardTint } from "@/components/ContentCard";
 import type { CategoryDefinition } from "../categories";
 import type { ContentSummary, Page } from "../types";
-import { ContentCard } from "@/features/home/components/ContentCard";
 
 type CategoryPageProps = {
   category: CategoryDefinition;
@@ -19,6 +20,12 @@ const FIELD_LABELS: Readonly<Record<string, string>> = {
   source: "来源",
   difficulty: "难度",
 };
+
+const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
 
 export function CategoryPage({
   category,
@@ -83,10 +90,12 @@ export function CategoryPage({
             </label>
           );
         })}
-        <button type="submit">应用筛选</button>
+        <Button type="submit" arrow={false}>
+          应用筛选
+        </Button>
       </form>
 
-      <div className="content-card-list">
+      <div className="content-grid">
         {page.items.length === 0 ? (
           <div className="category-empty">
             <p>
@@ -99,7 +108,16 @@ export function CategoryPage({
             ) : null}
           </div>
         ) : (
-          page.items.map((item) => <ContentCard key={item.id} item={item} />)
+          page.items.map((item, index) => (
+            <ContentCard
+              key={item.id}
+              href={`/content/${item.id}`}
+              title={item.title}
+              eyebrow={dateFormatter.format(new Date(item.publishedAt))}
+              description={item.summary ?? undefined}
+              tint={contentCardTint(index)}
+            />
+          ))
         )}
       </div>
 
@@ -127,9 +145,9 @@ export function CategoryPage({
 
       <footer className="category-page__footer">
         <span>共 {page.total} 条公开内容，投稿经审核后发布</span>
-        <Link className="button-secondary" href={`/submit/${category.slug}`}>
+        <Button href={`/submit/${category.slug}`} variant="secondary">
           向{category.label}投稿
-        </Link>
+        </Button>
       </footer>
     </>
   );

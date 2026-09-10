@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Button } from "@/components/Button";
 
 export default function SubmittedPage() {
   return (
@@ -13,12 +13,10 @@ export default function SubmittedPage() {
           内容不会立即公开。维护者会检查隐私、安全性与内容质量，通过后才会出现在对应分类。
         </p>
         <div className="submission-complete__actions">
-          <Link className="button-primary" href="/">
-            返回首页
-          </Link>
-          <Link className="button-secondary" href="/submit">
+          <Button href="/">返回首页</Button>
+          <Button href="/submit" variant="secondary">
             继续投稿
-          </Link>
+          </Button>
         </div>
       </div>
     </main>

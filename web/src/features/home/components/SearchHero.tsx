@@ -1,5 +1,4 @@
-import Link from "next/link";
-
+import { Button } from "@/components/Button";
 import { GlobalSearch } from "@/features/search/components/GlobalSearch";
 
 export function SearchHero() {
@@ -13,9 +12,9 @@ export function SearchHero() {
       </p>
       <div className="home-hero__actions">
         <GlobalSearch variant="hero" />
-        <Link href="/submit" className="button-secondary">
+        <Button href="/submit" variant="secondary" size="large">
           分享你的内容
-        </Link>
+        </Button>
       </div>
     </section>
   );

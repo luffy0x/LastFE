@@ -20,12 +20,14 @@ describe("submission directory", () => {
     expect(
       screen.getByRole("heading", { name: "选择投稿分类", level: 1 }),
     ).toBeInTheDocument();
-    expect(screen.getAllByRole("link", { name: /投稿.*/ })).toHaveLength(5);
     expect(
-      screen.getByRole("link", { name: "投稿面经记录" }),
+      screen.getByRole("link", { name: "面经记录" }),
     ).toHaveAttribute("href", "/submit/interview");
     expect(
-      screen.getByRole("link", { name: "投稿算法手撕" }),
+      screen.getByRole("link", { name: "算法手撕" }),
     ).toHaveAttribute("href", "/submit/algorithms");
+    expect(
+      screen.getByRole("heading", { name: "面经记录", level: 2 }),
+    ).toBeInTheDocument();
   });
 });

@@ -64,10 +64,10 @@ it("renders the search-first home page with stats, categories and latest content
     );
   }
 
-  expect(
-    screen.getByRole("link", { name: "示例面经标题" }),
-  ).toHaveAttribute("href", "/content/c-1");
-  expect(screen.getByText("一面到 HR 面的完整记录。")).toBeInTheDocument();
+  const latestCardLink = screen.getByRole("link", {
+    name: "示例面经标题",
+  });
+  expect(latestCardLink).toHaveAttribute("href", "/content/c-1");
 
   expect(
     screen.getByRole("link", { name: "开始投稿" }),

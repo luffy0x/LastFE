@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { Button } from "@/components/Button";
 import { CATEGORIES } from "@/features/content/categories";
 import { MarkdownRender } from "@/features/markdown/MarkdownRender";
 import { isSafeHttpUrl } from "@/utils/url";
@@ -57,18 +58,12 @@ export function Dossier({ record }: DossierProps) {
       ) : null}
 
       <footer className="dossier__footer">
-        <Link
-          className="button-secondary"
-          href={`/regions/${record.regionSlug}`}
-        >
+        <Button href={`/regions/${record.regionSlug}`} variant="secondary">
           返回{categoryLabel}
-        </Link>
-        <Link
-          className="button-secondary"
-          href={`/submit/${record.regionSlug}`}
-        >
+        </Button>
+        <Button href={`/submit/${record.regionSlug}`} variant="secondary">
           向{categoryLabel}投稿
-        </Link>
+        </Button>
       </footer>
     </article>
   );

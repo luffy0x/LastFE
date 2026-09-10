@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { ContentCard, contentCardTint } from "@/components/ContentCard";
 import { CATEGORIES } from "@/features/content/categories";
 
 export default function SubmitPage() {
@@ -22,24 +23,19 @@ export default function SubmitPage() {
         <p>选择与你的内容最贴近的分类后提交。内容不会直接公开，审核通过后才会出现。</p>
       </header>
 
-      <div className="submission-directory" role="list">
-        {categories.map((category) => (
-          <section
-            key={category.slug}
-            className="submission-directory__item"
-            role="listitem"
-          >
-            <div>
-              <h2>{category.label}</h2>
-              <p>{category.description}</p>
-            </div>
-            <Link
-              className="button-primary"
+      <div className="content-grid submission-directory" role="list">
+        {categories.map((category, index) => (
+          <div key={category.slug} role="listitem" className="submission-directory__item">
+            <ContentCard
               href={`/submit/${category.slug}`}
-            >
-              投稿{category.label}
-            </Link>
-          </section>
+              title={category.label}
+              eyebrow={category.label}
+              description={category.description}
+              action="去投稿"
+              tint={contentCardTint(index)}
+              headingLevel="h2"
+            />
+          </div>
         ))}
       </div>
 

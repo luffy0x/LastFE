@@ -1,6 +1,7 @@
 import { Compass } from "lucide-react";
 import Link from "next/link";
 
+import { Button } from "@/components/Button";
 import { CATEGORIES } from "@/features/content/categories";
 import { GlobalSearch } from "@/features/search/components/GlobalSearch";
 
@@ -27,9 +28,9 @@ export function SiteHeader() {
         <div className="site-header__actions">
           <GlobalSearch />
           <ThemeToggle />
-          <Link href="/submit" className="site-header__submit">
+          <Button href="/submit" arrow={false} className="site-header__submit">
             投稿
-          </Link>
+          </Button>
           <MobileNav categories={enabledCategories} />
         </div>
       </div>

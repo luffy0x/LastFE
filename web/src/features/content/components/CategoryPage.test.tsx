@@ -39,7 +39,9 @@ it("renders category intro, per-category filters and content list", () => {
   expect(
     screen.getByRole("link", { name: "某大厂前端一面记录" }),
   ).toHaveAttribute("href", "/content/c-1");
-  expect(screen.getByText("阿酥")).toBeInTheDocument();
+  const grid = document.querySelector(".content-grid");
+  expect(grid).not.toBeNull();
+  expect(grid?.firstElementChild?.className).toContain("content-card");
   expect(
     screen.getByRole("link", { name: "向面经记录投稿" }),
   ).toHaveAttribute("href", "/submit/interview");

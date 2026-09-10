@@ -2,6 +2,7 @@
 
 import { useMemo, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/Button";
 import type { CategoryDefinition } from "../categories";
 import { request, RequestError } from "@/utils/request";
 
@@ -182,9 +183,9 @@ export function SubmissionForm({ category }: SubmissionFormProps) {
         >
           {message}
         </p>
-        <button type="submit" className="button-primary" disabled={pending}>
+        <Button type="submit" arrow={false} disabled={pending}>
           {pending ? "提交中" : "提交审核"}
-        </button>
+        </Button>
       </div>
     </form>
   );
