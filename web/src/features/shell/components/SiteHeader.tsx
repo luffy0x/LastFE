@@ -15,7 +15,7 @@ export function SiteHeader() {
       <div className="site-container site-header__inner">
         <Link href="/" className="site-header__brand">
           <Compass size={20} aria-hidden="true" />
-          Knowledge Frontier
+          LastFE
         </Link>
         <nav className="site-header__nav" aria-label="主导航">
           {enabledCategories.map((category) => (

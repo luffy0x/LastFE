@@ -1,6 +1,6 @@
-# Knowledge Frontier
+# LastFE
 
-Knowledge Frontier 是一个公开、免注册的求职知识库 Next.js 应用，以搜索优先的 SaaS 界面组织面经、学习资料、八股、项目与算法内容。公开内容存储在 Supabase PostgreSQL，匿名投稿进入私有 GitHub Issues 审核流程。
+LastFE 是一个公开、免注册的求职知识库 Next.js 应用，以搜索优先的 SaaS 界面组织面经、学习资料、八股、项目与算法内容。公开内容存储在 Supabase PostgreSQL，匿名投稿进入私有 GitHub Issues 审核流程。
 
 ## 文档入口
 

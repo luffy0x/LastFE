@@ -17,7 +17,7 @@ it("renders the brand, five category links and the submit entry", () => {
   render(<SiteHeader />);
 
   expect(
-    screen.getByRole("link", { name: /Knowledge Frontier/ }),
+    screen.getByRole("link", { name: /LastFE/ }),
   ).toHaveAttribute("href", "/");
   const nav = screen.getByRole("navigation", { name: "主导航" });
   const links = ["面经记录", "学习资料", "八股盛宴", "项目推荐", "算法手撕"];

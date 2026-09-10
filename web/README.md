@@ -1,6 +1,6 @@
-# Knowledge Frontier
+# LastFE
 
-Knowledge Frontier 是一个面向求职知识分享的 Next.js 应用。首页提供可拖拽、缩放和键盘操作的 SVG 战略地图，领地页面从 Supabase PostgreSQL 读取已发布内容，匿名投稿通过 GitHub Issues 进入审核流程。
+LastFE 是一个面向求职知识分享的 Next.js 应用。首页提供可拖拽、缩放和键盘操作的 SVG 战略地图，领地页面从 Supabase PostgreSQL 读取已发布内容，匿名投稿通过 GitHub Issues 进入审核流程。
 
 ## 本地运行
 

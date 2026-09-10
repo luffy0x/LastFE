@@ -7,7 +7,7 @@ import { ThemeProvider } from "@/features/shell/components/ThemeProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Knowledge Frontier",
+  title: "LastFE",
   description: "公开、免注册的求职知识库：面经、学习资料、八股、项目与算法。",
 };
 
