@@ -1123,29 +1123,6 @@ button:focus-visible,
   text-wrap: pretty;
 }
 
-.dossier__metadata {
-  display: flex;
-  flex-wrap: wrap;
-  margin: 0 0 16px;
-  color: var(--muted-foreground);
-  font-size: 13px;
-  gap: 6px 18px;
-}
-
-.dossier__metadata div {
-  display: flex;
-  gap: 6px;
-}
-
-.dossier__metadata dt {
-  color: var(--muted-foreground);
-}
-
-.dossier__metadata dd {
-  margin: 0;
-  color: var(--foreground);
-}
-
 .dossier__tags {
   margin: 0 0 8px;
 }

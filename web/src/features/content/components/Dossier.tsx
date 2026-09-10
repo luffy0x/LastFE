@@ -31,17 +31,6 @@ export function Dossier({ record }: DossierProps) {
         {record.summary ? <p>{record.summary}</p> : null}
       </header>
 
-      {Object.keys(record.metadata).length > 0 ? (
-        <dl className="dossier__metadata">
-          {Object.entries(record.metadata).map(([key, value]) => (
-            <div key={key}>
-              <dt>{key}</dt>
-              <dd>{value}</dd>
-            </div>
-          ))}
-        </dl>
-      ) : null}
-
       {record.tags.length > 0 ? (
         <ul className="tag-list dossier__tags" aria-label="标签">
           {record.tags.map((tag) => (
