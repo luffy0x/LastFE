@@ -27,7 +27,15 @@ export function extractSummary(markdown) {
   const lines = String(markdown ?? '').split(/\r?\n/);
   const line = lines.find((item) => {
     const value = item.trim();
-    return value && !value.startsWith('#') && !value.startsWith('![') && !value.startsWith('[暂不支持的飞书块类型:');
+    return value
+      && !value.startsWith('#')
+      && !value.startsWith('![')
+      // 方括号标注行（[附件：…]/[内嵌表格…]/[暂不支持…]）不适合做摘要
+      && !/^\[.*\]$/.test(value)
+      && !value.startsWith('>')
+      && !value.startsWith('---')
+      && !value.startsWith('- ')
+      && !value.startsWith('1. ');
   });
   return line?.trim().slice(0, 240) || null;
 }
@@ -156,28 +164,69 @@ async function importToSupabase(rows) {
   return { inserted: newRows.length, skipped: skippedCount };
 }
 
-export async function importExport({ exportDir = DEFAULT_EXPORT_DIR, apply = false, now } = {}) {
+// --update：按 id 覆盖既有行的标题/摘要/正文/外链（不动 published_at）
+async function updateExisting(rows) {
+  const url = process.env.SUPABASE_URL?.trim();
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
+  if (!url || !key) throw new Error('缺少 SUPABASE_URL 或 SUPABASE_SERVICE_ROLE_KEY');
+  const client = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
+
+  // 写库前先备份现有行到本地 JSON，便于回滚
+  const backupPath = path.join(process.cwd(), '.backup-content.json');
+  const { data: existingRows, error: queryError } = await client.from('content').select('*').like('id', 'feishu-%');
+  if (queryError) throw new Error(`Supabase 查询失败: ${queryError.message}`);
+  await fs.writeFile(backupPath, `${JSON.stringify(existingRows, null, 2)}\n`, 'utf8');
+  console.log(`已备份 ${existingRows.length} 条现有记录到 ${backupPath}`);
+
+  const existingIds = new Set((existingRows || []).map((row) => row.id));
+  let updated = 0;
+  for (const row of rows) {
+    if (!existingIds.has(row.id)) continue;
+    const { error } = await client
+      .from('content')
+      .update({
+        title: row.title,
+        summary: row.summary,
+        markdown: row.markdown,
+        external_url: row.external_url,
+        updated_at: row.updated_at,
+      })
+      .eq('id', row.id);
+    if (error) throw new Error(`Supabase 更新失败 (${row.id}): ${error.message}`);
+    updated += 1;
+  }
+  return { updated, skipped: rows.length - updated };
+}
+
+export async function importExport({ exportDir = DEFAULT_EXPORT_DIR, apply = false, update = false, now } = {}) {
   const documents = await loadExportDocuments(exportDir);
   const rows = documents.map((document) => buildContentRow({ metadata: document.metadata, markdown: document.markdown, now }));
-  let result = { inserted: 0, skipped: 0 };
-  if (apply) {
-    result = await importToSupabase(rows);
+  let result = { inserted: 0, skipped: 0, updated: 0 };
+  if (apply && update) {
+    const { updated, skipped } = await updateExisting(rows);
+    result = { inserted: 0, skipped, updated };
+  } else if (apply) {
+    const { inserted, skipped } = await importToSupabase(rows);
+    result = { inserted, skipped, updated: 0 };
   }
-  return { count: rows.length, rows, inserted: result.inserted, skipped: result.skipped };
+  return { count: rows.length, rows, inserted: result.inserted, skipped: result.skipped, updated: result.updated };
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   loadLocalEnv()
     .then(async () => {
       const apply = process.argv.includes('--apply');
+      const update = process.argv.includes('--update');
       const exportDir = process.env.FEISHU_EXPORT_DIR || DEFAULT_EXPORT_DIR;
       const manifest = await syncManifest(exportDir);
-      const result = await importExport({ exportDir, apply });
+      const result = await importExport({ exportDir, apply, update });
       console.log(`清单已同步：${manifest.summary.document_count} 篇文档，${manifest.summary.image_count} 张图片。`);
-      if (apply) {
+      if (apply && update) {
+        console.log(`更新完成：覆盖 ${result.updated} 条，未匹配 ${result.skipped} 条。`);
+      } else if (apply) {
         console.log(`导入完成：新增 ${result.inserted} 条，跳过已存在 ${result.skipped} 条。`);
       } else {
-        console.log(`预览：共 ${result.count} 条 content 记录。加 --apply 才会写入 Supabase。`);
+        console.log(`预览：共 ${result.count} 条 content 记录。加 --apply 才会写入 Supabase，加 --apply --update 覆盖既有文档。`);
       }
     })
     .catch((error) => {

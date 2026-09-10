@@ -99,36 +99,43 @@ export function buildMarkdown(blocks, { imagePaths = new Map() } = {}) {
   let unsupportedCount = 0;
   const lines = [];
   const byId = new Map(blocks.map((block) => [block.block_id, block]));
-  const render = (block, depth = 0) => {
+  const render = (block, depth = 0, prefix = '') => {
     const type = Number(block.block_type);
     const text = blockText(block);
-    if (type >= 3 && type <= 11) lines.push(`${'#'.repeat(type - 2)} ${text}`);
-    else if (type === 2) lines.push(text);
-    else if (type === 12) lines.push(`${'  '.repeat(depth)}- ${text}`);
-    else if (type === 13) lines.push(`${'  '.repeat(depth)}1. ${text}`);
-    else if (type === 14) lines.push(`\`\`\`\n${text}\n\`\`\``);
-    else if (type === 15) lines.push(`> ${text}`);
-    else if (type === 17) lines.push(`- [${block.todo?.style?.done ? 'x' : ' '}] ${text}`);
-    else if (type === 18) lines.push('---');
+    // 34 引用容器本身不输出，让子块行携带 "> " 前缀形成 Markdown 引用
+    let childPrefix = prefix;
+    if (type >= 3 && type <= 11) lines.push(`${prefix}${'#'.repeat(type - 2)} ${text}`);
+    else if (type === 2) lines.push(`${prefix}${text}`);
+    else if (type === 12) lines.push(`${prefix}${'  '.repeat(depth)}- ${text}`);
+    else if (type === 13) lines.push(`${prefix}${'  '.repeat(depth)}1. ${text}`);
+    else if (type === 14) lines.push(`${prefix}\`\`\`\n${text}\n\`\`\``);
+    else if (type === 15) lines.push(`${prefix}> ${text}`);
+    else if (type === 17) lines.push(`${prefix}- [${block.todo?.style?.done ? 'x' : ' '}] ${text}`);
+    else if (type === 18 || type === 22) lines.push(`${prefix}---`);
     else if (type === 27) {
       const token = block.image?.token ?? block.image?.file_token ?? block.image?.source_file_token;
       lines.push(`![图片](${imagePaths.get(token) ?? `./assets/missing-${token ?? 'unknown'}`})`);
-    } else if (type === 31) {
+    } else if (type === 23) lines.push(`${prefix}[附件：${block.file?.name ?? '未知文件'}]`);
+    else if (type === 30) lines.push(`${prefix}[内嵌表格，内容见原文档]`);
+    else if (type === 31) {
       const cells = blockChildren(block, byId);
       if (cells.length) {
         const rows = block.table?.property?.row_size ?? 1;
         const cols = block.table?.property?.column_size ?? Math.max(1, cells.length);
         for (let row = 0; row < rows; row += 1) {
           const values = cells.slice(row * cols, (row + 1) * cols).map(blockText);
-          lines.push(`| ${values.join(' | ')} |`);
-          if (row === 0) lines.push(`| ${values.map(() => '---').join(' | ')} |`);
+          lines.push(`${prefix}| ${values.join(' | ')} |`);
+          if (row === 0) lines.push(`${prefix}| ${values.map(() => '---').join(' | ')} |`);
         }
       } else lines.push('[表格为空]');
-    } else if (type !== 1 && type !== 0) {
+    }
+    else if (type === 34) childPrefix = `${prefix}> `;
+    // 33 视图容器、51 子页面列表：本身无内容，仅递归子块（子页面已作为独立文档导出）
+    else if (type !== 1 && type !== 0 && type !== 33 && type !== 51) {
       unsupportedCount += 1;
       lines.push(`[暂不支持的飞书块类型: ${type || 'unknown'}]`);
     }
-    for (const child of blockChildren(block, byId)) render(child, depth + 1);
+    for (const child of blockChildren(block, byId)) render(child, depth + 1, childPrefix);
   };
   const childIds = new Set(blocks.flatMap((block) => (block.children ?? []).filter((child) => typeof child === 'string')));
   for (const block of blocks) if (!childIds.has(block.block_id)) render(block);

@@ -52,6 +52,10 @@ describe('Feishu import helpers', () => {
   it('extracts the first meaningful paragraph as summary', () => {
     expect(extractSummary('# 标题\n\n\n第一段内容\n\n## 小节')).toBe('第一段内容');
     expect(extractSummary('# 标题\n\n')).toBeNull();
+    expect(extractSummary('# 标题\n\n---\n\n> 引用开头\n\n真正的首段')).toBe('真正的首段');
+    expect(extractSummary('# 标题\n\n- 列表项\n\n首段')).toBe('首段');
+    expect(extractSummary('# 标题\n\n[内嵌表格，内容见原文档]\n\n正文首段')).toBe('正文首段');
+    expect(extractSummary('# 标题\n\n[附件：录音.md]\n\n正文首段')).toBe('正文首段');
   });
 
   it('loads only exported markdown documents with metadata', async () => {

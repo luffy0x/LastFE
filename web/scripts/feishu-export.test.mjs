@@ -27,6 +27,33 @@ describe('Feishu export helpers', () => {
     expect(result.unsupportedCount).toBe(1);
   });
 
+  it('converts divider, quote container, attachment and embedded sheet blocks', () => {
+    const result = buildMarkdown([
+      { block_type: 2, text: { elements: [{ text_run: { content: '前文' } }] } },
+      { block_type: 22, divider: {} },
+      {
+        block_type: 34,
+        quote_container: {},
+        children: ['quote-child'],
+      },
+      { block_id: 'quote-child', block_type: 2, text: { elements: [{ text_run: { content: '引用内容' } }] } },
+      { block_type: 23, file: { name: '面经录音.md', token: 'file-token' } },
+      { block_type: 30, sheet: { token: 'sheet-token' } },
+      { block_type: 33, view: { view_type: 2 }, children: ['file-child'] },
+      { block_id: 'file-child', block_type: 23, file: { name: '附件.md' } },
+      { block_type: 51, sub_page_list: { wiki_token: 'sub-wiki' } },
+      { block_type: 2, text: { elements: [{ text_run: { content: '后文' } }] } },
+    ]);
+
+    expect(result.markdown).toContain('---');
+    expect(result.markdown).toContain('> 引用内容');
+    expect(result.markdown).toContain('[附件：面经录音.md]');
+    expect(result.markdown).toContain('[内嵌表格，内容见原文档]');
+    expect(result.markdown).toContain('[附件：附件.md]');
+    expect(result.markdown).not.toContain('暂不支持');
+    expect(result.unsupportedCount).toBe(0);
+  });
+
   it('consumes every page', async () => {
     const pages = [
       { items: ['a', 'b'], page_token: 'next' },
@@ -36,12 +63,13 @@ describe('Feishu export helpers', () => {
     expect(result).toEqual(['a', 'b', 'c']);
   });
 
-  it('builds a user authorization URL with a local callback and requested scope', () => {
+  it('builds a user authorization URL with a local callback and default scopes', () => {
     const url = new URL(buildAuthorizeUrl('cli_test', 'state-value', DEFAULT_REDIRECT_URI));
     expect(url.origin).toBe('https://open.feishu.cn');
     expect(url.pathname).toBe('/open-apis/authen/v1/authorize');
     expect(url.searchParams.get('app_id')).toBe('cli_test');
-    expect(url.searchParams.get('scope')).toBe('wiki:wiki:readonly');
+    // 不传 scope：飞书默认申请应用已开通的全部权限
+    expect(url.searchParams.get('scope')).toBeNull();
     expect(url.searchParams.get('state')).toBe('state-value');
     expect(DEFAULT_REDIRECT_URI).toBe('http://localhost:38765/callback');
   });
