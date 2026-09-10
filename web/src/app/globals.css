@@ -162,6 +162,8 @@ a {
   font-weight: 700;
   letter-spacing: -0.01em;
   text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .site-header__brand svg {
@@ -170,8 +172,10 @@ a {
 
 .site-header__nav {
   display: flex;
+  min-width: 0;
   align-items: center;
   gap: 2px;
+  overflow: hidden;
 }
 
 .site-header__nav a {
@@ -183,6 +187,7 @@ a {
   color: var(--muted-foreground);
   font-size: 14px;
   text-decoration: none;
+  white-space: nowrap;
 }
 
 .site-header__nav a[aria-current="page"] {
@@ -210,6 +215,8 @@ a {
   font-size: 14px;
   font-weight: 600;
   text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .theme-toggle {
@@ -861,6 +868,7 @@ a {
   font-size: 15px;
   font-weight: 600;
   text-decoration: none;
+  white-space: nowrap;
 }
 
 .button-primary {
