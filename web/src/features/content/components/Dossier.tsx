@@ -8,12 +8,6 @@ import type { ContentRecord } from "../types";
 
 type DossierProps = { record: ContentRecord };
 
-const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
-  year: "numeric",
-  month: "2-digit",
-  day: "2-digit",
-});
-
 export function Dossier({ record }: DossierProps) {
   const category = CATEGORIES.find(({ slug }) => slug === record.regionSlug);
   const categoryLabel = category?.label ?? "分类";
@@ -37,26 +31,16 @@ export function Dossier({ record }: DossierProps) {
         {record.summary ? <p>{record.summary}</p> : null}
       </header>
 
-      <dl className="dossier__metadata">
-        <div>
-          <dt>作者</dt>
-          <dd>{record.nickname ?? "匿名"}</dd>
-        </div>
-        <div>
-          <dt>发布时间</dt>
-          <dd>
-            <time dateTime={record.publishedAt}>
-              {dateFormatter.format(new Date(record.publishedAt))}
-            </time>
-          </dd>
-        </div>
-        {Object.entries(record.metadata).map(([key, value]) => (
-          <div key={key}>
-            <dt>{key}</dt>
-            <dd>{value}</dd>
-          </div>
-        ))}
-      </dl>
+      {Object.keys(record.metadata).length > 0 ? (
+        <dl className="dossier__metadata">
+          {Object.entries(record.metadata).map(([key, value]) => (
+            <div key={key}>
+              <dt>{key}</dt>
+              <dd>{value}</dd>
+            </div>
+          ))}
+        </dl>
+      ) : null}
 
       {record.tags.length > 0 ? (
         <ul className="tag-list dossier__tags" aria-label="标签">
