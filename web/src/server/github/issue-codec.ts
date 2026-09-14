@@ -53,6 +53,8 @@ export function parseSubmissionIssueBody(
     throw new Error("Issue body does not contain a LastFE submission payload");
   }
 
-  const encoded = body.slice(payloadStart, end).trim();
+  // base64 载荷位置敏感，GitHub 编辑器折行/复制粘贴可能混入空白字符；
+  // Buffer 对非法字符是静默跳过，会产出乱码而非报错，因此解码前必须先剥离
+  const encoded = body.slice(payloadStart, end).replace(/\s+/g, "");
   return parseSubmissionInput(decodePayload(encoded));
 }

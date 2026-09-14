@@ -11,6 +11,18 @@ vi.mock("@/server/github/sync-issue", () => ({
   syncGitHubIssue: vi.fn(() => Promise.resolve({ status: "ignored" })),
 }));
 
+function signedRequest(body: string, delivery: string): Request {
+  return new Request("https://lastfe.test/api/github/webhook", {
+    method: "POST",
+    body,
+    headers: {
+      "x-github-signature-256": `sha256=${createHmac("sha256", "secret").update(body).digest("hex")}`,
+      "x-github-delivery": delivery,
+      "x-github-event": "issues",
+    },
+  });
+}
+
 describe("POST /api/github/webhook", () => {
   afterEach(() => {
     vi.resetModules();
@@ -71,5 +83,40 @@ describe("POST /api/github/webhook", () => {
         issue: expect.objectContaining({ number: 9 }),
       }),
     );
+  });
+
+  it("returns a 500 with a logged reason when sync fails", async () => {
+    vi.stubEnv("GITHUB_WEBHOOK_SECRET", "secret");
+    const { POST } = await import("./route");
+    const { syncGitHubIssue } = await import("@/server/github/sync-issue");
+    vi.mocked(syncGitHubIssue).mockRejectedValueOnce(
+      new Error("Issue body does not contain a LastFE submission payload"),
+    );
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const body = JSON.stringify({
+      action: "labeled",
+      issue: {
+        number: 10,
+        title: "[interview] 字节一面",
+        body: "body",
+        state: "open",
+        labels: [{ name: "submission" }, { name: "approved" }],
+      },
+    });
+    const response = await POST(signedRequest(body, "delivery-3"));
+
+    expect(response.status).toBe(500);
+    await expect(response.json()).resolves.toMatchObject({
+      ok: false,
+      code: "SYNC_FAILED",
+    });
+    expect(errorSpy).toHaveBeenCalledWith(
+      expect.stringContaining("github-webhook-sync-failed"),
+    );
+    expect(errorSpy).toHaveBeenCalledWith(
+      expect.stringContaining("Issue body does not contain"),
+    );
+    errorSpy.mockRestore();
   });
 });

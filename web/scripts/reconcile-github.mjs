@@ -169,6 +169,7 @@ async function main() {
           event: "github-reconcile-failed",
           issueNumber: issue.number,
           errorCategory: error instanceof Error ? error.name : "unknown",
+          reason: error instanceof Error ? error.message : String(error),
         }),
       );
     }

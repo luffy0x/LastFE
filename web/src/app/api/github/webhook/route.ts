@@ -52,18 +52,35 @@ export async function POST(request: Request) {
     return Response.json({ ok: false, code: "INVALID_ISSUE" }, { status: 400 });
   }
 
-  const result = await syncGitHubIssue({
-    client: getSupabaseAdmin(),
-    deliveryId,
-    eventName,
-    issue: {
-      number: issue.number,
-      title: issue.title,
-      body: issue.body ?? null,
-      state: issue.state ?? "open",
-      labels: labelsFrom(issue.labels),
-    },
-  });
+  let result;
+  try {
+    result = await syncGitHubIssue({
+      client: getSupabaseAdmin(),
+      deliveryId,
+      eventName,
+      issue: {
+        number: issue.number,
+        title: issue.title,
+        body: issue.body ?? null,
+        state: issue.state ?? "open",
+        labels: labelsFrom(issue.labels),
+      },
+    });
+  } catch (error) {
+    // GitHub 会按响应状态判断是否重试；带原因的日志让落库失败可从服务端日志直接定位
+    console.error(
+      JSON.stringify({
+        event: "github-webhook-sync-failed",
+        deliveryId,
+        issueNumber: issue.number,
+        reason: error instanceof Error ? error.message : String(error),
+      }),
+    );
+    return Response.json(
+      { ok: false, code: "SYNC_FAILED" },
+      { status: 500 },
+    );
+  }
 
   return Response.json({ ok: true, result });
 }

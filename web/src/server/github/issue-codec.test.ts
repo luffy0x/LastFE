@@ -31,4 +31,24 @@ describe("submission issue codec", () => {
       "Issue body does not contain a LastFE submission payload",
     );
   });
+
+  it("still parses when whitespace is injected into the payload", () => {
+    const issue = buildSubmissionIssue({
+      regionSlug: "fundamentals",
+      title: "Redis 持久化",
+      tags: ["Redis"],
+      nickname: null,
+      markdown: "## 区别\n\nRDB 与 AOF。",
+      externalUrl: null,
+      metadata: { category: "数据库与缓存" },
+    });
+
+    const start = issue.body.indexOf("<!-- lastfe-submission:v1");
+    const payloadStart = start + "<!-- lastfe-submission:v1".length;
+    const end = issue.body.indexOf("-->", payloadStart);
+    const encoded = issue.body.slice(payloadStart, end);
+    const wrapped = `${encoded.slice(0, 40)}\n${encoded.slice(40, 80)}\n${encoded.slice(80)}`;
+
+    expect(() => parseSubmissionIssueBody(issue.body.replace(encoded, wrapped))).not.toThrow();
+  });
 });

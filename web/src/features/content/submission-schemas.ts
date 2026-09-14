@@ -99,7 +99,19 @@ export function parseSubmissionInput(value: unknown): SubmissionInput {
     const input = baseSubmissionSchema.parse(value);
     validateRegionSpecific(input);
     return input;
-  } catch {
+  } catch (error) {
+    // 对外保持统一话术，避免向投稿者泄露校验细节；服务端日志保留具体字段便于排查落库失败
+    if (process.env.NODE_ENV === "production") {
+      console.error(
+        JSON.stringify({
+          event: "submission-validation-failed",
+          reason:
+            error instanceof z.ZodError
+              ? error.issues.map((issue) => `${issue.path.join(".")}:${issue.message}`)
+              : [error instanceof Error ? error.message : String(error)],
+        }),
+      );
+    }
     throw new Error("投稿内容不符合要求");
   }
 }
