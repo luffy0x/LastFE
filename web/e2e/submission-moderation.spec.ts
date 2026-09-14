@@ -39,11 +39,11 @@ async function issueCount(request: APIRequestContext): Promise<number> {
 const submissionCases: readonly SubmissionCase[] = [
   {
     slug: "interview",
-    title: "星河科技/平台 · 后端开发",
+    title: "星河科技 · 后端开发 · 一面",
     async fill(page) {
-      await page.getByLabel("公司 / 部门").fill("星河科技/平台");
+      await page.getByLabel("公司").fill("星河科技");
       await page.getByLabel("岗位").fill("后端开发");
-      await page.getByLabel("标签").fill("一面, 检索主链");
+      await page.getByLabel("几面").fill("一面");
       await page
         .getByLabel("面经内容")
         .fill("## 面试记录\n\nRedis 追问\n\n<script>alert('blocked')</script>");
@@ -161,9 +161,9 @@ test.describe.serial("anonymous submission flow", () => {
     await expect(
       page.getByRole("dialog", { name: "全局搜索" }),
     ).not.toBeVisible();
-    await page.goto("/regions/interview?q=Redis&companyDepartment=字节跳动&tags=后端");
+    await page.goto("/regions/interview?q=Redis&company=字节跳动&tags=后端");
     await expect(
-      page.getByRole("link", { name: "字节跳动/基础架构 · 后端开发" }),
+      page.getByRole("link", { name: "字节跳动 · 后端开发 · 三面" }),
     ).toBeVisible();
     await page.goto("/regions/interview?q=没有匹配项");
     await expect(page.getByText("没有符合当前条件的公开内容。")).toBeVisible();

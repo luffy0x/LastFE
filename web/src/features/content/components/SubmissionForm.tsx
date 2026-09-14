@@ -4,6 +4,10 @@ import { useMemo, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/Button";
 import type { CategoryDefinition } from "../categories";
+import {
+  buildInterviewTags,
+  buildInterviewTitle,
+} from "../submission-schemas";
 import { request, RequestError } from "@/utils/request";
 
 type SubmissionFormProps = {
@@ -12,6 +16,13 @@ type SubmissionFormProps = {
 
 function metadataKeysFor(category: CategoryDefinition): readonly string[] {
   return category.summaryFields.filter((key) => key !== "tags");
+}
+
+function todayLocalIso(): string {
+  const now = new Date();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${now.getFullYear()}-${month}-${day}`;
 }
 
 export function SubmissionForm({ category }: SubmissionFormProps) {
@@ -33,10 +44,16 @@ export function SubmissionForm({ category }: SubmissionFormProps) {
     const metadata = Object.fromEntries(
       metadataKeys.map((key) => [key, String(form.get(key) ?? "").trim()]),
     );
-    const tags = String(form.get("tags") ?? "")
-      .split(/[，,]/)
-      .map((tag) => tag.trim())
-      .filter(Boolean);
+    const isInterview = category.slug === "interview";
+    const tags = isInterview
+      ? buildInterviewTags(metadata)
+      : String(form.get("tags") ?? "")
+          .split(/[，,]/)
+          .map((tag) => tag.trim())
+          .filter(Boolean);
+    const title = isInterview
+      ? buildInterviewTitle(metadata)
+      : String(form.get("title") ?? "");
 
     setPending(true);
     setMessageKind("status");
@@ -47,7 +64,7 @@ export function SubmissionForm({ category }: SubmissionFormProps) {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           regionSlug: category.slug,
-          title: String(form.get("title") ?? ""),
+          title,
           summary: String(form.get("summary") ?? ""),
           nickname: String(form.get("nickname") ?? ""),
           markdown: String(form.get("markdown") ?? ""),
@@ -80,25 +97,42 @@ export function SubmissionForm({ category }: SubmissionFormProps) {
         aria-hidden="true"
       />
 
-      <label>
-        标题
-        <input name="title" maxLength={120} required />
-      </label>
+      {category.slug !== "interview" ? (
+        <label>
+          标题
+          <input name="title" maxLength={120} required />
+        </label>
+      ) : null}
 
-      <label>
-        标签
-        <input
-          name="tags"
-          placeholder="用逗号分隔，最多 5 个"
-          maxLength={140}
-          required
-        />
-      </label>
+      {category.slug !== "interview" ? (
+        <label>
+          标签
+          <input
+            name="tags"
+            placeholder="用逗号分隔，最多 5 个"
+            maxLength={140}
+            required
+          />
+        </label>
+      ) : null}
 
-      <label>
-        昵称
-        <input name="nickname" maxLength={40} placeholder="可留空，公开显示匿名" />
-      </label>
+      {category.slug !== "interview" ? (
+        <label>
+          昵称
+          <input name="nickname" maxLength={40} placeholder="可留空，公开显示匿名" />
+        </label>
+      ) : null}
+
+      {category.slug === "interview" ? (
+        <label>
+          投稿人
+          <input
+            name="nickname"
+            maxLength={40}
+            placeholder="可留空，公开显示匿名"
+          />
+        </label>
+      ) : null}
 
       {category.submissionFields
         .filter(({ name }) => !["title", "tags", "nickname"].includes(name))
@@ -115,6 +149,20 @@ export function SubmissionForm({ category }: SubmissionFormProps) {
                     </option>
                   ))}
                 </select>
+              </label>
+            );
+          }
+
+          if (field.kind === "date") {
+            return (
+              <label key={field.name}>
+                {field.label}
+                <input
+                  name={field.name}
+                  type="date"
+                  required={field.required}
+                  max={todayLocalIso()}
+                />
               </label>
             );
           }
@@ -171,7 +219,12 @@ export function SubmissionForm({ category }: SubmissionFormProps) {
           return (
             <label key={field.name}>
               {field.label}
-              <input name={field.name} maxLength={field.maxLength} required={field.required} />
+              <input
+                name={field.name}
+                maxLength={field.maxLength}
+                required={field.required}
+                placeholder={field.placeholder}
+              />
             </label>
           );
         })}

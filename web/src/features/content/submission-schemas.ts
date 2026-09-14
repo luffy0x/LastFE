@@ -25,7 +25,6 @@ const optionalText = (max: number) =>
 
 const tagList = z
   .array(z.string().trim().min(1).max(24))
-  .min(1)
   .max(5)
   .transform((tags) => Array.from(new Set(tags.map((tag) => tag.trim()))));
 
@@ -68,8 +67,9 @@ function assertMarkdown(value: string | null): void {
 
 function validateRegionSpecific(input: SubmissionInput): void {
   if (input.regionSlug === "interview") {
-    requireMetadata(input.metadata, "companyDepartment", "公司/部门");
+    requireMetadata(input.metadata, "company", "公司");
     requireMetadata(input.metadata, "position", "岗位");
+    requireMetadata(input.metadata, "round", "几面");
     assertMarkdown(input.markdown);
   }
 
@@ -118,4 +118,18 @@ export function parseSubmissionInput(value: unknown): SubmissionInput {
 
 export function normalizeTag(tag: string): string {
   return tag.trim().toLocaleLowerCase();
+}
+
+export function buildInterviewTitle(metadata: Readonly<Record<string, string>>): string {
+  const company = metadata.company?.trim() ?? "";
+  const position = metadata.position?.trim() ?? "";
+  const round = metadata.round?.trim() ?? "";
+  return [company, position, round].filter(Boolean).join(" · ").slice(0, 120);
+}
+
+export function buildInterviewTags(metadata: Readonly<Record<string, string>>): readonly string[] {
+  const tags = [metadata.company?.trim(), metadata.round?.trim()].filter(
+    (tag): tag is string => Boolean(tag),
+  );
+  return Array.from(new Set(tags));
 }

@@ -22,7 +22,7 @@ const sampleItem: ContentSummary = {
   nickname: "阿酥",
   tags: ["前端"],
   publishedAt: "2026-09-01T00:00:00.000Z",
-  metadata: { companyDepartment: "某大厂", position: "前端工程师" },
+  metadata: { company: "某大厂", position: "前端工程师" },
 };
 
 it("renders category intro, per-category filters and content list", () => {
@@ -37,7 +37,7 @@ it("renders category intro, per-category filters and content list", () => {
   expect(
     screen.getByRole("heading", { name: "面经记录" }),
   ).toBeInTheDocument();
-  expect(screen.getByLabelText("公司/部门")).toBeInTheDocument();
+  expect(screen.getByLabelText("公司")).toBeInTheDocument();
   expect(screen.getByLabelText("岗位")).toBeInTheDocument();
   expect(
     screen.getByRole("link", { name: "某大厂前端一面记录" }),
@@ -92,7 +92,6 @@ it("paginates while preserving query params", () => {
 });
 
 it("renders select options for the difficulty filter", () => {
-  const algorithms = CATEGORIES.find(({ slug }) => slug === "algorithms")!;
   render(<CategoryPage category={algorithms} page={emptyPage()} query={{}} />);
 
   const difficulty = screen.getByLabelText("难度");
@@ -101,8 +100,6 @@ it("renders select options for the difficulty filter", () => {
 });
 
 it("renders the static site recommendation cards only for algorithms", () => {
-  const algorithms = CATEGORIES.find(({ slug }) => slug === "algorithms")!;
-
   const { container, rerender } = render(
     <CategoryPage category={algorithms} page={emptyPage()} query={{}} />,
   );

@@ -5,10 +5,12 @@ type SubmissionFieldBase = {
   label: string;
   required: boolean;
   maxLength?: number;
+  placeholder?: string;
 };
 
 export type SubmissionFieldDefinition =
   | (SubmissionFieldBase & { kind: "text" })
+  | (SubmissionFieldBase & { kind: "date" })
   | (SubmissionFieldBase & { kind: "tags" })
   | (SubmissionFieldBase & { kind: "url" })
   | (SubmissionFieldBase & {
@@ -50,14 +52,15 @@ export const CATEGORIES = [
     theme: "amber",
     schemaKey: "interview",
     submissionFields: [
-      { name: "companyDepartment", label: "公司 / 部门", kind: "text", required: true, maxLength: 80 },
+      { name: "company", label: "公司", kind: "text", required: true, maxLength: 80 },
       { name: "position", label: "岗位", kind: "text", required: true, maxLength: 80 },
-      { name: "tags", label: "标签", kind: "tags", required: true, maxLength: 24 },
-      { name: "nickname", label: "昵称", kind: "text", required: false, maxLength: 40 },
+      { name: "round", label: "几面", kind: "text", required: true, maxLength: 20, placeholder: "如：一面 / 二面 / HR面" },
+      { name: "interviewDate", label: "时间", kind: "date", required: false },
+      { name: "nickname", label: "投稿人", kind: "text", required: false, maxLength: 40, placeholder: "可留空，公开显示匿名" },
       { name: "markdown", label: "面经内容", kind: "markdown", required: true, maxLength: 50 * 1024 },
     ],
-    filterKeys: ["companyDepartment", "position", "tags"],
-    summaryFields: ["companyDepartment", "position", "tags"],
+    filterKeys: ["company", "position", "tags"],
+    summaryFields: ["company", "position", "round", "interviewDate", "tags"],
     enabled: true,
   },
   {

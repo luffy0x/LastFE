@@ -20,6 +20,8 @@ describe("CATEGORIES", () => {
       expect(category.submissionFields.length).toBeGreaterThan(0);
       expect(category.filterKeys.length).toBeGreaterThan(0);
       for (const key of category.filterKeys) {
+        // tags 是所有分类共用的筛选键，由表单统一提供，不属于单独的表单字段。
+        if (key === "tags") continue;
         expect(
           category.submissionFields.some((field) => field.name === key),
         ).toBe(true);

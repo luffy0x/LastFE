@@ -11,8 +11,8 @@ describe("fixtureContentRepository", () => {
 
     expect(page.total).toBe(2);
     expect(page.items.map(({ title }) => title)).toEqual([
-      "字节跳动/基础架构 · 后端开发",
-      "腾讯/云架构 · 后端开发",
+      "字节跳动 · 后端开发 · 三面",
+      "腾讯 · 后端开发 · 二面",
     ]);
   });
 

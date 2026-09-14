@@ -8,14 +8,16 @@ export const FIXTURE_CONTENT: readonly ContentRecord[] = [
   {
     id: "interview-byte-infra",
     regionSlug: "interview",
-    title: "字节跳动/基础架构 · 后端开发",
+    title: "字节跳动 · 后端开发 · 三面",
     summary: "三轮技术面，重点覆盖高并发设计、缓存一致性与项目取舍。",
     nickname: "林舟",
     tags: ["后端", "三轮技术面", "基础架构"],
     publishedAt: RECENT_DATE,
     metadata: {
-      companyDepartment: "字节跳动/基础架构",
+      company: "字节跳动",
       position: "后端开发",
+      round: "三面",
+      interviewDate: "2026-08-20",
     },
     markdown:
       "## 面试路线\n\n一面从项目中的缓存策略开始追问，随后讨论 Redis 热点键和数据库降级。\n\n## 复盘\n\n回答系统设计题时，先明确流量规模与一致性目标，再画数据流。",
@@ -27,14 +29,16 @@ export const FIXTURE_CONTENT: readonly ContentRecord[] = [
   {
     id: "interview-tencent-cloud",
     regionSlug: "interview",
-    title: "腾讯/云架构 · 后端开发",
+    title: "腾讯 · 后端开发 · 二面",
     summary: "围绕网络协议、容器调度和故障排查展开的技术面记录。",
     nickname: "程远",
     tags: ["云计算", "网络", "容器"],
     publishedAt: ARCHIVE_DATE,
     metadata: {
-      companyDepartment: "腾讯/云架构",
+      company: "腾讯",
       position: "后端开发",
+      round: "二面",
+      interviewDate: "2026-07-15",
     },
     markdown:
       "## 高频问题\n\nTCP 重传、连接池耗尽的定位顺序，以及一次线上故障如何缩小排查范围。",

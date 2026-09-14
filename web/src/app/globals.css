@@ -1558,6 +1558,31 @@ button:focus-visible,
   text-wrap: pretty;
 }
 
+.dossier__meta {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 18px 0 0;
+  gap: 8px 24px;
+}
+
+.dossier__meta div {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.dossier__meta dt {
+  color: var(--muted-foreground);
+  font-size: 13px;
+}
+
+.dossier__meta dd {
+  margin: 0;
+  color: var(--foreground);
+  font-size: 14px;
+  font-weight: 600;
+}
+
 .dossier__tags {
   margin: 0 0 8px;
 }
@@ -1817,6 +1842,12 @@ button:focus-visible,
   font-size: 16px;
 }
 
+.markdown-render__action-icon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+}
+
 .markdown-render__code-actions .markdown-render__action + .markdown-render__action,
 .markdown-render__table-actions .markdown-render__action + .markdown-render__action {
   border-left: 1px solid var(--line);
@@ -1950,6 +1981,14 @@ button:focus-visible,
   font: inherit;
   font-size: 16px;
   font-weight: 400;
+}
+
+.submission-form input[type="date"] {
+  color-scheme: light;
+}
+
+.dark .submission-form input[type="date"] {
+  color-scheme: dark;
 }
 
 .submission-form input:focus-visible,

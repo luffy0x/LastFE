@@ -11,10 +11,16 @@ it("renders a readable dossier with a route back to its category", async () => {
 
   expect(
     screen.getByRole("heading", {
-      name: "字节跳动/基础架构 · 后端开发",
+      name: "字节跳动 · 后端开发 · 三面",
       level: 1,
     }),
   ).toBeVisible();
+  expect(screen.getByText("公司")).toBeVisible();
+  expect(screen.getByText("字节跳动")).toBeVisible();
+  expect(screen.getByText("轮次")).toBeVisible();
+  expect(screen.getByText("三面")).toBeVisible();
+  expect(screen.getByText("时间")).toBeVisible();
+  expect(screen.getByText("2026-08-20")).toBeVisible();
   expect(screen.getByRole("link", { name: "返回面经记录" })).toHaveAttribute(
     "href",
     "/regions/interview",

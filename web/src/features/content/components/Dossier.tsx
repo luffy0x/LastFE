@@ -9,6 +9,13 @@ import type { ContentRecord } from "../types";
 
 type DossierProps = { record: ContentRecord };
 
+const INTERVIEW_FIELD_LABELS: Readonly<Record<string, string>> = {
+  company: "公司",
+  position: "岗位",
+  round: "轮次",
+  interviewDate: "时间",
+};
+
 export function Dossier({ record }: DossierProps) {
   const category = CATEGORIES.find(({ slug }) => slug === record.regionSlug);
   const categoryLabel = category?.label ?? "分类";
@@ -16,6 +23,11 @@ export function Dossier({ record }: DossierProps) {
     record.externalUrl && isSafeHttpUrl(record.externalUrl)
       ? record.externalUrl
       : null;
+  const interviewMeta = Object.entries(INTERVIEW_FIELD_LABELS)
+    .map(([key, label]) => ({ label, value: record.metadata[key]?.trim() }))
+    .filter((item): item is { label: string; value: string } =>
+      Boolean(item.value),
+    );
 
   return (
     <article className="dossier">
@@ -30,6 +42,16 @@ export function Dossier({ record }: DossierProps) {
       <header className="dossier__header">
         <h1>{record.title}</h1>
         {record.summary ? <p>{record.summary}</p> : null}
+        {interviewMeta.length > 0 ? (
+          <dl className="dossier__meta" aria-label="面经信息">
+            {interviewMeta.map(({ label, value }) => (
+              <div key={label}>
+                <dt>{label}</dt>
+                <dd>{value}</dd>
+              </div>
+            ))}
+          </dl>
+        ) : null}
       </header>
 
       {record.tags.length > 0 ? (

@@ -15,8 +15,10 @@ type CategoryPageProps = {
 };
 
 const FIELD_LABELS: Readonly<Record<string, string>> = {
-  companyDepartment: "公司/部门",
+  company: "公司",
   position: "岗位",
+  round: "几面",
+  interviewDate: "时间",
   tags: "标签",
   category: "知识分类",
   techStack: "技术栈",
