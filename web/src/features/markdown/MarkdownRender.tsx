@@ -65,6 +65,100 @@ function textFromReactNode(node: ReactNode): string {
   return "";
 }
 
+function CodeVisibilityIcon({ isExpanded }: { isExpanded: boolean }) {
+  return (
+    <svg
+      aria-hidden="true"
+      className="markdown-render__action-icon"
+      viewBox="0 0 20 20"
+      fill="none"
+    >
+      <path
+        d={isExpanded ? "m5 12 5-5 5 5" : "m5 8 5 5 5-5"}
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function CodeCopyIcon({
+  state,
+}: {
+  state: "idle" | "copied" | "failed";
+}) {
+  if (state === "copied") {
+    return (
+      <svg
+        aria-hidden="true"
+        className="markdown-render__action-icon"
+        viewBox="0 0 20 20"
+        fill="none"
+      >
+        <path
+          d="m4.75 10.25 3.25 3.25 7.25-7.25"
+          stroke="currentColor"
+          strokeWidth="1.75"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    );
+  }
+
+  if (state === "failed") {
+    return (
+      <svg
+        aria-hidden="true"
+        className="markdown-render__action-icon"
+        viewBox="0 0 20 20"
+        fill="none"
+      >
+        <circle
+          cx="10"
+          cy="10"
+          r="6.75"
+          stroke="currentColor"
+          strokeWidth="1.5"
+        />
+        <path
+          d="M10 6.5v4.25M10 13.5h.01"
+          stroke="currentColor"
+          strokeWidth="1.75"
+          strokeLinecap="round"
+        />
+      </svg>
+    );
+  }
+
+  return (
+    <svg
+      aria-hidden="true"
+      className="markdown-render__action-icon"
+      viewBox="0 0 20 20"
+      fill="none"
+    >
+      <rect
+        x="6.5"
+        y="6.5"
+        width="8"
+        height="8"
+        rx="1.25"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
+      <path
+        d="M12.5 6.5V5.75A1.25 1.25 0 0 0 11.25 4.5h-5.5A1.25 1.25 0 0 0 4.5 5.75v5.5A1.25 1.25 0 0 0 5.75 12.5h.75"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
 function MarkdownCodeBlock(props: ComponentPropsWithoutRef<"pre">) {
   const [isExpanded, setIsExpanded] = useState(true);
   const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">(
@@ -107,21 +201,23 @@ function MarkdownCodeBlock(props: ComponentPropsWithoutRef<"pre">) {
         <div className="markdown-render__code-actions">
           <button
             type="button"
-            className="markdown-render__action"
+            className="markdown-render__action markdown-render__action--icon"
             aria-controls={codeId}
             aria-expanded={isExpanded}
             aria-label={isExpanded ? "收起代码" : "展开代码"}
+            title={isExpanded ? "收起代码" : "展开代码"}
             onClick={() => setIsExpanded((current) => !current)}
           >
-            {isExpanded ? "收起代码" : "展开代码"}
+            <CodeVisibilityIcon isExpanded={isExpanded} />
           </button>
           <button
             type="button"
-            className="markdown-render__action"
+            className="markdown-render__action markdown-render__action--icon"
             aria-label={buttonLabel}
+            title={buttonLabel}
             onClick={copyCode}
           >
-            {buttonLabel}
+            <CodeCopyIcon state={copyState} />
           </button>
         </div>
       </div>

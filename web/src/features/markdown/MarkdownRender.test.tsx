@@ -35,6 +35,28 @@ it("copies a fenced code block and reports completion", async () => {
   expect(screen.getByRole("button", { name: "已复制" })).toBeVisible();
 });
 
+it("uses SVG icons for code block actions without exposing decorative graphics", () => {
+  render(<MarkdownRender content={"```ts\nconst answer = 42;\n```"} />);
+
+  const collapseButton = screen.getByRole("button", { name: "收起代码" });
+  const copyButton = screen.getByRole("button", { name: "复制代码" });
+
+  expect(collapseButton).toHaveClass("markdown-render__action--icon");
+  expect(copyButton).toHaveClass("markdown-render__action--icon");
+  expect(collapseButton).toHaveAttribute("title", "收起代码");
+  expect(copyButton).toHaveAttribute("title", "复制代码");
+  expect(collapseButton.querySelector("svg")).toHaveAttribute(
+    "aria-hidden",
+    "true",
+  );
+  expect(copyButton.querySelector("svg")).toHaveAttribute(
+    "aria-hidden",
+    "true",
+  );
+  expect(collapseButton).toHaveTextContent("");
+  expect(copyButton).toHaveTextContent("");
+});
+
 it("collapses and expands each fenced code block independently", async () => {
   const user = userEvent.setup();
   render(
@@ -103,6 +125,14 @@ it("renders markdown headings within the detail page hierarchy", () => {
     screen.getByRole("heading", { name: "技术追问", level: 3 }),
   ).toHaveClass("markdown-render__heading--2");
   expect(screen.queryByRole("heading", { level: 1 })).toBeNull();
+});
+
+it("renders valid strong syntax as semantic bold text", () => {
+  render(<MarkdownRender content="这是 **需要强调的文字**。" />);
+
+  expect(screen.getByText("需要强调的文字")).toHaveClass(
+    "markdown-render__strong",
+  );
 });
 
 it("uses shared render rules for semantic markdown structures", () => {
