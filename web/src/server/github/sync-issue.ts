@@ -129,6 +129,21 @@ async function assertNoPriorDelivery(
   return Boolean(result.data);
 }
 
+async function existingPublishedAt(
+  client: SupabaseWriteClient,
+  issueNumber: number,
+): Promise<string | null> {
+  const query = (client.from("content").select("published_at") as {
+    eq(column: string, value: unknown): unknown;
+  }).eq("github_issue_number", issueNumber);
+  const result = await maybeSingle<{ published_at: string }>(query);
+  if (result.error) {
+    throw new Error(`Supabase content lookup failed: ${result.error.message}`);
+  }
+
+  return result.data?.published_at ?? null;
+}
+
 export async function syncGitHubIssue(
   options: SyncGitHubIssueOptions,
 ): Promise<SyncGitHubIssueResult> {
@@ -169,6 +184,9 @@ export async function syncGitHubIssue(
 
   const submission = parseSubmissionIssueBody(options.issue.body ?? "");
   const timestamp = (options.now ?? new Date()).toISOString();
+  // 首次发布才写 published_at；重新同步（如 reconcile）必须保留原始发布日期
+  const publishedAt =
+    (await existingPublishedAt(client, options.issue.number)) ?? timestamp;
   const upsertResult = (await client.from("content").upsert(
     {
       id: contentId,
@@ -181,7 +199,7 @@ export async function syncGitHubIssue(
       markdown: submission.markdown,
       external_url: submission.externalUrl,
       metadata_json: submission.metadata,
-      published_at: timestamp,
+      published_at: publishedAt,
       updated_at: timestamp,
     },
     { onConflict: "github_issue_number" },

@@ -43,15 +43,17 @@ describe("syncGitHubIssue", () => {
   it("publishes approved issue content into Supabase and records delivery", async () => {
     const issue = buildSubmissionIssue({
       regionSlug: "interview",
-      title: "字节一面",
+      title: "字节跳动 · 后端 · 一面",
       tags: ["后端"],
       markdown: "## 过程\n\n聊缓存。",
       metadata: {
-        companyDepartment: "字节/基础架构",
+        company: "字节跳动",
         position: "后端",
+        round: "一面",
       },
     });
     const duplicateQuery = query({ data: null, error: null });
+    const existingContentQuery = query({ data: null, error: null });
     const contentQuery = query({ data: null, error: null });
     const deleteTagsQuery = query({ data: null, error: null });
     const tagQuery = query({ data: { id: 33 }, error: null });
@@ -61,6 +63,7 @@ describe("syncGitHubIssue", () => {
       from: vi
         .fn()
         .mockReturnValueOnce(duplicateQuery)
+        .mockReturnValueOnce(existingContentQuery)
         .mockReturnValueOnce(contentQuery)
         .mockReturnValueOnce(deleteTagsQuery)
         .mockReturnValueOnce(tagQuery)
@@ -102,6 +105,64 @@ describe("syncGitHubIssue", () => {
     expect(contentTagQuery.upsert).toHaveBeenCalledWith(
       { content_id: "github-issue-13", tag_id: 33 },
       { onConflict: "content_id,tag_id" },
+    );
+  });
+
+  it("keeps the original published_at when re-publishing an already stored issue", async () => {
+    const issue = buildSubmissionIssue({
+      regionSlug: "interview",
+      title: "字节跳动 · 后端 · 一面",
+      tags: ["后端"],
+      markdown: "## 过程\n\n聊缓存。",
+      metadata: {
+        company: "字节跳动",
+        position: "后端",
+        round: "一面",
+      },
+    });
+    const duplicateQuery = query({ data: null, error: null });
+    const existingContentQuery = query({
+      data: { published_at: "2026-09-11T10:00:00.000Z" },
+      error: null,
+    });
+    const contentQuery = query({ data: null, error: null });
+    const deleteTagsQuery = query({ data: null, error: null });
+    const tagQuery = query({ data: { id: 33 }, error: null });
+    const contentTagQuery = query({ data: null, error: null });
+    const eventQuery = query({ data: null, error: null });
+    const client = {
+      from: vi
+        .fn()
+        .mockReturnValueOnce(duplicateQuery)
+        .mockReturnValueOnce(existingContentQuery)
+        .mockReturnValueOnce(contentQuery)
+        .mockReturnValueOnce(deleteTagsQuery)
+        .mockReturnValueOnce(tagQuery)
+        .mockReturnValueOnce(contentTagQuery)
+        .mockReturnValueOnce(eventQuery),
+    };
+
+    await expect(
+      syncGitHubIssue({
+        client,
+        deliveryId: "delivery-3",
+        eventName: "issues",
+        issue: {
+          number: 13,
+          title: issue.title,
+          body: issue.body,
+          labels: ["submission", "approved"],
+          state: "open",
+        },
+      }),
+    ).resolves.toEqual({ status: "published", contentId: "github-issue-13" });
+
+    expect(contentQuery.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: "github-issue-13",
+        published_at: "2026-09-11T10:00:00.000Z",
+      }),
+      { onConflict: "github_issue_number" },
     );
   });
 });

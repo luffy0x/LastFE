@@ -99,6 +99,14 @@ async function syncGitHubIssue(client, deliveryId, eventName, issue) {
 
   const submission = parseSubmissionIssueBody(issue.body ?? "");
   const timestamp = new Date().toISOString();
+  // 首次发布才写 published_at；reconcile 重跑必须保留原始发布日期
+  const existing = await client
+    .from("content")
+    .select("published_at")
+    .eq("github_issue_number", issue.number)
+    .maybeSingle();
+  if (existing.error) throw new Error(`content lookup failed: ${existing.error.message}`);
+  const publishedAt = existing.data?.published_at ?? timestamp;
   const { error } = await client.from("content").upsert(
     {
       id: contentId,
@@ -111,7 +119,7 @@ async function syncGitHubIssue(client, deliveryId, eventName, issue) {
       markdown: submission.markdown,
       external_url: submission.externalUrl,
       metadata_json: submission.metadata,
-      published_at: timestamp,
+      published_at: publishedAt,
       updated_at: timestamp,
     },
     { onConflict: "github_issue_number" },
