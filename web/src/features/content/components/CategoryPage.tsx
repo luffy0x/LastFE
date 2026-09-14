@@ -6,6 +6,7 @@ import type { CategoryDefinition } from "../categories";
 import type { ContentSummary, Page } from "../types";
 
 import { AlgorithmSiteCards } from "./AlgorithmSiteCards";
+import { TopicAccordion, type ContentGroup } from "./ContentAccordion";
 
 type CategoryPageProps = {
   category: CategoryDefinition;
@@ -29,12 +30,65 @@ const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
   day: "2-digit",
 });
 
+const FUNDAMENTALS_TOPIC_ORDER = [
+  "HTML",
+  "CSS",
+  "JavaScript",
+  "浏览器",
+  "计算机网络",
+  "Web 安全",
+  "操作系统",
+  "TypeScript",
+  "工程化",
+  "React",
+  "Vue",
+  "AI / Agent",
+] as const;
+
+const ALGORITHM_TOPIC_ORDER = ["CSS", "JavaScript"] as const;
+
+function groupContentByTopic(
+  items: readonly ContentSummary[],
+  categorySlug: string,
+): readonly ContentGroup[] {
+  const groups = new Map<string, ContentSummary[]>();
+  for (const item of items) {
+    const topic = item.metadata.category?.trim() || "未分类";
+    const contents = groups.get(topic);
+    if (contents) contents.push(item);
+    else groups.set(topic, [item]);
+  }
+
+  const orderedTopics: readonly string[] =
+    (categorySlug === "fundamentals"
+      ? FUNDAMENTALS_TOPIC_ORDER
+      : ALGORITHM_TOPIC_ORDER);
+  const topicOrder = new Map<string, number>(
+    orderedTopics.map((topic, index) => [topic, index]),
+  );
+  const unrankedTopicOrder = topicOrder.size;
+
+  return Array.from(groups, ([title, groupedItems], index) => ({
+    id: `topic-${index}`,
+    title,
+    items: groupedItems,
+  })).sort(
+    (left, right) =>
+      (topicOrder.get(left.title) ?? unrankedTopicOrder) -
+      (topicOrder.get(right.title) ?? unrankedTopicOrder),
+  );
+}
+
 export function CategoryPage({
   category,
   page,
   query = {},
 }: CategoryPageProps) {
   const hasActiveQuery = Object.keys(query).length > 0;
+  const usesAccordion = ["fundamentals", "algorithms"].includes(category.slug);
+  const topicGroups = usesAccordion
+    ? groupContentByTopic(page.items, category.slug)
+    : [];
   const pageCount = Math.max(1, Math.ceil(page.total / page.pageSize));
   const pageHref = (pageNumber: number) => {
     const parameters = new URLSearchParams(query);
@@ -99,20 +153,27 @@ export function CategoryPage({
 
       {category.slug === "algorithms" ? <AlgorithmSiteCards /> : null}
 
-      <div className="content-grid">
-        {page.items.length === 0 ? (
-          <div className="category-empty">
-            <p>
-              {hasActiveQuery || page.page > 1
-                ? "没有符合当前条件的公开内容。"
-                : "该分类还没有公开内容。"}
-            </p>
-            {hasActiveQuery || page.page > 1 ? (
-              <Link href={`/regions/${category.slug}`}>清除搜索与筛选</Link>
-            ) : null}
-          </div>
-        ) : (
-          page.items.map((item, index) => (
+      {page.items.length === 0 ? (
+        <div className="category-empty">
+          <p>
+            {hasActiveQuery || page.page > 1
+              ? "没有符合当前条件的公开内容。"
+              : "该分类还没有公开内容。"}
+          </p>
+          {hasActiveQuery || page.page > 1 ? (
+            <Link href={`/regions/${category.slug}`}>清除搜索与筛选</Link>
+          ) : null}
+        </div>
+      ) : usesAccordion ? (
+        <TopicAccordion
+          key={category.slug}
+          groups={topicGroups}
+          groupLabel={category.slug === "fundamentals" ? "专题" : "题型"}
+          idPrefix={`${category.slug}-topics`}
+        />
+      ) : (
+        <div className="content-grid">
+          {page.items.map((item, index) => (
             <ContentCard
               key={item.id}
               href={`/content/${item.id}`}
@@ -121,9 +182,9 @@ export function CategoryPage({
               description={item.summary ?? undefined}
               tint={contentCardTint(index)}
             />
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
 
       {pageCount > 1 ? (
         <nav className="category-pagination" aria-label="内容分页">

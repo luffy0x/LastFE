@@ -27,7 +27,7 @@ const items = [
   },
 ];
 
-it("expands the first item by default and switches on click", async () => {
+it("expands the first item by default and keeps other expanded items open", async () => {
   const user = userEvent.setup();
   render(<LatestContent items={items} />);
 
@@ -43,12 +43,13 @@ it("expands the first item by default and switches on click", async () => {
 
   await user.click(secondTrigger);
   expect(secondTrigger).toHaveAttribute("aria-expanded", "true");
-  expect(firstTrigger).toHaveAttribute("aria-expanded", "false");
+  expect(firstTrigger).toHaveAttribute("aria-expanded", "true");
   expect(screen.getByText("第二篇的摘要。")).toBeInTheDocument();
   expect(screen.getByText("投稿人：投稿人甲")).toBeInTheDocument();
 
   await user.click(secondTrigger);
   expect(secondTrigger).toHaveAttribute("aria-expanded", "false");
+  expect(firstTrigger).toHaveAttribute("aria-expanded", "true");
 });
 
 it("shows the empty state when there is no content", () => {

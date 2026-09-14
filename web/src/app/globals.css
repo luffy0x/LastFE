@@ -972,6 +972,56 @@ button:focus-visible,
   margin: 2px 0 0;
 }
 
+.accordion-item__subnav {
+  display: grid;
+  margin: 12px 0 0;
+  padding: 0;
+  gap: 8px;
+  list-style: none;
+}
+
+.accordion-item__subnav a {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  padding: 11px 12px;
+  border: 1px solid color-mix(in oklch, var(--card-edge) 72%, transparent);
+  border-radius: 12px;
+  background: color-mix(in oklch, var(--accordion-accent) 5%, transparent);
+  color: var(--foreground);
+  font-size: 14px;
+  font-weight: 600;
+  gap: 12px;
+  text-decoration: none;
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+.accordion-item__subnav a > span:first-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.accordion-item__subnav a > span:last-child {
+  color: var(--accordion-accent);
+  font-size: 18px;
+  line-height: 1;
+}
+
+@media (hover: hover) {
+  .accordion-item__subnav a:hover {
+    border-color: color-mix(in oklch, var(--accordion-accent) 42%, var(--card-edge));
+    background: color-mix(in oklch, var(--accordion-accent) 10%, transparent);
+    color: color-mix(in oklch, var(--accordion-accent) 74%, var(--foreground));
+  }
+}
+
+.accordion-item__subnav a:focus-visible {
+  outline-offset: 2px;
+}
+
 .accordion-item__link {
   display: inline-flex;
   justify-self: start;

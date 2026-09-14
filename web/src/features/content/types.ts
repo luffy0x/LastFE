@@ -25,7 +25,7 @@ export type ContentQuery = {
   tags?: readonly string[];
   filters?: Readonly<Record<string, string>>;
   page: number;
-  pageSize: 20;
+  pageSize: number;
 };
 
 export type Page<T> = {

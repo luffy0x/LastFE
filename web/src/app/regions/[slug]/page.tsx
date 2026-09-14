@@ -4,7 +4,7 @@ import { connection } from "next/server";
 import { CATEGORIES } from "@/features/content/categories";
 import { CategoryPage } from "@/features/content/components/CategoryPage";
 import { getContentRepository } from "@/features/content/repository";
-import { parsePage } from "@/server/content/search";
+import { categoryPageSize, parsePage } from "@/server/content/search";
 
 export function generateStaticParams() {
   return CATEGORIES.filter(({ enabled }) => enabled).map(({ slug }) => ({
@@ -46,13 +46,14 @@ export default async function RegionPage({
       .map((key) => [key, query[key]]),
   );
 
+  const usesTopicGrouping = ["fundamentals", "algorithms"].includes(category.slug);
   const page = await getContentRepository().list({
     regionSlug: category.slug,
     search: query.q,
     tags,
     filters,
-    page: parsePage(firstValue(rawQuery.page)),
-    pageSize: 20,
+    page: usesTopicGrouping ? 1 : parsePage(firstValue(rawQuery.page)),
+    pageSize: categoryPageSize(category.slug),
   });
 
   return (

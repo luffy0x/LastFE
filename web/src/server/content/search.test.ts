@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import type { ContentRepository } from "@/features/content/repository";
 import type { ContentSummary } from "@/features/content/types";
 
-import { parsePage, searchAll } from "./search";
+import { categoryPageSize, parsePage, searchAll } from "./search";
 
 const summary = (
   id: string,
@@ -64,5 +64,11 @@ describe("public content search", () => {
     ["3", 3],
   ])("clamps page value %s to %i", (value, expected) => {
     expect(parsePage(value)).toBe(expected);
+  });
+
+  it("loads complete topic groups for knowledge and algorithm pages", () => {
+    expect(categoryPageSize("fundamentals")).toBe(100);
+    expect(categoryPageSize("algorithms")).toBe(100);
+    expect(categoryPageSize("interview")).toBe(20);
   });
 });

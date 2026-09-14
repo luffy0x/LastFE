@@ -3,6 +3,13 @@ import type { ContentRepository } from "@/features/content/repository";
 import type { ContentSummary } from "@/features/content/types";
 
 export const PAGE_SIZE = 20;
+export const TOPIC_PAGE_SIZE = 100;
+
+export function categoryPageSize(regionSlug: string): number {
+  return ["fundamentals", "algorithms"].includes(regionSlug)
+    ? TOPIC_PAGE_SIZE
+    : PAGE_SIZE;
+}
 
 export type SearchGroup = {
   regionSlug: string;
