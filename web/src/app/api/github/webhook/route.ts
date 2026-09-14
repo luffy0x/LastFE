@@ -1,12 +1,16 @@
 import { getSupabaseAdmin } from "@/server/supabase/admin";
 import { requireServerEnv } from "@/server/supabase/env";
 import { syncGitHubIssue } from "@/server/github/sync-issue";
+import { log, requestIdFromHeaders } from "@/server/logging";
 import {
+  describeGitHubWebhookSignature,
   readBoundedBody,
   verifyGitHubWebhookSignature,
 } from "@/server/github/verify-webhook";
 
 export const runtime = "nodejs";
+
+const WEBHOOK_RUNTIME_ID = crypto.randomUUID();
 
 type GitHubLabel = string | { name?: string | null };
 
@@ -23,13 +27,20 @@ export async function POST(request: Request) {
   const body = await readBoundedBody(request);
   const secret = requireServerEnv("GITHUB_WEBHOOK_SECRET");
   const signature = request.headers.get("x-github-signature-256");
+  const eventName = request.headers.get("x-github-event") ?? "";
+  const deliveryId = request.headers.get("x-github-delivery") ?? "";
 
   if (!verifyGitHubWebhookSignature(body, signature, secret)) {
+    log("warn", "github.webhook_signature_mismatch", {
+      deliveryId,
+      eventName,
+      requestId: requestIdFromHeaders(request.headers),
+      runtimeId: WEBHOOK_RUNTIME_ID,
+      ...describeGitHubWebhookSignature(body, signature, secret),
+    });
     return Response.json({ ok: false, code: "BAD_SIGNATURE" }, { status: 401 });
   }
 
-  const eventName = request.headers.get("x-github-event") ?? "";
-  const deliveryId = request.headers.get("x-github-delivery") ?? "";
   if (!deliveryId) {
     return Response.json({ ok: false, code: "MISSING_DELIVERY" }, { status: 400 });
   }
