@@ -66,6 +66,43 @@ function assertManifestEntry(entry, markdown) {
   }
 }
 
+export function toPublishedMarkdown(entry, markdown) {
+  const reviewHeader = [
+    `# ${entry.title}`,
+    "",
+    `> 分类：${entry.category}`,
+    `> 标签：${entry.tags.join("、")}`,
+    ...(entry.difficulty ? [`> 难度：${entry.difficulty}`] : []),
+    `> 整理状态：${entry.status}`,
+    "",
+  ].join("\n");
+
+  if (!markdown.startsWith(reviewHeader)) {
+    throw new Error(`资料审核头与清单不一致：${entry.id}`);
+  }
+  return markdown.slice(reviewHeader.length);
+}
+
+function assertNoMalformedEmphasis(markdown, id) {
+  let fenceMarker = null;
+
+  for (const line of markdown.split(/\r?\n/)) {
+    const fence = line.match(/^\s*(`{3,}|~{3,})/);
+    if (fence) {
+      const marker = fence[1][0];
+      fenceMarker = fenceMarker === marker ? null : fenceMarker ?? marker;
+      continue;
+    }
+    if (fenceMarker) continue;
+
+    const withoutInlineCode = line.replace(/`[^`]*`/g, "inline-code");
+    if (/^\s*\*{4,}\s*$/.test(withoutInlineCode)) continue;
+    if (/\*{4,}/.test(withoutInlineCode)) {
+      throw new Error(`资料包含异常加粗标记：${id}`);
+    }
+  }
+}
+
 export function buildCuratedRow({ entry, markdown, timestamp = new Date().toISOString() }) {
   assertManifestEntry(entry, markdown);
 
@@ -77,15 +114,17 @@ export function buildCuratedRow({ entry, markdown, timestamp = new Date().toISOS
           if (!difficulty) throw new Error("算法资料缺少有效难度");
           return { category: entry.category, source: "整理资料", difficulty };
         })();
+  const publishedMarkdown = toPublishedMarkdown(entry, markdown);
+  assertNoMalformedEmphasis(publishedMarkdown, entry.id);
 
   return {
     id: `curated-bagu-${entry.id}`,
     region_slug: entry.region,
     status: "published",
     title: entry.title,
-    summary: extractSummary(markdown),
+    summary: extractSummary(publishedMarkdown),
     nickname: null,
-    markdown,
+    markdown: publishedMarkdown,
     external_url: null,
     metadata_json: metadataJson,
     published_at: timestamp,
@@ -154,9 +193,7 @@ export async function importCurated({ curatedDir = DEFAULT_CURATED_DIR, apply = 
 
   const existingIds = new Set((existingRows ?? []).map(({ id }) => id));
   const newRows = rows.filter(({ id }) => !existingIds.has(id));
-  const existingCuratedRows = rows.filter(
-    ({ id, region_slug }) => existingIds.has(id) && region_slug === "algorithms",
-  );
+  const existingCuratedRows = rows.filter(({ id }) => existingIds.has(id));
   if (newRows.length) {
     const contentRows = newRows.map((row) => {
       const contentRow = { ...row };
@@ -170,9 +207,14 @@ export async function importCurated({ curatedDir = DEFAULT_CURATED_DIR, apply = 
   for (const row of existingCuratedRows) {
     const { error } = await client
       .from("content")
-      .update({ metadata_json: row.metadata_json })
+      .update({
+        summary: row.summary,
+        markdown: row.markdown,
+        metadata_json: row.metadata_json,
+        updated_at: row.updated_at,
+      })
       .eq("id", row.id);
-    if (error) throw new Error(`Supabase 分类回填失败：${error.message}`);
+    if (error) throw new Error(`Supabase 整理正文更新失败：${error.message}`);
   }
 
   const tagRelations = await storeTags(client, rows);
