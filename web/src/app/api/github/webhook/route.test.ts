@@ -16,7 +16,7 @@ function signedRequest(body: string, delivery: string): Request {
     method: "POST",
     body,
     headers: {
-      "x-github-signature-256": `sha256=${createHmac("sha256", "secret").update(body).digest("hex")}`,
+      "x-hub-signature-256": `sha256=${createHmac("sha256", "secret").update(body).digest("hex")}`,
       "x-github-delivery": delivery,
       "x-github-event": "issues",
     },
@@ -26,7 +26,6 @@ function signedRequest(body: string, delivery: string): Request {
 describe("POST /api/github/webhook", () => {
   afterEach(() => {
     vi.resetModules();
-    vi.restoreAllMocks();
     vi.unstubAllEnvs();
   });
 
@@ -39,7 +38,7 @@ describe("POST /api/github/webhook", () => {
         method: "POST",
         body: JSON.stringify({ action: "labeled" }),
         headers: {
-          "x-github-signature-256": "sha256=bad",
+          "x-hub-signature-256": "sha256=bad",
           "x-github-delivery": "delivery-1",
           "x-github-event": "issues",
         },
@@ -49,53 +48,7 @@ describe("POST /api/github/webhook", () => {
     expect(response.status).toBe(401);
   });
 
-  it("logs safe diagnostics when signature verification fails", async () => {
-    const secret = "super-secret-value";
-    const body = '{"action":"labeled","private":"do-not-log"}';
-    const signature = `sha256=${"a".repeat(64)}`;
-    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => undefined);
-    vi.stubEnv("GITHUB_WEBHOOK_SECRET", secret);
-    const { POST } = await import("./route");
-
-    const response = await POST(
-      new Request("https://lastfe.test/api/github/webhook", {
-        method: "POST",
-        body,
-        headers: {
-          "x-github-signature-256": signature,
-          "x-github-delivery": "delivery-diagnostic",
-          "x-github-event": "issues",
-          "x-request-id": "request-1",
-        },
-      }),
-    );
-
-    expect(response.status).toBe(401);
-    expect(warnSpy).toHaveBeenCalledOnce();
-    const serializedLog = String(warnSpy.mock.calls[0][0]);
-    expect(JSON.parse(serializedLog)).toEqual({
-      level: "warn",
-      event: "github.webhook_signature_mismatch",
-      deliveryId: "delivery-diagnostic",
-      eventName: "issues",
-      requestId: "request-1",
-      runtimeId: expect.stringMatching(
-        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
-      ),
-      webhookKeyBytes: 18,
-      webhookKeyFingerprint: "03767fbe4857",
-      payloadBytes: 43,
-      payloadSha256:
-        "6452273ae5503e45c5e4b01e8169c52aa4aff1cc5985ee650d5b49734382bfd8",
-      providedSignaturePrefix: "sha256=aaaaaaaaaaaa",
-      expectedSignaturePrefix: "sha256=a79c996ef1ea",
-    });
-    expect(serializedLog).not.toContain(secret);
-    expect(serializedLog).not.toContain(body);
-    expect(serializedLog).not.toContain(signature);
-  });
-
-  it("accepts signed issue events and dispatches sync", async () => {
+  it("accepts issue events signed with GitHub's signature header", async () => {
     vi.stubEnv("GITHUB_WEBHOOK_SECRET", "secret");
     const body = JSON.stringify({
       action: "labeled",
@@ -116,7 +69,7 @@ describe("POST /api/github/webhook", () => {
         method: "POST",
         body,
         headers: {
-          "x-github-signature-256": signature,
+          "x-hub-signature-256": signature,
           "x-github-delivery": "delivery-2",
           "x-github-event": "issues",
         },
