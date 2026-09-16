@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { normalizeTag } from "@/features/content/submission-schemas";
 import type { SupabaseContentClient } from "@/server/content/supabase-repository";
 import { parseSubmissionIssueBody } from "./issue-codec";
@@ -14,6 +15,7 @@ type SyncGitHubIssueOptions = {
   client: SupabaseContentClient;
   deliveryId: string;
   eventName: string;
+  repository: string;
   issue: GitHubIssueSnapshot;
   now?: Date;
 };
@@ -53,6 +55,7 @@ async function recordDelivery(
 ): Promise<void> {
   const result = (await client.from("moderation_events").insert({
     delivery_id: options.deliveryId,
+    github_repository: normalizeGitHubRepository(options.repository),
     github_issue_number: options.issue.number,
     event_name: `${options.eventName}:${status}`,
   })) as { error?: null | { message: string } };
@@ -60,6 +63,18 @@ async function recordDelivery(
   if (result?.error) {
     throw new Error(`Supabase moderation event write failed: ${result.error.message}`);
   }
+}
+
+export function normalizeGitHubRepository(repository: string): string {
+  return repository.trim().toLocaleLowerCase();
+}
+
+function newContentId(repository: string, issueNumber: number): string {
+  const repositoryKey = createHash("sha256")
+    .update(normalizeGitHubRepository(repository))
+    .digest("hex")
+    .slice(0, 12);
+  return `github-repo-${repositoryKey}-issue-${issueNumber}`;
 }
 
 async function storeContentTags(
@@ -129,26 +144,34 @@ async function assertNoPriorDelivery(
   return Boolean(result.data);
 }
 
-async function existingPublishedAt(
+async function existingContent(
   client: SupabaseWriteClient,
+  repository: string,
   issueNumber: number,
-): Promise<string | null> {
-  const query = (client.from("content").select("published_at") as {
-    eq(column: string, value: unknown): unknown;
-  }).eq("github_issue_number", issueNumber);
-  const result = await maybeSingle<{ published_at: string }>(query);
+): Promise<{ id: string; published_at: string } | null> {
+  const query = client.from("content").select("id,published_at") as {
+    eq(column: string, value: unknown): {
+      eq(column: string, value: unknown): unknown;
+    };
+  };
+  const result = await maybeSingle<{ id: string; published_at: string }>(
+    query
+      .eq("github_repository", normalizeGitHubRepository(repository))
+      .eq("github_issue_number", issueNumber),
+  );
   if (result.error) {
     throw new Error(`Supabase content lookup failed: ${result.error.message}`);
   }
 
-  return result.data?.published_at ?? null;
+  return result.data;
 }
 
 export async function syncGitHubIssue(
   options: SyncGitHubIssueOptions,
 ): Promise<SyncGitHubIssueResult> {
   const client = asWriter(options.client);
-  const contentId = `github-issue-${options.issue.number}`;
+  const repository = normalizeGitHubRepository(options.repository);
+  const generatedContentId = newContentId(repository, options.issue.number);
 
   if (await assertNoPriorDelivery(client, options.deliveryId)) {
     return { status: "duplicate" };
@@ -160,9 +183,15 @@ export async function syncGitHubIssue(
   }
 
   if (hasLabel(options.issue, "unpublish")) {
-    const result = (await client
+    const withdrawal = client
       .from("content")
-      .update({ status: "withdrawn", updated_at: (options.now ?? new Date()).toISOString() })
+      .update({ status: "withdrawn", updated_at: (options.now ?? new Date()).toISOString() }) as {
+      eq(column: string, value: unknown): {
+        eq(column: string, value: unknown): unknown;
+      };
+    };
+    const result = (await withdrawal
+      .eq("github_repository", repository)
       .eq("github_issue_number", options.issue.number)) as {
       error?: null | { message: string };
     };
@@ -170,7 +199,7 @@ export async function syncGitHubIssue(
       throw new Error(`Supabase content withdrawal failed: ${result.error.message}`);
     }
     await recordDelivery(client, options, "withdrawn");
-    return { status: "withdrawn", contentId };
+    return { status: "withdrawn", contentId: generatedContentId };
   }
 
   if (!hasLabel(options.issue, "approved")) {
@@ -185,11 +214,13 @@ export async function syncGitHubIssue(
   const submission = parseSubmissionIssueBody(options.issue.body ?? "");
   const timestamp = (options.now ?? new Date()).toISOString();
   // 首次发布才写 published_at；重新同步（如 reconcile）必须保留原始发布日期
-  const publishedAt =
-    (await existingPublishedAt(client, options.issue.number)) ?? timestamp;
+  const existing = await existingContent(client, repository, options.issue.number);
+  const contentId = existing?.id ?? generatedContentId;
+  const publishedAt = existing?.published_at ?? timestamp;
   const upsertResult = (await client.from("content").upsert(
     {
       id: contentId,
+      github_repository: repository,
       github_issue_number: options.issue.number,
       region_slug: submission.regionSlug,
       status: "published",
@@ -202,7 +233,7 @@ export async function syncGitHubIssue(
       published_at: publishedAt,
       updated_at: timestamp,
     },
-    { onConflict: "github_issue_number" },
+    { onConflict: "github_repository,github_issue_number" },
   )) as { error?: null | { message: string } };
   if (upsertResult?.error) {
     throw new Error(`Supabase content upsert failed: ${upsertResult.error.message}`);

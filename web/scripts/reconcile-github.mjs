@@ -1,7 +1,10 @@
 import { createClient } from "@supabase/supabase-js";
-
-const PAYLOAD_START = "<!-- lastfe-submission:v1";
-const PAYLOAD_END = "-->";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import {
+  normalizeGitHubRepository,
+  syncGitHubIssue,
+} from "../src/server/github/sync-issue.ts";
 
 function requireServerEnv(name) {
   const value = process.env[name]?.trim();
@@ -39,98 +42,7 @@ function normalizeIssue(issue) {
   };
 }
 
-function parseSubmissionIssueBody(body) {
-  const start = body.indexOf(PAYLOAD_START);
-  if (start === -1) throw new Error("missing submission payload");
-  const payloadStart = start + PAYLOAD_START.length;
-  const end = body.indexOf(PAYLOAD_END, payloadStart);
-  if (end === -1) throw new Error("missing submission payload");
-  return JSON.parse(Buffer.from(body.slice(payloadStart, end).trim(), "base64url").toString("utf8"));
-}
-
-function hasLabel(issue, label) {
-  return issue.labels.some((candidate) => candidate.trim().toLocaleLowerCase() === label);
-}
-
-function summaryFrom(markdown, fallback) {
-  if (fallback) return fallback;
-  if (!markdown) return null;
-  return markdown.replace(/^#{1,6}\s+/gm, "").replace(/\s+/g, " ").trim().slice(0, 180);
-}
-
-async function recordDelivery(client, issue, deliveryId, eventName, status) {
-  const { error } = await client.from("moderation_events").insert({
-    delivery_id: deliveryId,
-    github_issue_number: issue.number,
-    event_name: `${eventName}:${status}`,
-  });
-  if (error) throw new Error(`moderation event write failed: ${error.message}`);
-}
-
-async function syncGitHubIssue(client, deliveryId, eventName, issue) {
-  const duplicate = await client
-    .from("moderation_events")
-    .select("delivery_id")
-    .eq("delivery_id", deliveryId)
-    .maybeSingle();
-  if (duplicate.error) throw new Error(`moderation lookup failed: ${duplicate.error.message}`);
-  if (duplicate.data) return { status: "duplicate" };
-
-  const contentId = `github-issue-${issue.number}`;
-  if (!hasLabel(issue, "submission")) {
-    await recordDelivery(client, issue, deliveryId, eventName, "ignored");
-    return { status: "ignored" };
-  }
-
-  if (hasLabel(issue, "unpublish")) {
-    const { error } = await client
-      .from("content")
-      .update({ status: "withdrawn", updated_at: new Date().toISOString() })
-      .eq("github_issue_number", issue.number);
-    if (error) throw new Error(`content withdrawal failed: ${error.message}`);
-    await recordDelivery(client, issue, deliveryId, eventName, "withdrawn");
-    return { status: "withdrawn" };
-  }
-
-  if (!hasLabel(issue, "approved")) {
-    await recordDelivery(client, issue, deliveryId, eventName, issue.state === "closed" ? "rejected" : "ignored");
-    return { status: issue.state === "closed" ? "rejected" : "ignored" };
-  }
-
-  const submission = parseSubmissionIssueBody(issue.body ?? "");
-  const timestamp = new Date().toISOString();
-  // 首次发布才写 published_at；reconcile 重跑必须保留原始发布日期
-  const existing = await client
-    .from("content")
-    .select("published_at")
-    .eq("github_issue_number", issue.number)
-    .maybeSingle();
-  if (existing.error) throw new Error(`content lookup failed: ${existing.error.message}`);
-  const publishedAt = existing.data?.published_at ?? timestamp;
-  const { error } = await client.from("content").upsert(
-    {
-      id: contentId,
-      github_issue_number: issue.number,
-      region_slug: submission.regionSlug,
-      status: "published",
-      title: submission.title,
-      summary: summaryFrom(submission.markdown, submission.summary),
-      nickname: submission.nickname,
-      markdown: submission.markdown,
-      external_url: submission.externalUrl,
-      metadata_json: submission.metadata,
-      published_at: publishedAt,
-      updated_at: timestamp,
-    },
-    { onConflict: "github_issue_number" },
-  );
-  if (error) throw new Error(`content upsert failed: ${error.message}`);
-  await recordDelivery(client, issue, deliveryId, eventName, "published");
-  return { status: "published" };
-}
-
-async function listSubmissionIssues() {
-  const repository = requireServerEnv("GITHUB_REPOSITORY");
+async function listSubmissionIssues(repository) {
   const token = requireServerEnv("GITHUB_TOKEN");
   const url = new URL(`${githubApiBaseUrl()}/repos/${repository}/issues`);
   url.searchParams.set("state", "all");
@@ -157,18 +69,22 @@ async function listSubmissionIssues() {
 
 async function main() {
   const client = getSupabaseAdmin();
-  const issues = await listSubmissionIssues();
+  const repository = normalizeGitHubRepository(
+    requireServerEnv("GITHUB_REPOSITORY"),
+  );
+  const issues = await listSubmissionIssues(repository);
   let synced = 0;
   let failed = 0;
 
   for (const issue of issues) {
     try {
-      await syncGitHubIssue(
+      await syncGitHubIssue({
         client,
-        `reconcile:${issue.number}:${issue.updated_at}`,
-        "reconcile",
-        normalizeIssue(issue),
-      );
+        deliveryId: `reconcile:${repository}:${issue.number}:${issue.updated_at}`,
+        eventName: "reconcile",
+        repository,
+        issue: normalizeIssue(issue),
+      });
       synced += 1;
     } catch (error) {
       failed += 1;
@@ -187,12 +103,14 @@ async function main() {
   if (failed > 0) process.exitCode = 1;
 }
 
-main().catch((error) => {
-  console.error(
-    JSON.stringify({
-      event: "github-reconcile-crashed",
-      errorCategory: error instanceof Error ? error.name : "unknown",
-    }),
-  );
-  process.exitCode = 1;
-});
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  main().catch((error) => {
+    console.error(
+      JSON.stringify({
+        event: "github-reconcile-crashed",
+        errorCategory: error instanceof Error ? error.name : "unknown",
+      }),
+    );
+    process.exitCode = 1;
+  });
+}

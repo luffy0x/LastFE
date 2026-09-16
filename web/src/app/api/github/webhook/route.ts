@@ -1,6 +1,9 @@
 import { getSupabaseAdmin } from "@/server/supabase/admin";
 import { requireServerEnv } from "@/server/supabase/env";
-import { syncGitHubIssue } from "@/server/github/sync-issue";
+import {
+  normalizeGitHubRepository,
+  syncGitHubIssue,
+} from "@/server/github/sync-issue";
 import {
   readBoundedBody,
   verifyGitHubWebhookSignature,
@@ -39,6 +42,9 @@ export async function POST(request: Request) {
   }
 
   const payload = JSON.parse(body) as {
+    repository?: {
+      full_name?: string;
+    };
     issue?: {
       number?: number;
       title?: string;
@@ -47,6 +53,19 @@ export async function POST(request: Request) {
       labels?: unknown;
     };
   };
+  const expectedRepository = normalizeGitHubRepository(
+    requireServerEnv("GITHUB_REPOSITORY"),
+  );
+  const eventRepository = payload.repository?.full_name
+    ? normalizeGitHubRepository(payload.repository.full_name)
+    : "";
+  if (eventRepository !== expectedRepository) {
+    return Response.json(
+      { ok: false, code: "WRONG_REPOSITORY" },
+      { status: 403 },
+    );
+  }
+
   const issue = payload.issue;
   if (!issue?.number || !issue.title) {
     return Response.json({ ok: false, code: "INVALID_ISSUE" }, { status: 400 });
@@ -58,6 +77,7 @@ export async function POST(request: Request) {
       client: getSupabaseAdmin(),
       deliveryId,
       eventName,
+      repository: expectedRepository,
       issue: {
         number: issue.number,
         title: issue.title,

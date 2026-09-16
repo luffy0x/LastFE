@@ -13,7 +13,7 @@
     "start": "next start",
     "export:feishu": "node scripts/feishu-export.mjs",
     "import:feishu": "node scripts/import-feishu.mjs",
-    "reconcile:github": "node scripts/reconcile-github.mjs",
+    "reconcile:github": "tsx scripts/reconcile-github.mjs",
     "lint": "eslint .",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest",

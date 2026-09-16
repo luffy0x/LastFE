@@ -8,6 +8,8 @@ vi.mock("@/server/supabase/admin", () => ({
   getSupabaseAdmin: vi.fn(() => ({ from: vi.fn() })),
 }));
 vi.mock("@/server/github/sync-issue", () => ({
+  normalizeGitHubRepository: (repository: string) =>
+    repository.trim().toLocaleLowerCase(),
   syncGitHubIssue: vi.fn(() => Promise.resolve({ status: "ignored" })),
 }));
 
@@ -25,6 +27,7 @@ function signedRequest(body: string, delivery: string): Request {
 
 describe("POST /api/github/webhook", () => {
   afterEach(() => {
+    vi.clearAllMocks();
     vi.resetModules();
     vi.unstubAllEnvs();
   });
@@ -50,8 +53,10 @@ describe("POST /api/github/webhook", () => {
 
   it("accepts issue events signed with GitHub's signature header", async () => {
     vi.stubEnv("GITHUB_WEBHOOK_SECRET", "secret");
+    vi.stubEnv("GITHUB_REPOSITORY", "luffy0x/lastfe-moderation");
     const body = JSON.stringify({
       action: "labeled",
+      repository: { full_name: "luffy0x/lastfe-moderation" },
       issue: {
         number: 9,
         title: "[interview] 字节一面",
@@ -80,13 +85,42 @@ describe("POST /api/github/webhook", () => {
     expect(syncGitHubIssue).toHaveBeenCalledWith(
       expect.objectContaining({
         deliveryId: "delivery-2",
+        repository: "luffy0x/lastfe-moderation",
         issue: expect.objectContaining({ number: 9 }),
       }),
     );
   });
 
+  it("rejects signed events from a different repository", async () => {
+    vi.stubEnv("GITHUB_WEBHOOK_SECRET", "secret");
+    vi.stubEnv("GITHUB_REPOSITORY", "luffy0x/lastfe-moderation");
+    const body = JSON.stringify({
+      action: "labeled",
+      repository: { full_name: "luffy0x/LastFE" },
+      issue: {
+        number: 9,
+        title: "[interview] 字节一面",
+        body: "body",
+        state: "open",
+        labels: [{ name: "submission" }, { name: "approved" }],
+      },
+    });
+    const { POST } = await import("./route");
+    const { syncGitHubIssue } = await import("@/server/github/sync-issue");
+
+    const response = await POST(signedRequest(body, "delivery-wrong-repo"));
+
+    expect(response.status).toBe(403);
+    await expect(response.json()).resolves.toMatchObject({
+      ok: false,
+      code: "WRONG_REPOSITORY",
+    });
+    expect(syncGitHubIssue).not.toHaveBeenCalled();
+  });
+
   it("returns a 500 with a logged reason when sync fails", async () => {
     vi.stubEnv("GITHUB_WEBHOOK_SECRET", "secret");
+    vi.stubEnv("GITHUB_REPOSITORY", "luffy0x/lastfe-moderation");
     const { POST } = await import("./route");
     const { syncGitHubIssue } = await import("@/server/github/sync-issue");
     vi.mocked(syncGitHubIssue).mockRejectedValueOnce(
@@ -96,6 +130,7 @@ describe("POST /api/github/webhook", () => {
 
     const body = JSON.stringify({
       action: "labeled",
+      repository: { full_name: "luffy0x/lastfe-moderation" },
       issue: {
         number: 10,
         title: "[interview] 字节一面",

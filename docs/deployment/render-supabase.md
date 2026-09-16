@@ -5,7 +5,7 @@
 ## Supabase
 
 1. 新建 Supabase 项目。
-2. 在 Supabase SQL editor 中执行 `web/supabase/migrations/001_initial_schema.sql`。
+2. 在 Supabase SQL editor 中按编号依次执行 `web/supabase/migrations/*.sql`。
 3. 在 Project Settings / API 记录：
    - `SUPABASE_URL`
    - `SUPABASE_SERVICE_ROLE_KEY`
@@ -37,6 +37,10 @@
 - `RATE_LIMIT_HMAC_KEY`
 
 ## 发布与回滚
+
+从原审核仓库切换到新仓库时，必须先执行
+`002_namespace_github_issues.sql`，再部署引用新仓库的应用版本。迁移会给旧 Issue
+内容补上原仓库标识，并把唯一键改为“仓库 + Issue 编号”；不会重建内容或改变旧内容 ID。
 
 发布前在本地运行：
 
