@@ -16,9 +16,12 @@ vi.mock("@/features/search/components/GlobalSearch", () => ({
 it("renders the brand, five category links and the submit entry", () => {
   render(<SiteHeader />);
 
-  expect(
-    screen.getByRole("link", { name: /LastFE/ }),
-  ).toHaveAttribute("href", "/");
+  const brand = screen.getByRole("link", { name: /LastFE/ });
+  expect(brand).toHaveAttribute("href", "/");
+  expect(brand.querySelector("svg")).toHaveAttribute("viewBox", "0 0 32 32");
+  expect(brand.querySelector("svg")).toHaveAttribute("width", "20");
+  expect(brand.querySelector("svg")).toHaveAttribute("height", "20");
+  expect(brand.querySelector("svg")).toHaveAttribute("aria-hidden", "true");
   const nav = screen.getByRole("navigation", { name: "主导航" });
   const links = ["面经记录", "学习资料", "八股盛宴", "项目推荐", "算法手撕"];
   for (const label of links) {

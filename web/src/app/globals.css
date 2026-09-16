@@ -158,7 +158,7 @@ button:focus-visible,
   display: inline-flex;
   min-height: 44px;
   align-items: center;
-  gap: 9px;
+  gap: 8px;
   color: var(--foreground);
   font-size: 17px;
   font-weight: 700;
@@ -169,6 +169,8 @@ button:focus-visible,
 }
 
 .site-header__brand svg {
+  display: block;
+  flex: 0 0 20px;
   color: var(--primary);
 }
 
