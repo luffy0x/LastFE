@@ -1,8 +1,19 @@
 import { describe, expect, it } from "vitest";
 
-import { buildCuratedRow } from "../../../scripts/import-curated.mjs";
+import {
+  buildCuratedRow,
+  extractSummary,
+} from "../../../scripts/import-curated.mjs";
 
 describe("curated knowledge import", () => {
+  it("converts inline Markdown in summaries to plain text", () => {
+    expect(
+      extractSummary(
+        "# CSP\n\n**CSP（Content Security Policy）** 使用 `default-src` 限制 **XSS**。",
+      ),
+    ).toBe("CSP（Content Security Policy） 使用 default-src 限制 XSS。");
+  });
+
   it("maps a fundamentals entry to the public content contract", () => {
     const sourceMarkdown = [
       "# HTML 核心知识",
@@ -118,6 +129,13 @@ describe("curated knowledge import", () => {
       buildCuratedRow({
         entry,
         markdown: `${reviewHeader}**基本****数据类型**`,
+      }),
+    ).toThrow("资料包含异常加粗标记：malformed-emphasis");
+
+    expect(() =>
+      buildCuratedRow({
+        entry,
+        markdown: `${reviewHeader}**使用 **\`unknown\`** 替代 **\`any\``,
       }),
     ).toThrow("资料包含异常加粗标记：malformed-emphasis");
 

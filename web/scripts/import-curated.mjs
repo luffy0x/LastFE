@@ -3,6 +3,10 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { createClient } from "@supabase/supabase-js";
+import React from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 const DEFAULT_CURATED_DIR = path.resolve(process.cwd(), "..", "..", "整理后的八股资料");
 const MAX_MARKDOWN_LENGTH = 50 * 1024;
@@ -46,7 +50,14 @@ export function extractSummary(markdown) {
     ) {
       continue;
     }
-    return value.slice(0, 240);
+    return value
+      .replace(/!\[([^\]]*)\]\([^)]+\)/g, "$1")
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+      .replace(/`+([^`]*?)`+/g, "$1")
+      .replace(/\*\*|__|~~/g, "")
+      .replace(/\\([\\`*_[\]{}()#+\-.!>])/g, "$1")
+      .trim()
+      .slice(0, 240);
   }
   return null;
 }
@@ -84,22 +95,19 @@ export function toPublishedMarkdown(entry, markdown) {
 }
 
 function assertNoMalformedEmphasis(markdown, id) {
-  let fenceMarker = null;
+  const rendered = renderToStaticMarkup(
+    React.createElement(
+      ReactMarkdown,
+      { remarkPlugins: [remarkGfm], skipHtml: true },
+      markdown,
+    ),
+  );
+  const visibleOutsideCode = rendered
+    .replace(/<pre\b[^>]*>[\s\S]*?<\/pre>/gi, "")
+    .replace(/<code\b[^>]*>[\s\S]*?<\/code>/gi, "");
 
-  for (const line of markdown.split(/\r?\n/)) {
-    const fence = line.match(/^\s*(`{3,}|~{3,})/);
-    if (fence) {
-      const marker = fence[1][0];
-      fenceMarker = fenceMarker === marker ? null : fenceMarker ?? marker;
-      continue;
-    }
-    if (fenceMarker) continue;
-
-    const withoutInlineCode = line.replace(/`[^`]*`/g, "inline-code");
-    if (/^\s*\*{4,}\s*$/.test(withoutInlineCode)) continue;
-    if (/\*{4,}/.test(withoutInlineCode)) {
-      throw new Error(`资料包含异常加粗标记：${id}`);
-    }
+  if (visibleOutsideCode.includes("**")) {
+    throw new Error(`资料包含异常加粗标记：${id}`);
   }
 }
 
