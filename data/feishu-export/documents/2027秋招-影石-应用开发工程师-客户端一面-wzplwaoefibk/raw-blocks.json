@@ -1,0 +1,401 @@
+[
+  {
+    "block_id": "OFtfdC1FqoguQXxxiWmcqxTInah",
+    "block_type": 1,
+    "children": [
+      "E6w7dZ9cgolpfwxXr5wcY5denib",
+      "LBNfdnN1XoWjjXxxQvTc0aUfntj",
+      "NX5TdLl7poTacXxLzEqc2pTen7e",
+      "OGHndDQY7orIONxLp53c91Zcn8c",
+      "IbOpdhTkRoIYdmx7SEfcpykbngo",
+      "CBBWdE5VcoMkSixYB4RcxZwDnyg",
+      "IxvfdNrIFoHrQVxkpjkc7Gfznxf",
+      "Xn5RdlXjlohpDLxsYCtcshcrnZg",
+      "GlArdltTFoV8h6xtTxdcE8yqnYe",
+      "UYRPdIOnuoHC31xlkqAcFpgdn6g",
+      "A30ldOgrCoWkMWxPAa8cHHSpnEh",
+      "N95idrTZOoPqRgxBKOZcJPNbnWf",
+      "Bnwld18cDoxVJfxK1x8ced7SnTc",
+      "Ndk5dhameo5419xYPcJcI5hdnZ3"
+    ],
+    "page": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "【2027秋招】影石-应用开发工程师-客户端一面",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1
+      }
+    },
+    "parent_id": ""
+  },
+  {
+    "block_id": "E6w7dZ9cgolpfwxXr5wcY5denib",
+    "block_type": 3,
+    "heading1": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "注意",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "OFtfdC1FqoguQXxxiWmcqxTInah"
+  },
+  {
+    "block_id": "LBNfdnN1XoWjjXxxQvTc0aUfntj",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "这是单一软件方向的，主要是客户端和SDK开发。技术栈很广，包括kotlin、swift、c++、go等。我错以为是嵌入式软件。只有SDK（C++）部分会和硬件打交道，主要还是软件平台。",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "1"
+      }
+    },
+    "parent_id": "OFtfdC1FqoguQXxxiWmcqxTInah"
+  },
+  {
+    "block_id": "NX5TdLl7poTacXxLzEqc2pTen7e",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "影翎无人机就是这个部门做的，如果有了解会加分。",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "OFtfdC1FqoguQXxxiWmcqxTInah"
+  },
+  {
+    "block_id": "OGHndDQY7orIONxLp53c91Zcn8c",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "影石内部用飞书办公。",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "OFtfdC1FqoguQXxxiWmcqxTInah"
+  },
+  {
+    "block_id": "IbOpdhTkRoIYdmx7SEfcpykbngo",
+    "block_type": 3,
+    "heading1": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "提问",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "OFtfdC1FqoguQXxxiWmcqxTInah"
+  },
+  {
+    "block_id": "CBBWdE5VcoMkSixYB4RcxZwDnyg",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "无前端八股，无算法无手撕。主要考察持续的学习能力和学习意愿。对客户端了解得多更好，但是非必需要求。",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "1"
+      }
+    },
+    "parent_id": "OFtfdC1FqoguQXxxiWmcqxTInah"
+  },
+  {
+    "block_id": "IxvfdNrIFoHrQVxkpjkc7Gfznxf",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "就是聊天，会挖简历中的实习和项目。但是不会很深，项目的几个边界case没考虑到，貌似减分。",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "OFtfdC1FqoguQXxxiWmcqxTInah"
+  },
+  {
+    "block_id": "Xn5RdlXjlohpDLxsYCtcshcrnZg",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "有使用过影石的产品会加分。（我没用过）",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "OFtfdC1FqoguQXxxiWmcqxTInah"
+  },
+  {
+    "block_id": "GlArdltTFoV8h6xtTxdcE8yqnYe",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "给影石大人跪了，根本不知道反问啥，技术栈也不合适，应该寄了。",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "OFtfdC1FqoguQXxxiWmcqxTInah"
+  },
+  {
+    "block_id": "UYRPdIOnuoHC31xlkqAcFpgdn6g",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "客户端问题：从打开app图标到首页加载完成，发生了什么？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "OFtfdC1FqoguQXxxiWmcqxTInah"
+  },
+  {
+    "block_id": "A30ldOgrCoWkMWxPAa8cHHSpnEh",
+    "block_type": 13,
+    "ordered": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "假如使用app时，来了一个电话，你接了10分钟后才回到app，这个过程中app会发生什么事情？",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false,
+        "sequence": "auto"
+      }
+    },
+    "parent_id": "OFtfdC1FqoguQXxxiWmcqxTInah"
+  },
+  {
+    "block_id": "N95idrTZOoPqRgxBKOZcJPNbnWf",
+    "block_type": 3,
+    "heading1": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "面试流程",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    },
+    "parent_id": "OFtfdC1FqoguQXxxiWmcqxTInah"
+  },
+  {
+    "block_id": "Bnwld18cDoxVJfxK1x8ced7SnTc",
+    "block_type": 2,
+    "parent_id": "OFtfdC1FqoguQXxxiWmcqxTInah",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "2轮技术面+1轮hr面。",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  },
+  {
+    "block_id": "Ndk5dhameo5419xYPcJcI5hdnZ3",
+    "block_type": 2,
+    "parent_id": "OFtfdC1FqoguQXxxiWmcqxTInah",
+    "text": {
+      "elements": [
+        {
+          "text_run": {
+            "content": "",
+            "text_element_style": {
+              "bold": false,
+              "inline_code": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false
+            }
+          }
+        }
+      ],
+      "style": {
+        "align": 1,
+        "folded": false
+      }
+    }
+  }
+]
