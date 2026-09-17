@@ -2217,7 +2217,16 @@ button:focus-visible,
   right: 12px;
   bottom: 0;
   z-index: 30;
+  touch-action: none;
+  cursor: grab;
   pointer-events: none;
+}
+
+/* 拖拽过一次后改由内联 left/top 定位，停靠点固定在指针处 */
+.site-pet--placed {
+  right: auto;
+  bottom: auto;
+  cursor: grabbing;
 }
 
 .site-pet > * {
