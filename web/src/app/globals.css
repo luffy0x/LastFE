@@ -363,6 +363,7 @@ button:focus-visible,
 
 .global-search--header {
   display: block;
+  width: auto;
 }
 
 .global-search--hero {
@@ -395,6 +396,19 @@ button:focus-visible,
   font-size: 14px;
   gap: 8px;
   text-align: left;
+}
+
+.global-search--header > button {
+  grid-template-columns: 20px;
+  width: 44px;
+  justify-content: center;
+  padding: 0;
+  background: transparent;
+  border-color: transparent;
+}
+
+.global-search--header > button:hover {
+  border-color: transparent;
 }
 
 .global-search kbd {

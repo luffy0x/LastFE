@@ -56,8 +56,7 @@ export function GlobalSearch({
           onClick={open}
         >
           <SearchIcon />
-          <span>搜索全部内容</span>
-          <kbd>Ctrl K</kbd>
+          {variant === "hero" ? <span>搜索全部内容</span> : null}
         </button>
       </div>
 
