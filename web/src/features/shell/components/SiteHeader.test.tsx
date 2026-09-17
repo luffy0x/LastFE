@@ -13,7 +13,7 @@ vi.mock("@/features/search/components/GlobalSearch", () => ({
   GlobalSearch: () => <div data-testid="global-search" />,
 }));
 
-it("renders the brand, five category links and the submit entry", () => {
+it("renders the brand, category links and the submit entry", () => {
   render(<SiteHeader />);
 
   const brand = screen.getByRole("link", { name: /LastFE/ });
@@ -23,7 +23,15 @@ it("renders the brand, five category links and the submit entry", () => {
   expect(brand.querySelector("svg")).toHaveAttribute("height", "20");
   expect(brand.querySelector("svg")).toHaveAttribute("aria-hidden", "true");
   const nav = screen.getByRole("navigation", { name: "主导航" });
-  const links = ["面经记录", "学习资料", "八股盛宴", "项目推荐", "算法手撕"];
+  const links = [
+    "学习资料",
+    "项目推荐",
+    "八股盛宴",
+    "算法手撕",
+    "简历制作",
+    "投递记录",
+    "面经记录",
+  ];
   for (const label of links) {
     expect(
       screen.getByRole("link", { name: label }),
@@ -48,7 +56,7 @@ it("opens the mobile menu, focuses the first link and closes on Escape", async (
   const mobileNav = screen.getByRole("navigation", {
     name: "移动端分类导航",
   });
-  const firstLink = screen.getAllByRole("link", { name: "面经记录" }).at(-1);
+  const firstLink = screen.getAllByRole("link", { name: "学习资料" }).at(-1);
   expect(mobileNav).toContainElement(firstLink ?? null);
   expect(firstLink).toHaveFocus();
 

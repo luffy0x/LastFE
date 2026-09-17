@@ -2,8 +2,10 @@ import {
   BookOpen,
   Briefcase,
   Code2,
+  FileUser,
   FolderGit2,
   Layers,
+  Send,
   type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
@@ -16,6 +18,8 @@ const CATEGORY_ICONS: Record<string, LucideIcon> = {
   fundamentals: Layers,
   projects: FolderGit2,
   algorithms: Code2,
+  resume: FileUser,
+  applications: Send,
 };
 
 type CategoryGridProps = {
@@ -33,9 +37,10 @@ export function CategoryGrid({ categories }: CategoryGridProps) {
             href={category.href}
             className="category-card"
           >
-            <Icon size={22} aria-hidden="true" />
+            <span className="category-card__icon" aria-hidden="true">
+              <Icon size={20} />
+            </span>
             <h3>{category.label}</h3>
-            <p>{category.description}</p>
           </Link>
         );
       })}

@@ -1,4 +1,11 @@
-export type CategoryTheme = "amber" | "teal" | "magenta" | "indigo" | "cyan";
+export type CategoryTheme =
+  | "amber"
+  | "teal"
+  | "magenta"
+  | "indigo"
+  | "cyan"
+  | "lime"
+  | "rose";
 
 type SubmissionFieldBase = {
   name: string;
@@ -30,7 +37,9 @@ export type CategoryDefinition = {
     | "resource"
     | "fundamental"
     | "project"
-    | "algorithm";
+    | "algorithm"
+    | "resume"
+    | "application";
   submissionFields: readonly SubmissionFieldDefinition[];
   filterKeys: readonly string[];
   summaryFields: readonly string[];
@@ -44,25 +53,6 @@ const DIFFICULTY_OPTIONS = [
 ] as const;
 
 export const CATEGORIES = [
-  {
-    slug: "interview",
-    href: "/regions/interview",
-    label: "面经记录",
-    description: "公司与岗位实战记录，标记真实面试路径。",
-    theme: "amber",
-    schemaKey: "interview",
-    submissionFields: [
-      { name: "company", label: "公司", kind: "text", required: true, maxLength: 80 },
-      { name: "position", label: "岗位", kind: "text", required: true, maxLength: 80 },
-      { name: "round", label: "几面", kind: "text", required: true, maxLength: 20, placeholder: "如：一面 / 二面 / HR面" },
-      { name: "interviewDate", label: "时间", kind: "date", required: false },
-      { name: "nickname", label: "投稿人", kind: "text", required: false, maxLength: 40, placeholder: "可留空，公开显示匿名" },
-      { name: "markdown", label: "面经内容", kind: "markdown", required: true, maxLength: 50 * 1024 },
-    ],
-    filterKeys: ["company", "position", "tags"],
-    summaryFields: ["company", "position", "round", "interviewDate", "tags"],
-    enabled: true,
-  },
   {
     slug: "resources",
     href: "/regions/resources",
@@ -79,24 +69,6 @@ export const CATEGORIES = [
     ],
     filterKeys: ["tags"],
     summaryFields: ["tags"],
-    enabled: true,
-  },
-  {
-    slug: "fundamentals",
-    href: "/regions/fundamentals",
-    label: "八股盛宴",
-    description: "把零散知识组织成可检索的基础内容。",
-    theme: "magenta",
-    schemaKey: "fundamental",
-    submissionFields: [
-      { name: "title", label: "标题", kind: "text", required: true, maxLength: 120 },
-      { name: "category", label: "分类", kind: "text", required: true, maxLength: 60 },
-      { name: "tags", label: "标签", kind: "tags", required: true, maxLength: 24 },
-      { name: "nickname", label: "昵称", kind: "text", required: false, maxLength: 40 },
-      { name: "markdown", label: "内容", kind: "markdown", required: true, maxLength: 50 * 1024 },
-    ],
-    filterKeys: ["category", "tags"],
-    summaryFields: ["category", "tags"],
     enabled: true,
   },
   {
@@ -117,6 +89,24 @@ export const CATEGORIES = [
     ],
     filterKeys: ["techStack", "tags"],
     summaryFields: ["techStack", "tags"],
+    enabled: true,
+  },
+  {
+    slug: "fundamentals",
+    href: "/regions/fundamentals",
+    label: "八股盛宴",
+    description: "把零散知识组织成可检索的基础内容。",
+    theme: "magenta",
+    schemaKey: "fundamental",
+    submissionFields: [
+      { name: "title", label: "标题", kind: "text", required: true, maxLength: 120 },
+      { name: "category", label: "分类", kind: "text", required: true, maxLength: 60 },
+      { name: "tags", label: "标签", kind: "tags", required: true, maxLength: 24 },
+      { name: "nickname", label: "昵称", kind: "text", required: false, maxLength: 40 },
+      { name: "markdown", label: "内容", kind: "markdown", required: true, maxLength: 50 * 1024 },
+    ],
+    filterKeys: ["category", "tags"],
+    summaryFields: ["category", "tags"],
     enabled: true,
   },
   {
@@ -143,6 +133,63 @@ export const CATEGORIES = [
     ],
     filterKeys: ["source", "difficulty", "tags"],
     summaryFields: ["source", "difficulty", "tags"],
+    enabled: true,
+  },
+  {
+    slug: "resume",
+    href: "/regions/resume",
+    label: "简历制作",
+    description: "打磨经得起追问的简历与自我介绍。",
+    theme: "lime",
+    schemaKey: "resume",
+    submissionFields: [
+      { name: "title", label: "标题", kind: "text", required: true, maxLength: 120 },
+      { name: "position", label: "目标岗位", kind: "text", required: true, maxLength: 60 },
+      { name: "tags", label: "标签", kind: "tags", required: true, maxLength: 24 },
+      { name: "nickname", label: "昵称", kind: "text", required: false, maxLength: 40 },
+      { name: "markdown", label: "内容", kind: "markdown", required: true, maxLength: 50 * 1024 },
+    ],
+    filterKeys: ["position", "tags"],
+    summaryFields: ["position", "tags"],
+    enabled: true,
+  },
+  {
+    slug: "applications",
+    href: "/regions/applications",
+    label: "投递记录",
+    description: "汇总投递渠道与进展，掌握求职节奏。",
+    theme: "rose",
+    schemaKey: "application",
+    submissionFields: [
+      { name: "title", label: "标题", kind: "text", required: true, maxLength: 120 },
+      { name: "company", label: "公司", kind: "text", required: true, maxLength: 80 },
+      { name: "stage", label: "进展阶段", kind: "text", required: true, maxLength: 40, placeholder: "如：已投递 / 笔试 / 一面 / Offer" },
+      { name: "applicationDate", label: "投递时间", kind: "date", required: false },
+      { name: "tags", label: "标签", kind: "tags", required: true, maxLength: 24 },
+      { name: "nickname", label: "昵称", kind: "text", required: false, maxLength: 40 },
+      { name: "markdown", label: "补充记录", kind: "markdown", required: false, maxLength: 50 * 1024 },
+    ],
+    filterKeys: ["company", "stage", "tags"],
+    summaryFields: ["company", "stage", "applicationDate", "tags"],
+    enabled: true,
+  },
+  {
+    slug: "interview",
+    href: "/regions/interview",
+    label: "面经记录",
+    description: "公司与岗位实战记录，标记真实面试路径。",
+    theme: "amber",
+    schemaKey: "interview",
+    submissionFields: [
+      { name: "company", label: "公司", kind: "text", required: true, maxLength: 80 },
+      { name: "position", label: "岗位", kind: "text", required: true, maxLength: 80 },
+      { name: "round", label: "几面", kind: "text", required: true, maxLength: 20, placeholder: "如：一面 / 二面 / HR面" },
+      { name: "interviewDate", label: "时间", kind: "date", required: false },
+      { name: "nickname", label: "投稿人", kind: "text", required: false, maxLength: 40, placeholder: "可留空，公开显示匿名" },
+      { name: "markdown", label: "面经内容", kind: "markdown", required: true, maxLength: 50 * 1024 },
+    ],
+    filterKeys: ["company", "position", "tags"],
+    summaryFields: ["company", "position", "round", "interviewDate", "tags"],
     enabled: true,
   },
 ] as const satisfies readonly CategoryDefinition[];

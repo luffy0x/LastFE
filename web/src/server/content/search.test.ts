@@ -45,12 +45,12 @@ describe("public content search", () => {
     const results = await searchAll(repositoryWithResults(), " Redis ");
 
     expect(results.map((group) => group.regionSlug)).toEqual([
-      "interview",
       "fundamentals",
+      "interview",
     ]);
     expect(results.flatMap((group) => group.items.map(({ id }) => id))).toEqual([
-      "gh-1",
       "gh-2",
+      "gh-1",
     ]);
   });
 

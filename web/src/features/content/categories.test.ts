@@ -3,8 +3,8 @@ import { describe, expect, it } from "vitest";
 import { CATEGORIES, getCategory } from "./categories";
 
 describe("CATEGORIES", () => {
-  it("defines exactly five categories", () => {
-    expect(CATEGORIES).toHaveLength(5);
+  it("defines exactly seven categories", () => {
+    expect(CATEGORIES).toHaveLength(7);
   });
 
   it("has unique slugs and matching hrefs", () => {
@@ -29,13 +29,15 @@ describe("CATEGORIES", () => {
     }
   });
 
-  it("carries the expected category labels", () => {
+  it("carries the expected category labels in display order", () => {
     expect(CATEGORIES.map(({ label }) => label)).toEqual([
-      "面经记录",
       "学习资料",
-      "八股盛宴",
       "项目推荐",
+      "八股盛宴",
       "算法手撕",
+      "简历制作",
+      "投递记录",
+      "面经记录",
     ]);
   });
 

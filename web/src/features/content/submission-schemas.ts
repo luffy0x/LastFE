@@ -92,6 +92,16 @@ function validateRegionSpecific(input: SubmissionInput): void {
     requireMetadata(input.metadata, "difficulty", "难度");
     assertMarkdown(input.markdown);
   }
+
+  if (input.regionSlug === "resume") {
+    requireMetadata(input.metadata, "position", "目标岗位");
+    assertMarkdown(input.markdown);
+  }
+
+  if (input.regionSlug === "applications") {
+    requireMetadata(input.metadata, "company", "公司");
+    requireMetadata(input.metadata, "stage", "进展阶段");
+  }
 }
 
 export function parseSubmissionInput(value: unknown): SubmissionInput {

@@ -718,37 +718,32 @@ button:focus-visible,
 }
 
 .category-card {
-  display: grid;
+  display: flex;
+  align-items: center;
   min-height: 44px;
-  padding: 20px;
+  padding: 16px 18px;
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   background: var(--card);
   box-shadow: var(--shadow-card);
   color: var(--card-foreground);
-  gap: 12px;
+  gap: 10px;
   text-decoration: none;
   transition:
     border-color 160ms cubic-bezier(0.16, 1, 0.3, 1),
     transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.category-card svg {
+.category-card__icon {
+  display: inline-flex;
   color: var(--primary);
 }
 
 .category-card h3 {
   margin: 0;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 650;
   letter-spacing: -0.01em;
-}
-
-.category-card p {
-  margin: 0;
-  color: var(--muted-foreground);
-  font-size: 13px;
-  line-height: 1.65;
 }
 
 .content-card-list {
@@ -2098,7 +2093,7 @@ button:focus-visible,
   border-radius: 6px;
 }
 
-/* 「算法手撕」分区顶部的静态刷题站点推荐卡片 */
+/* 分区顶部的静态站点推荐卡片（「算法手撕」/「简历制作」共用） */
 
 .algorithm-site-cards {
   margin: 34px 0 30px;

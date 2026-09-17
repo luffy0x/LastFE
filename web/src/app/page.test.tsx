@@ -52,11 +52,13 @@ it("renders the search-first home page with stats, categories and latest content
   expect(screen.getByText("近七日新增")).toBeInTheDocument();
 
   for (const label of [
-    "面经记录",
     "学习资料",
-    "八股盛宴",
     "项目推荐",
+    "八股盛宴",
     "算法手撕",
+    "简历制作",
+    "投递记录",
+    "面经记录",
   ]) {
     expect(screen.getByRole("link", { name: new RegExp(label) })).toHaveAttribute(
       "href",
