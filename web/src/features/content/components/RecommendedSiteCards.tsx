@@ -1,12 +1,24 @@
-import { ALGORITHM_SITES } from "../site-icons";
+import type { RecommendedSite } from "../site-icons";
 
-/** 「算法手撕」分区顶部的静态刷题站点推荐卡片 */
-export function AlgorithmSiteCards() {
+type RecommendedSiteCardsProps = {
+  /** 区块标题，如「刷题网站推荐」「简历制作网站推荐」 */
+  title: string;
+  /** 无障碍标签，缺省沿用标题 */
+  ariaLabel?: string;
+  sites: readonly RecommendedSite[];
+};
+
+/** 分区顶部的静态站点推荐卡片（「算法手撕」/「简历制作」共用） */
+export function RecommendedSiteCards({
+  title,
+  ariaLabel,
+  sites,
+}: RecommendedSiteCardsProps) {
   return (
-    <section className="algorithm-site-cards" aria-label="刷题网站推荐">
-      <h2>刷题网站推荐</h2>
+    <section className="algorithm-site-cards" aria-label={ariaLabel ?? title}>
+      <h2>{title}</h2>
       <div className="algorithm-site-cards__grid">
-        {ALGORITHM_SITES.map(({ site, description, icon, url, labels }) => (
+        {sites.map(({ site, description, icon, url, labels }) => (
           <a
             key={site}
             className="algorithm-site-card"

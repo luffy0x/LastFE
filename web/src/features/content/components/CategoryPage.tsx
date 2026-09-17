@@ -3,9 +3,10 @@ import Link from "next/link";
 import { Button } from "@/components/Button";
 import { ContentCard, contentCardTint } from "@/components/ContentCard";
 import type { CategoryDefinition } from "../categories";
+import { ALGORITHM_SITES, RESUME_SITES } from "../site-icons";
 import type { ContentSummary, Page } from "../types";
 
-import { AlgorithmSiteCards } from "./AlgorithmSiteCards";
+import { RecommendedSiteCards } from "./RecommendedSiteCards";
 import { TopicAccordion, type ContentGroup } from "./ContentAccordion";
 
 type CategoryPageProps = {
@@ -24,6 +25,8 @@ const FIELD_LABELS: Readonly<Record<string, string>> = {
   techStack: "技术栈",
   source: "来源",
   difficulty: "难度",
+  stage: "进展阶段",
+  applicationDate: "投递时间",
 };
 
 const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
@@ -126,9 +129,11 @@ export function CategoryPage({
           const field = category.submissionFields.find(
             ({ name }) => name === key,
           );
+          // 筛选标签优先用投稿字段自带的 label，保证「岗位」「目标岗位」等同名键在不同分类下含义准确
+          const fieldLabel = field?.label ?? FIELD_LABELS[key] ?? key;
           return (
             <label key={key}>
-              <span>{FIELD_LABELS[key] ?? key}</span>
+              <span>{fieldLabel}</span>
               {field?.kind === "select" ? (
                 <select name={key} defaultValue={query[key] ?? ""}>
                   <option value="">全部</option>
@@ -153,7 +158,15 @@ export function CategoryPage({
         </Button>
       </form>
 
-      {category.slug === "algorithms" ? <AlgorithmSiteCards /> : null}
+      {category.slug === "algorithms" ? (
+        <RecommendedSiteCards
+          title="刷题网站推荐"
+          sites={ALGORITHM_SITES}
+        />
+      ) : null}
+      {category.slug === "resume" ? (
+        <RecommendedSiteCards title="简历制作网站推荐" sites={RESUME_SITES} />
+      ) : null}
 
       {page.items.length === 0 ? (
         <div className="category-empty">

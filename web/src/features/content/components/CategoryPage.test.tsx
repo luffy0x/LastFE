@@ -9,6 +9,7 @@ import { CategoryPage } from "./CategoryPage";
 const interview = CATEGORIES.find(({ slug }) => slug === "interview")!;
 const fundamentals = CATEGORIES.find(({ slug }) => slug === "fundamentals")!;
 const algorithms = CATEGORIES.find(({ slug }) => slug === "algorithms")!;
+const resume = CATEGORIES.find(({ slug }) => slug === "resume")!;
 
 function emptyPage(): Page<ContentSummary> {
   return { items: [], page: 1, total: 0, pageSize: 20 };
@@ -99,7 +100,7 @@ it("renders select options for the difficulty filter", () => {
   expect(screen.getByRole("option", { name: "简单" })).toBeInTheDocument();
 });
 
-it("renders the static site recommendation cards only for algorithms", () => {
+it("renders the static site recommendation cards for algorithms and resume", () => {
   const { container, rerender } = render(
     <CategoryPage category={algorithms} page={emptyPage()} query={{}} />,
   );
@@ -117,6 +118,17 @@ it("renders the static site recommendation cards only for algorithms", () => {
   rerender(
     <CategoryPage category={interview} page={emptyPage()} query={{}} />,
   );
+  expect(
+    screen.queryByRole("heading", { name: "刷题网站推荐" }),
+  ).not.toBeInTheDocument();
+
+  rerender(<CategoryPage category={resume} page={emptyPage()} query={{}} />);
+  expect(
+    screen.getByRole("heading", { name: "简历制作网站推荐" }),
+  ).toBeInTheDocument();
+  expect(
+    container.querySelectorAll(".algorithm-site-card"),
+  ).toHaveLength(6);
   expect(
     screen.queryByRole("heading", { name: "刷题网站推荐" }),
   ).not.toBeInTheDocument();
