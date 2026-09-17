@@ -2206,3 +2206,26 @@ button:focus-visible,
     gap: 12px;
   }
 }
+
+/* ---------- 右下角站宠 ---------- */
+
+.site-pet {
+  /* 需为确定宽度：组件内部 width: min(var(--pet-width), 100%) 的
+     100% 依赖父容器宽度，shrink-to-fit 会循环解析成 0 */
+  width: 200px;
+  position: fixed;
+  right: 12px;
+  bottom: 0;
+  z-index: 30;
+  pointer-events: none;
+}
+
+.site-pet > * {
+  pointer-events: auto;
+}
+
+@media (max-width: 900px) {
+  .site-pet {
+    display: none;
+  }
+}

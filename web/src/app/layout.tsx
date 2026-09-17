@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { SiteFooter } from "@/features/shell/components/SiteFooter";
 import { SiteHeader } from "@/features/shell/components/SiteHeader";
+import { SitePet } from "@/features/shell/components/SitePet";
 import { ThemeProvider } from "@/features/shell/components/ThemeProvider";
 
 import "./globals.css";
@@ -24,6 +25,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             {children}
             <SiteFooter />
           </div>
+          <SitePet />
         </ThemeProvider>
       </body>
     </html>
