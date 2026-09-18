@@ -91,15 +91,23 @@ export function useSitePetDrag() {
       }
       const root = rootRef.current;
       if (!root) return;
+      // transform scale 从中心放大：视觉盒 = 布局盒 × scale，四周溢出 (scale-1)/2。
+      // 钳制必须按视觉盒计算，否则放大后拖到边缘时溢出部分（如头部）被视口裁掉。
+      const visualW = PET_BASE_WIDTH * scaleRef.current;
+      const visualH = PET_BASE_HEIGHT * scaleRef.current;
+      const bleedX = (visualW - PET_BASE_WIDTH) / 2;
+      const bleedY = (visualH - PET_BASE_HEIGHT) / 2;
       const rect = root.getBoundingClientRect();
+      const visualLeft = rect.left + dx;
+      const visualTop = rect.top + dy;
       setPosition({
         left: Math.min(
-          Math.max(rect.left + dx, 0),
-          Math.max(0, window.innerWidth - rect.width),
+          Math.max(visualLeft, bleedX),
+          Math.max(bleedX, window.innerWidth - visualW + bleedX),
         ),
         top: Math.min(
-          Math.max(rect.top + dy, 0),
-          Math.max(0, window.innerHeight - rect.height),
+          Math.max(visualTop, bleedY),
+          Math.max(bleedY, window.innerHeight - visualH + bleedY),
         ),
       });
       drag.startX = event.clientX;
