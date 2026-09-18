@@ -2212,11 +2212,12 @@ button:focus-visible,
 .site-pet {
   /* 需为确定宽度：组件内部 width: min(var(--pet-width), 100%) 的
      100% 依赖父容器宽度，shrink-to-fit 会循环解析成 0 */
-  width: 200px;
+  width: 160px;
   position: fixed;
   right: 12px;
   bottom: 0;
-  z-index: 30;
+  /* 高于吸顶 header(40)，避免拖到顶部时头被半透明 header 盖住 */
+  z-index: 45;
   touch-action: none;
   cursor: grab;
   pointer-events: none;

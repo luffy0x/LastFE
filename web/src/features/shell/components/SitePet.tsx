@@ -3,8 +3,8 @@
 import { PixelLive2D } from "./pixel-live2d";
 import { useSitePetDrag } from "./useSitePetDrag";
 
-const PET_WIDTH = 200;
-const PET_HEIGHT = 300;
+const PET_WIDTH = 160;
+const PET_HEIGHT = 240;
 
 /** 固定在右下角的站宠，可全屏拖拽，渲染产物与 SSR 一致，交互逻辑均在 effect 中运行。 */
 export function SitePet() {
