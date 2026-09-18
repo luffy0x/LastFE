@@ -2210,8 +2210,7 @@ button:focus-visible,
 /* ---------- 右下角站宠 ---------- */
 
 .site-pet {
-  /* 需为确定宽度：组件内部 width: min(var(--pet-width), 100%) 的
-     100% 依赖父容器宽度，shrink-to-fit 会循环解析成 0 */
+  /* 默认宽度由内联样式驱动（滚轮缩放），此处仅兜底 */
   width: 160px;
   position: fixed;
   right: 12px;
@@ -2223,11 +2222,13 @@ button:focus-visible,
   pointer-events: none;
 }
 
-/* 拖拽过一次后改由内联 left/top 定位，停靠点固定在指针处 */
+/* 拖拽过一次后改由内联 left/top 定位，停靠点固定在指针处；
+   缩放走内联 transform scale（合成器动画，可中断、连续滚轮下依然平滑） */
 .site-pet--placed {
   right: auto;
   bottom: auto;
   cursor: grabbing;
+  transition: transform 160ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .site-pet > * {

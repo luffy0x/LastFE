@@ -3,6 +3,19 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const DRAG_THRESHOLD_PX = 6;
+/** 每格滚动的缩放步长 */
+const WHEEL_SCALE_STEP = 0.06;
+
+export const PET_MIN_SCALE = 0.6;
+export const PET_MAX_SCALE = 1.75;
+/** 布局基准尺寸（未缩放），实际视觉尺寸 = 基准 × scale */
+export const PET_BASE_WIDTH = 160;
+/** 宽高比固定 2:3 */
+export const PET_ASPECT = 3 / 2;
+export const PET_BASE_HEIGHT = PET_BASE_WIDTH * PET_ASPECT;
+
+const clampScale = (scale: number) =>
+  Math.min(Math.max(scale, PET_MIN_SCALE), PET_MAX_SCALE);
 
 type DragState = {
   pointerId: number;
@@ -14,24 +27,21 @@ type DragState = {
 };
 
 /**
- * 站宠全屏拖拽：返回当前位置（相对视口左上角）、拖拽状态和事件处理器。
- * 按下后移动超过阈值才进入拖拽，未超过阈值视为点击，交给子元素的点击逻辑。
+ * 站宠全屏拖拽 + 滚轮缩放。
+ * 缩放用 transform scale（可中断、可合成，连续滚轮下依然丝滑），
+ * width/height 过渡在连续事件下会被反复重启动画而冻结，故不采用。
+ * 返回位置（相对视口左上角）、缩放、拖拽状态和事件处理器；
+ * 按下后移动超过阈值才算拖拽，否则视为点击，交给子元素的点击逻辑。
  */
-export function useSitePetDrag(width: number, height: number) {
+export function useSitePetDrag() {
   const rootRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<DragState | null>(null);
+  const [scale, setScale] = useState(1);
+  const scaleRef = useRef(1);
   const [position, setPosition] = useState<{ left: number; top: number } | null>(
     null,
   );
   const [dragging, setDragging] = useState(false);
-
-  const clamp = useCallback(
-    (left: number, top: number) => ({
-      left: Math.min(Math.max(left, 0), window.innerWidth - width),
-      top: Math.min(Math.max(top, 0), window.innerHeight - height),
-    }),
-    [height, width],
-  );
 
   const onPointerDown = useCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
@@ -57,6 +67,17 @@ export function useSitePetDrag(width: number, height: number) {
     [],
   );
 
+  const onWheel = useCallback((event: React.WheelEvent<HTMLDivElement>) => {
+    // 以指针悬停点为锚缩放；transform 动画可中断，连续滚动也能平滑跟进
+    event.preventDefault();
+    const factor = 1 + (event.deltaY < 0 ? WHEEL_SCALE_STEP : -WHEEL_SCALE_STEP);
+    setScale((prev) => {
+      const next = clampScale(prev * factor);
+      scaleRef.current = next;
+      return next;
+    });
+  }, []);
+
   useEffect(() => {
     const handleMove = (event: PointerEvent) => {
       const drag = dragRef.current;
@@ -68,8 +89,21 @@ export function useSitePetDrag(width: number, height: number) {
         drag.moved = true;
         setDragging(true);
       }
-      const next = clamp(drag.originX + dx, drag.originY + dy);
-      setPosition(next);
+      const root = rootRef.current;
+      if (!root) return;
+      const rect = root.getBoundingClientRect();
+      setPosition({
+        left: Math.min(
+          Math.max(rect.left + dx, 0),
+          Math.max(0, window.innerWidth - rect.width),
+        ),
+        top: Math.min(
+          Math.max(rect.top + dy, 0),
+          Math.max(0, window.innerHeight - rect.height),
+        ),
+      });
+      drag.startX = event.clientX;
+      drag.startY = event.clientY;
     };
 
     const handleUp = (event: PointerEvent) => {
@@ -87,7 +121,14 @@ export function useSitePetDrag(width: number, height: number) {
       window.removeEventListener("pointerup", handleUp);
       window.removeEventListener("pointercancel", handleUp);
     };
-  }, [clamp]);
+  }, []);
 
-  return { rootRef, position, dragging, onPointerDown };
+  return {
+    rootRef,
+    position,
+    scale,
+    dragging,
+    onPointerDown,
+    onWheel,
+  };
 }
